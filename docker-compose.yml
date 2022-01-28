@@ -13,13 +13,13 @@ services:
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
-  is-ssi-proof-of-ownership:
+  ssi-proof-of-ownership:
     restart: always
     build:
-      context: ./is-ssi-proof-of-ownership
+      context: ./ssi-proof-of-ownership
       dockerfile: Dockerfile 
 
-  is-ssi-authenticity-collector:
+  ssi-authenticity-collector:
     restart: always
     ports:
       - 4000:4000
@@ -27,5 +27,5 @@ services:
       context: ./ssi-auth
       dockerfile: Dockerfile
     depends_on:
-      - is-ssi-proof-of-ownership
+      - ssi-proof-of-ownership
       - mongo
