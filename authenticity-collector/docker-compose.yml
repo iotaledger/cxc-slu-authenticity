@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: ${DATABASE_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  is-ssi-proof-of-ownership:
+    restart: always
+    build:
+      context: ./is-ssi-proof-of-ownership
+      dockerfile: Dockerfile 
+
+  is-ssi-authenticity-collector:
+    restart: always
+    ports:
+      - 4000:4000
+    build:
+      context: ./ssi-auth
+      dockerfile: Dockerfile
+    depends_on:
+      - is-ssi-proof-of-ownership
+      - mongo
