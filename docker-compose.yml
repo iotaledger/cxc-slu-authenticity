@@ -24,7 +24,7 @@ services:
     ports:
       - 4000:4000
     build:
-      context: ./ssi-auth
+      context: ./authenticity-collector
       dockerfile: Dockerfile
     depends_on:
       - ssi-proof-of-ownership
