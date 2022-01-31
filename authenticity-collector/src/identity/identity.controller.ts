@@ -6,16 +6,16 @@ import { Identity } from './schemas/identity.schema';
 
 @Controller('identity')
 export class IdentityController {
-    constructor(private identityService: IdentityService){}
+	constructor(private identityService: IdentityService) {}
 
-    @Get('prove')
-    async getAuthProves(@Query() query): Promise<Identity[]>{
-        return await this.identityService.getAuthProves(query.did, query.from, query.to);
-    }
+	@Get('prove')
+	async getAuthProves(@Query() query): Promise<Identity[]> {
+		return await this.identityService.getAuthProves(query.did, query.from, query.to);
+	}
 
-    @Post('prove')
-    @UsePipes(new IdentityValidationPipe())
-    async saveSlu(@Body() body: IdentityDto): Promise<Identity> {
-        return await this.identityService.proveAndSaveSlu(body);
-    }
+	@Post('prove')
+	@UsePipes(new IdentityValidationPipe())
+	async saveSlu(@Body() body: IdentityDto): Promise<Identity> {
+		return await this.identityService.proveAndSaveSlu(body);
+	}
 }

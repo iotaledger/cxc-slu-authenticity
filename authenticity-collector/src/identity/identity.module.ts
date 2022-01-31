@@ -6,11 +6,8 @@ import { Identity, IdentitySchema } from './schemas/identity.schema';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  providers: [IdentityService],
-  controllers: [IdentityController],
-  imports: [
-    HttpModule,
-    MongooseModule.forFeature([{name: Identity.name, schema: IdentitySchema}])
-  ]
+	providers: [IdentityService],
+	controllers: [IdentityController],
+	imports: [HttpModule, MongooseModule.forFeature([{ name: Identity.name, schema: IdentitySchema }])]
 })
 export class IdentityModule {}
