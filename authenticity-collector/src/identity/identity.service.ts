@@ -9,11 +9,14 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class IdentityService {
+	
+	private readonly logger: Logger = new Logger(IdentityService.name);
+
 	constructor(
 		private httpService: HttpService,
 		private configService: ConfigService,
 		@InjectModel(Identity.name) private identityModel: Model<IdentityDocument>
-	) { }
+	) {}
 
 	async proveAndSaveSlu(identity: IdentityDto): Promise<Identity> {
 		const proveOwnershipUrl = this.configService.get<string>('PROVE_OF_OWNERSHIP_URL');
@@ -29,12 +32,15 @@ export class IdentityService {
 				let model = await new this.identityModel(identity).save();
 				return model.toObject();
 			} catch (ex: any) {
+				this.logger.error('Failed saving identity in database');
 				throw new BadRequestException(ex.message);
 			}
 		}
 		if (response.data.error) {
+			this.logger.error('Proving identity failed.')
 			throw new BadRequestException(response.data.error);
 		} else {
+			this.logger.error('Verification failed.')
 			throw new BadRequestException('Verification failed: wrong signature');
 		}
 	}
@@ -48,6 +54,7 @@ export class IdentityService {
 				})
 				.lean();
 		} catch (ex: any) {
+			this.logger.error(ex)
 			throw new BadRequestException(ex.message);
 		}
 	}
