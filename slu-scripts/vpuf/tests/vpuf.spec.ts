@@ -8,13 +8,13 @@ describe('VPUF Tests', () => {
 	let data: string;
 
 	beforeEach(() => {
-		key = vpuf.createKey('./tests/data/unclonable.txt');
-		encryptedData = vpuf.encrypt('./tests/data/data.json', key);
+		key = vpuf.createKey('./vpuf/tests/data/unclonable.txt');
+		encryptedData = vpuf.encrypt('./vpuf/tests/data/data.json', key);
 		decryptedData = vpuf.decrypt(encryptedData, key);
-		data = fs.readFileSync('./tests/data/data.json', 'utf-8');
+		data = fs.readFileSync('./vpuf/tests/data/data.json', 'utf-8');
 	});
 	test('should create the same key', () => {
-		const key2 = vpuf.createKey('./tests/data/unclonable.txt');
+		const key2 = vpuf.createKey('./vpuf/tests/data/unclonable.txt');
 		expect(key).toBe(key2);
 	});
 	test('should encrypt data', () => {
