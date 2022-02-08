@@ -3,3 +3,4 @@ process.env.INPUT = './jest/data/data.json';
 process.env.DEST = './jest/data';
 process.env.INPUT_ENC = './jest/data/data.json.enc';
 process.env.INTERVAL = '1000';
+process.env.URL = '/';

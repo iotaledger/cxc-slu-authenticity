@@ -9,6 +9,10 @@
     "transform": {
         "^.+\\.(t|j)s$": "ts-jest"
     },
+    "collectCoverageFrom": [
+        "**/*.ts"
+      ],
+    "coverageDirectory": "./dist/coverage",
     "testEnvironment": "node",
     "setupFiles": [
         "./jest/envVars.ts"
