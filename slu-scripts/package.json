@@ -4,9 +4,10 @@
 	"description": "library to encrypt/decrypt data",
 	"main": "vpuf.ts",
 	"scripts": {
-		"format": "prettier --write \"./**/*.ts\" \"./tests/**/*.ts\"",
+		"format": "prettier --write \"./**/*.ts\" \"./**/tests/**/*.ts\"",
 		"build": "tsc",
-		"test": "jest"
+		"test": "jest",
+		"bootstrap": "URL=$npm_config_url KEY=$npm_config_key DEST=$npm_config_dest node -e \"require('./dist/bootstrap/bootstrap.js').bootstrap();\""
 	},
 	"author": "",
 	"license": "ISC",

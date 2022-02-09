@@ -13,8 +13,9 @@ const encrypt = (filePath: string, key: string, dest: string): string => {
 	return encryptedData;
 };
 
-const encryptBodyData = (body: any, key: string, dest: string) => {
-	var encryptedData = cryptoJs.AES.encrypt(body, key).toString();
+const encryptBodyData = (bodyData: any, key: string, dest: string) => {
+	const data = JSON.stringify(bodyData)
+	var encryptedData = cryptoJs.AES.encrypt(data, key).toString();
 	fs.writeFileSync(dest + '/data.json.enc', encryptedData, 'utf-8');
 	return encryptedData;
 };
