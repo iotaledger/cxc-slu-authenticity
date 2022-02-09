@@ -31,22 +31,6 @@ describe('DeviceRegistrationController', () => {
 		nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02'
 	};
 
-	const requestMock = {
-		query: {}
-	} as unknown as Request;
-
-	const responseMock = {
-		status: jest.fn((x) => ({ send: jest.fn((y) => y) })),
-		send: jest.fn((x) => x)
-	} as unknown as Response;
-
-	function mockUserModel(dto) {
-		this.data = dto;
-		this.save = () => {
-			return this.data;
-		};
-	}
-
 	afterEach(() => {
 		module.close();
 	});
@@ -75,20 +59,7 @@ describe('DeviceRegistrationController', () => {
 		deviceRegistrationController = await module.get<DeviceRegistrationController>(DeviceRegistrationController);
 	});
 
-	it('deviceRegistrationController should be defined', () => {
-		expect(deviceRegistrationController).toBeDefined();
+	it('deviceRegistrationService should be defined', () => {
+		expect(deviceRegistrationService).toBeDefined();
 	});
-
-	// // Test Post route:
-	it('post route should return status 201: ', async () => {
-		// const post = jest.spyOn(deviceRegistrationController, 'createChannelAndIdentity').mockReturnValueOnce(responseMock);
-		const postRoute = await deviceRegistrationController.createChannelAndIdentity();
-		console.log('postRoute', postRoute);
-		expect(postRoute.success).toBe(true);
-	});
-	it('should save nonce, channel and device identity to MongoDb', () => {
-		const saveData = jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity').mockResolvedValue();
-		console.log('saveData', saveData);
-		expect(saveData).toBe(mockData);
-	});
-}); // describe block ends here
+}); // describe block end here
