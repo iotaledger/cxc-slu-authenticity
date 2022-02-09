@@ -16,7 +16,7 @@ describe('DeviceRegistrationController', () => {
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
 	let module: TestingModule;
 
-	const mockData: dto | any = {
+	const mockDeviceRegistration: dto | any = {
 		identityKeys: {
 			id: 'did:iota:5qmWjFWcqE3BNTB9KNCBH6reXEgig4gFUXiPENywB3wo',
 			key: {
@@ -30,6 +30,8 @@ describe('DeviceRegistrationController', () => {
 		channelId: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
 		nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02'
 	};
+
+	const nonceMock = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
 
 	const requestMock = {
 		query: {}
@@ -81,14 +83,19 @@ describe('DeviceRegistrationController', () => {
 
 	// // Test Post route:
 	it('post route should return status 201: ', async () => {
-		// const post = jest.spyOn(deviceRegistrationController, 'createChannelAndIdentity').mockReturnValueOnce(responseMock);
 		const postRoute = await deviceRegistrationController.createChannelAndIdentity();
-		console.log('postRoute', postRoute);
 		expect(postRoute.success).toBe(true);
 	});
-	it('should save nonce, channel and device identity to MongoDb', () => {
-		const saveData = jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity').mockResolvedValue();
-		console.log('saveData', saveData);
-		expect(saveData).toBe(mockData);
+	it('should save nonce, channel and device identity to MongoDb', async () => {
+		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity').mockResolvedValue(mockDeviceRegistration);
+		const saveDeviceToDb = await deviceRegistrationController.createChannelAndIdentity();
+		expect(saveDeviceToDb.registerDevice).toBe(mockDeviceRegistration);
+	});
+
+	it('should delete the device from slu-bootstrap collection ', async () => {
+		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity').mockResolvedValue(mockDeviceRegistration);
+		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice').mock;
+		const deleteDeviceFromCollection = await deviceRegistrationController.getRegisteredDevice(nonceMock);
+		expect(deleteDeviceFromCollection.registeredDeviceInfo).toBe(null);
 	});
 }); // describe block ends here
