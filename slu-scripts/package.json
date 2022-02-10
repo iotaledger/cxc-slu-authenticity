@@ -9,7 +9,7 @@
 		"test": "jest",
 		"test:cov": "jest --coverage",
 		"encrypt-file": "KEY=$npm_config_key INPUT=$npm_config_input DEST=$npm_config_dest node -e \"require('./dist/auth-proof/encrypt-data.js').encryptData();\"",
-		"send-proof": "URL=$npm_config_url INPUT_ENC=$npm_config_input_enc INTERVAL=$npm_config_interval KEY=$npm_config_key node -e \"require('./dist/auth-proof/auth-proof.js').intervalRequests();\""
+		"send-proof": "node ./dist/auth-proof/auth-proof.js"
 	},
 	"author": "",
 	"license": "ISC",

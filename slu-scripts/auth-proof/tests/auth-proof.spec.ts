@@ -44,7 +44,6 @@ describe('Encrypt data', () => {
 		expect(result?.status).toBe(200);
 	});
 
-
 	it('intervalRequests should throw error', async () => {
 		process.env.INTERVAL = '';
 		try {
@@ -71,7 +70,6 @@ describe('Encrypt data', () => {
 			expect(ex.message).toBe('Url for post request is not provided');
 		}
 	});
-
 
 	afterAll(() => {
 		fs.rmSync(process.env.DEST! + '/data.json.enc');
