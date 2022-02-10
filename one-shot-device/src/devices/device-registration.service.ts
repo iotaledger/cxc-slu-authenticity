@@ -11,7 +11,7 @@ import { IdentityClient, ChannelClient } from 'iota-is-sdk';
 export class DeviceRegistrationService {
 	constructor(
 		@InjectModel(DeviceRegistration.name)
-		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>
+		private deviceRegistrationModel: Model<DeviceRegistrationDocument>
 	) {}
 
 	async createChannelAndIdentity() {
