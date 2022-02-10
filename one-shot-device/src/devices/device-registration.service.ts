@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { defaultConfig } from '../configuration/configuration';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,12 +14,18 @@ export class DeviceRegistrationService {
 		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>
 	) {}
 
+	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
+
 	async createChannelAndIdentity() {
 		const channelClient = new ChannelClient(defaultConfig);
 		const identityClient = new IdentityClient(defaultConfig);
 
 		// create device identity
 		const deviceIdentity = await identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
+
+		if (deviceIdentity == null) {
+			this.logger.error('Failed to create identity for your device');
+		}
 
 		// Authenticate device identity
 		await channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
@@ -28,6 +34,10 @@ export class DeviceRegistrationService {
 		const newChannel = await channelClient.create({
 			topics: [{ type: 'example-data', source: 'data-creator' }]
 		});
+
+		if (newChannel == null) {
+			this.logger.error('Failed creating a new channel for your device');
+		}
 
 		const dto: CreateDeviceRegistrationDto = {
 			nonce: uuidv4(),
@@ -40,6 +50,7 @@ export class DeviceRegistrationService {
 		};
 		const doc = await this.deviceRegistrationModel.create(dto);
 		await doc.save();
+		return `device identity created with nonce: ${dto.nonce}`;
 	}
 
 	async getRegisteredDevice(nonce) {
