@@ -63,16 +63,14 @@ describe('DeviceRegistrationController', () => {
 		}
 	});
 
-	// it('should fail to remove device when provided with non existing nonce', async () => {
-	// 	jest.spyOn(deviceRegistrationService, 'getRegisteredDevice');
-	// 	try {
-	// 		await deviceRegistrationModel.create(mockDeviceRegistration);
-	// 		const deleteOperation = deviceRegistrationModel.findOneAndDelete({ badNonceMock }).exec;
-	// 		if (deleteOperation === null) {
-
-	// 		}
-	// 	} catch (err) {
-	// 		expect(err.message).toBe('DeviceRegistration validation failed: nonce: Path `nonce` is required.');
-	// 	}
-	// });
+	it('should fail to remove device when provided with non existing nonce', async () => {
+		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice');
+		try {
+			await deviceRegistrationModel.create(mockDeviceRegistration);
+			deviceRegistrationModel.findOneAndDelete({ badNonceMock }).exec;
+		} catch (err) {
+			expect(err.message).toBe('Document does not exist in the collection');
+			console.log(err.message);
+		}
+	});
 });

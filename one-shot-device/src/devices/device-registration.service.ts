@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { defaultConfig } from '../configuration/configuration';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,6 +13,7 @@ export class DeviceRegistrationService {
 		@InjectModel(DeviceRegistration.name)
 		private deviceRegistrationModel: Model<DeviceRegistrationDocument>
 	) {}
+	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
 	async createChannelAndIdentity() {
 		const channelClient = new ChannelClient(defaultConfig);
@@ -44,7 +45,10 @@ export class DeviceRegistrationService {
 
 	async getRegisteredDevice(nonce) {
 		const response = await this.deviceRegistrationModel.findOne({ nonce });
-		await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+		if (deletedDocument === null) {
+			this.logger.error('Document does not exist in the collection');
+		}
 		return response;
 	}
 }
