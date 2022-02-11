@@ -5,10 +5,14 @@ import * as ed from '@noble/ed25519';
 import { AxiosResponse } from 'axios';
 import axios from 'axios';
 
-const encryptedDataPath: string | undefined = process.env.input;
-const keyFilePath: string | undefined = process.env.npm_config_keys;
-const interval: string | undefined = process.env.mpm_config_interval;
-const requestUrl: string | undefined = process.env.URL;
+export function encryptData(keyFilePath: string | undefined, inputData: string | undefined, destination: string | undefined) {
+	if (keyFilePath && inputData && destination) {
+		const key = vpuf.createKey(keyFilePath!);
+		vpuf.encrypt(inputData, key, destination);
+	} else {
+		throw Error('One or all of the env variables are not provided: KEY, INPUT, DEST');
+	}
+}
 
 export async function decryptData(
 	encryptedDataPath: string | undefined,
@@ -41,7 +45,7 @@ export async function sendAuthProof(
 		timestamp: Date;
 		signature: string;
 	},
-	requestUrl: string | undefined
+	requestUrl: string | undefined,
 ): Promise<AxiosResponse<any, any> | undefined> {
 	if (requestUrl) {
 		return await axios.post(requestUrl, body);
@@ -49,14 +53,3 @@ export async function sendAuthProof(
 		throw Error('Url for post request is not provided');
 	}
 }
-
-export async function intervalRequests(interval: string | undefined) {
-	const body = await decryptData(encryptedDataPath, keyFilePath);
-	if (interval) {
-		setInterval(sendAuthProof, Number(interval), [body, requestUrl]);
-	} else {
-		throw Error('Interval in ms is not provided');
-	}
-}
-
-intervalRequests(interval);

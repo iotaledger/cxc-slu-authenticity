@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as cryptoJs from 'crypto-js';
+import { encryptData } from 'src/auth-proof/auth-proof';
 
 const createKey = (filePath: string): string => {
 	const seed = fs.readFileSync(filePath, 'utf-8');
