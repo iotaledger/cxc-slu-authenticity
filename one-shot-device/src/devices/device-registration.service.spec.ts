@@ -15,10 +15,6 @@ describe('DeviceRegistrationController', () => {
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
 	let module: TestingModule;
 
-	afterEach(() => {
-		module.close();
-	});
-
 	beforeEach(async () => {
 		module = await Test.createTestingModule({
 			imports: [
@@ -41,6 +37,10 @@ describe('DeviceRegistrationController', () => {
 
 		deviceRegistrationService = await module.get<DeviceRegistrationService>(DeviceRegistrationService);
 		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
+	});
+
+	afterAll(async () => {
+		module.close();
 	});
 
 	it('deviceRegistrationService should be defined', () => {
@@ -70,7 +70,6 @@ describe('DeviceRegistrationController', () => {
 			deviceRegistrationModel.findOneAndDelete({ badNonceMock }).exec;
 		} catch (err) {
 			expect(err.message).toBe('Document does not exist in the collection');
-			console.log(err.message);
 		}
 	});
 });
