@@ -45,7 +45,7 @@ export async function sendAuthProof(
 		timestamp: Date;
 		signature: string;
 	},
-	requestUrl: string | undefined,
+	requestUrl: string | undefined
 ): Promise<AxiosResponse<any, any> | undefined> {
 	if (requestUrl) {
 		return await axios.post(requestUrl, body);

@@ -1,11 +1,10 @@
 import yargs from 'yargs';
 import { encryptData, decryptData, sendAuthProof } from './auth-proof/auth-proof';
 
-
 const argv = yargs
-.command('encrypt', 'Encrypt for encrypting')
-.command('send-proof', 'Decrypt data and send auth proof of device')
-.help().argv;
+	.command('encrypt', 'Encrypt for encrypting')
+	.command('send-proof', 'Decrypt data and send auth proof of device')
+	.help().argv;
 
 export async function sendingProof() {
 	if (argv._.includes('encrypt')) {
@@ -32,8 +31,7 @@ export async function sendingProof() {
 		} catch (ex: any) {
 			console.log(ex.message);
 		}
-	} 
-	else {
+	} else {
 		yargs.showHelp('log');
 	}
 }

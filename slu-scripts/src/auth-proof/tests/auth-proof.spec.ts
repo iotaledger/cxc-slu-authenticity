@@ -5,19 +5,17 @@ import axios from 'axios';
 jest.mock('axios');
 
 describe('Encrypt data', () => {
-
 	const keyFilePath: string | undefined = process.env.npm_config_key;
-	const inputDataPath: string | undefined = process.env.npm_config_input
+	const inputDataPath: string | undefined = process.env.npm_config_input;
 	const destinationPath: string | undefined = process.env.npm_config_dest;
-	const requestUrl: string | undefined = process.env.npm_config_url
-	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc
+	const requestUrl: string | undefined = process.env.npm_config_url;
+	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 
 	it('should encrypt data', () => {
 		encryptData(keyFilePath, inputDataPath, destinationPath);
 		const encryptedData = fs.readFileSync(encryptedDataPath!, 'utf-8');
 		expect(encryptedData).toContain('U2FsdGVkX1');
 	});
-
 
 	it('should decrypt data and send successfully auth proof', async () => {
 		const response = {
@@ -38,14 +36,14 @@ describe('Encrypt data', () => {
 		expect(result?.status).toBe(200);
 	});
 
-		it('should send auth proof three times', () => {
+	it('should send auth proof three times', () => {
 		jest.useFakeTimers();
 
 		const proofRequest = jest.spyOn(axios, 'post');
-		const body = { did: 'did:iota:..', timestamp: new Date(), signature: 'isdnfcd' }
-		
+		const body = { did: 'did:iota:..', timestamp: new Date(), signature: 'isdnfcd' };
+
 		setInterval(sendAuthProof, 1000, body, '/');
-		
+
 		jest.advanceTimersByTime(2000);
 
 		expect(proofRequest).toBeCalledWith('/', body);
