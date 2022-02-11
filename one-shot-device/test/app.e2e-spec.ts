@@ -24,6 +24,15 @@ describe('AppController (e2e)', () => {
 	let httpServer;
 	let mongod: MongoMemoryServer;
 
+	const createDevice: dto | any = {
+		nonce: deviceStubData().nonce,
+		channelId: deviceStubData().channelId,
+		channelSeed: deviceStubData().channelSeed,
+		identityKeys: deviceStubData().identityKeys
+	};
+
+	const nonce = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
+
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [
@@ -32,7 +41,7 @@ describe('AppController (e2e)', () => {
 				HttpModule,
 				MongooseModule.forRootAsync({
 					useFactory: async () => {
-						const mongod = await MongoMemoryServer.create({
+						mongod = await MongoMemoryServer.create({
 							instance: {
 								port: 8088
 							}
@@ -61,22 +70,37 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/create (POST) it should create channel, device identity and nonce', async () => {
-		const createDevice: dto | any = {
-			nonce: deviceStubData().nonce,
-			channelId: deviceStubData().channelId,
-			channelSeed: deviceStubData().channelSeed,
-			identityKeys: deviceStubData().identityKeys
-		};
-		console.log(createDevice);
-
 		jest.spyOn(httpService, 'post').mockReturnValue(createDevice);
 		const response = await request(httpServer).post('/create').send(createDevice);
-
 		expect(response.status).toBe(201);
-		// expect(response.body).toMatchObject(createDevice);
 
-		const savedDevice = await deviceRegistrationModel.findOne({ nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02' }, { _id: 0 });
-		console.log('savedDevice:', savedDevice);
+		const savedDevice = await deviceRegistrationModel.findOne({ nonce }, { _id: 0 });
 		expect(savedDevice).toMatchObject(createDevice);
+	});
+
+	it('/:nonce (GET) it should return device to the creator and remove the document from the collection', async () => {
+		jest.spyOn(httpService, 'get');
+		const savedDevice = await deviceRegistrationModel.create(createDevice);
+		console.log(savedDevice);
+		const response = await request(httpServer).get(`/bootstrap/${nonce}`);
+		expect(response.status).toBe(200);
+		expect(response.body).toMatchObject({
+			success: true,
+			registeredDeviceInfo: {
+				identityKeys: {
+					id: 'did:iota:5qmWjFWcqE3BNTB9KNCBH6reXEgig4gFUXiPENywB3wo',
+					key: {
+						type: 'ed25519',
+						public: 'BKU1cLqakKrN9g4ridQ6z5NyHqA7vZLLqmAygwDrSeex',
+						secret: '9EXX7aqBKGpBBDvy7ND65PvHe2DHwZrq7ZLorzE8ZDvv',
+						encoding: 'base58'
+					}
+				},
+				channelSeed: 'jldirikybrxczxlhhswzikqhsafjdzejjacoqaymzmoffdrwrzmytolrwuyhwoweybnzofew',
+				channelId: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
+				nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02',
+				_id: '6206a157f891fb94bac4cfc5'
+			}
+		});
 	});
 });
