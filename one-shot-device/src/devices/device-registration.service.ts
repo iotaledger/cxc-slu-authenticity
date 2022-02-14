@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { defaultConfig } from '../configuration/configuration';
 import { InjectModel } from '@nestjs/mongoose';
@@ -25,6 +25,7 @@ export class DeviceRegistrationService {
 
 		if (deviceIdentity == null) {
 			this.logger.error('Failed to create identity for your device');
+			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		// Authenticate device identity
@@ -37,6 +38,7 @@ export class DeviceRegistrationService {
 
 		if (newChannel == null) {
 			this.logger.error('Failed creating a new channel for your device');
+			throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		const dto: CreateDeviceRegistrationDto = {
@@ -50,7 +52,7 @@ export class DeviceRegistrationService {
 		};
 		const doc = await this.deviceRegistrationModel.create(dto);
 		await doc.save();
-		return `device identity created with nonce: ${dto.nonce}`;
+		return { nonce: dto.nonce };
 	}
 
 	async getRegisteredDevice(nonce) {
