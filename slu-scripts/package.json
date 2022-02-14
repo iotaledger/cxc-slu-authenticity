@@ -7,6 +7,8 @@
 		"format": "prettier --write \"./**/*.ts\" \"./**/tests/**/*.ts\"",
 		"build": "tsc",
 		"test": "jest",
+		"encrypt-file": "node ./dist/src/index.js encrypt",
+		"send-proof": "node ./dist/src/index.js send-proof",
 		"bootstrap": "URL=$npm_config_url KEY=$npm_config_key DEST=$npm_config_dest node -e \"require('./dist/bootstrap/bootstrap.js').bootstrap();\""
 	},
 	"author": "",
