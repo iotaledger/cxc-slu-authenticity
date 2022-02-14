@@ -57,7 +57,11 @@ export class DeviceRegistrationService {
 
 	async getRegisteredDevice(nonce) {
 		const response = await this.deviceRegistrationModel.findOne({ nonce });
-		await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+		if (deletedDocument === null) {
+			this.logger.error('Document does not exist in the collection');
+			throw new HttpException('Could not find document in collection.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return response;
 	}
 }
