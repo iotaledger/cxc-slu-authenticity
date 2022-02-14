@@ -5,10 +5,10 @@ import axios from 'axios';
 jest.mock('axios');
 
 describe('Encrypt data', () => {
-	const keyFilePath: string | undefined = process.env.npm_config_key;
+	const keyFilePath: string | undefined = process.env.npm_config_key_file;
 	const inputDataPath: string | undefined = process.env.npm_config_input;
 	const destinationPath: string | undefined = process.env.npm_config_dest;
-	const requestUrl: string | undefined = process.env.npm_config_url;
+	const collectorUrl: string | undefined = process.env.npm_config_collector_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 
 	it('should encrypt data', () => {
@@ -30,7 +30,7 @@ describe('Encrypt data', () => {
 
 		encryptData(keyFilePath, inputDataPath, destinationPath);
 		const body = await decryptData(encryptedDataPath, keyFilePath);
-		const result = await sendAuthProof(body!, requestUrl);
+		const result = await sendAuthProof(body!, collectorUrl);
 
 		expect(axios.post).toBeCalledWith('/', body);
 		expect(result?.status).toBe(200);
@@ -57,7 +57,7 @@ describe('Encrypt data', () => {
 		try {
 			encryptData(keyFilePath, '', destinationPath);
 		} catch (ex: any) {
-			expect(ex.message).toBe('One or all of the env variables are not provided: KEY, INPUT, DEST');
+			expect(ex.message).toBe('One or all of the env variables are not provided: --key_file, --input, --dest');
 		}
 	});
 
@@ -65,7 +65,7 @@ describe('Encrypt data', () => {
 		try {
 			await decryptData(encryptedDataPath, '');
 		} catch (ex: any) {
-			expect(ex.message).toBe('One or all of the env variables are not provided: INPUT_ENC, KEY');
+			expect(ex.message).toBe('One or all of the env variables are not provided: --input_enc, --key_file');
 		}
 	});
 

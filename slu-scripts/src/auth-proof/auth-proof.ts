@@ -10,7 +10,7 @@ export function encryptData(keyFilePath: string | undefined, inputData: string |
 		const key = vpuf.createKey(keyFilePath!);
 		vpuf.encrypt(inputData, key, destination);
 	} else {
-		throw Error('One or all of the env variables are not provided: KEY, INPUT, DEST');
+		throw Error('One or all of the env variables are not provided: --key_file, --input, --dest');
 	}
 }
 
@@ -35,7 +35,7 @@ export async function decryptData(
 		};
 		return body;
 	} else {
-		throw Error('One or all of the env variables are not provided: INPUT_ENC, KEY');
+		throw Error('One or all of the env variables are not provided: --input_enc, --key_file');
 	}
 }
 
