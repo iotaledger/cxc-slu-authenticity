@@ -23,6 +23,7 @@ describe('AppController (e2e)', () => {
 	let httpService: HttpService;
 	let httpServer;
 	let mongod: MongoMemoryServer;
+	let savedDeviceExample;
 
 	const createDevice: dto | any = {
 		nonce: deviceStubData().nonce,
@@ -63,6 +64,9 @@ describe('AppController (e2e)', () => {
 		deviceRegistrationModel = moduleFixture.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
 		httpService = moduleFixture.get<HttpService>(HttpService);
 		httpServer = app.getHttpServer();
+
+		await deviceRegistrationModel.deleteMany();
+		savedDeviceExample = await deviceRegistrationModel.create(createDevice);
 	});
 
 	afterAll(async () => {
@@ -80,27 +84,16 @@ describe('AppController (e2e)', () => {
 
 	it('/:nonce (GET) it should return device to the creator and remove the document from the collection', async () => {
 		jest.spyOn(httpService, 'get');
-		const savedDevice = await deviceRegistrationModel.create(createDevice);
-		console.log(savedDevice);
 		const response = await request(httpServer).get(`/bootstrap/${nonce}`);
-		expect(response.status).toBe(200);
-		expect(response.body).toMatchObject({
+		const bootstrapNonceResult = {
 			success: true,
-			registeredDeviceInfo: {
-				identityKeys: {
-					id: 'did:iota:5qmWjFWcqE3BNTB9KNCBH6reXEgig4gFUXiPENywB3wo',
-					key: {
-						type: 'ed25519',
-						public: 'BKU1cLqakKrN9g4ridQ6z5NyHqA7vZLLqmAygwDrSeex',
-						secret: '9EXX7aqBKGpBBDvy7ND65PvHe2DHwZrq7ZLorzE8ZDvv',
-						encoding: 'base58'
-					}
-				},
-				channelSeed: 'jldirikybrxczxlhhswzikqhsafjdzejjacoqaymzmoffdrwrzmytolrwuyhwoweybnzofew',
-				channelId: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
-				nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02',
-				_id: '6206a157f891fb94bac4cfc5'
-			}
-		});
+			registeredDeviceInfo: savedDeviceExample
+		};
+
+		expect(response.status).toBe(200);
+		expect(response.body).toStrictEqual(JSON.parse(JSON.stringify(bootstrapNonceResult)));
+		const findDevice = await deviceRegistrationModel.findOne({ nonce });
+		console.log(findDevice);
+		expect(findDevice).toBe(null);
 	});
 });
