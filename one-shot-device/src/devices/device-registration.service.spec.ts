@@ -47,12 +47,26 @@ describe('DeviceRegistrationController', () => {
 		expect(deviceRegistrationService).toBeDefined();
 	});
 
-	it('It should validate the DTO and save device identity to MongoDB', async () => {
+	it('should validate the DTO and save device identity to MongoDB', async () => {
 		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');
 		await deviceRegistrationModel.create(mockDeviceRegistration);
 		const savedDevice = await deviceRegistrationModel.find({ nonceMock });
 		expect(savedDevice[0]).toMatchObject(mockDeviceRegistration);
 	});
+
+	// test the public methods
+	// 	createChannelAndIdentity
+	// Should return an error during creation of an identity and return the error
+	// Should return an error during creation of a channel  and return the error
+	// Successfully create the identity and channel
+	// it('Should return an error during creation of an identity and return the error', async () => {
+	// 	jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');
+	// 	try {
+	// 		const createIdentity = await deviceRegistrationService.createChannelAndIdentity();
+	// 	} catch (err) {
+	// 		expect(err.message).toBe('DeviceRegistration validation failed: nonce: Path `nonce` is required.');
+	// 	}
+	// });
 
 	it('should not validate an faulty data structure', async () => {
 		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');

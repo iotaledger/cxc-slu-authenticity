@@ -92,8 +92,8 @@ describe('AppController (e2e)', () => {
 
 		expect(response.status).toBe(200);
 		expect(response.body).toStrictEqual(JSON.parse(JSON.stringify(bootstrapNonceResult)));
+
 		const findDevice = await deviceRegistrationModel.findOne({ nonce });
-		console.log(findDevice);
 		expect(findDevice).toBe(null);
 	});
 });
