@@ -2,16 +2,18 @@ import { DeviceRegistrationController } from './device-registration.controller';
 import { DeviceRegistrationService } from './device-registration.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { MongooseModule } from '@nestjs/mongoose';
-import { DeviceRegistration, DeviceRegistrationSchema } from './schemas/device-registration.schema';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
+import { DeviceRegistration, DeviceRegistrationSchema, DeviceRegistrationDocument } from './schemas/device-registration.schema';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { mockDeviceRegistration, nonceMock } from './mocks';
+import { Model } from 'mongoose';
 
 jest.setTimeout(40000);
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationController: DeviceRegistrationController;
 	let deviceRegistrationService: DeviceRegistrationService;
+	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
 	let module: TestingModule;
 
 	afterEach(() => {
@@ -40,6 +42,7 @@ describe('DeviceRegistrationController', () => {
 
 		deviceRegistrationService = await module.get<DeviceRegistrationService>(DeviceRegistrationService);
 		deviceRegistrationController = await module.get<DeviceRegistrationController>(DeviceRegistrationController);
+		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
 	});
 
 	it('deviceRegistrationController should be defined', () => {
@@ -58,9 +61,9 @@ describe('DeviceRegistrationController', () => {
 	});
 
 	it('should delete the device from slu-bootstrap collection ', async () => {
-		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity').mockResolvedValue(mockDeviceRegistration);
 		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice').mock;
+		const saveDeviceToDb = await deviceRegistrationModel.create(mockDeviceRegistration);
 		const deleteDeviceFromCollection = await deviceRegistrationController.getRegisteredDevice(nonceMock);
-		expect(deleteDeviceFromCollection.registeredDeviceInfo).toBe(null);
+		expect(deleteDeviceFromCollection.registeredDeviceInfo.nonce).toBe(saveDeviceToDb.nonce);
 	});
 });

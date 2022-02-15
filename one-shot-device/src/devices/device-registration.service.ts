@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { defaultConfig } from '../configuration/configuration';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,8 +11,9 @@ import { IdentityClient, ChannelClient } from 'iota-is-sdk';
 export class DeviceRegistrationService {
 	constructor(
 		@InjectModel(DeviceRegistration.name)
-		private deviceRegistrationModel: Model<DeviceRegistrationDocument>
+		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>
 	) {}
+
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
 	async createChannelAndIdentity() {
@@ -22,6 +23,11 @@ export class DeviceRegistrationService {
 		// create device identity
 		const deviceIdentity = await identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 
+		if (deviceIdentity == null) {
+			this.logger.error('Failed to create identity for your device');
+			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		// Authenticate device identity
 		await channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
 
@@ -29,6 +35,11 @@ export class DeviceRegistrationService {
 		const newChannel = await channelClient.create({
 			topics: [{ type: 'example-data', source: 'data-creator' }]
 		});
+
+		if (newChannel == null) {
+			this.logger.error('Failed creating a new channel for your device');
+			throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		const dto: CreateDeviceRegistrationDto = {
 			nonce: uuidv4(),
@@ -41,6 +52,7 @@ export class DeviceRegistrationService {
 		};
 		const doc = await this.deviceRegistrationModel.create(dto);
 		await doc.save();
+		return { nonce: dto.nonce };
 	}
 
 	async getRegisteredDevice(nonce) {
@@ -48,6 +60,7 @@ export class DeviceRegistrationService {
 		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
 		if (deletedDocument === null) {
 			this.logger.error('Document does not exist in the collection');
+			throw new HttpException('Could not find document in collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return response;
 	}

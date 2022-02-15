@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const defaultConfig: ClientConfig = {
-	apiKey: process.env.API_KEY,
-	baseUrl: process.env.API_URL,
+	apiKey: process.env.IS_API_KEY,
+	baseUrl: process.env.IS_API_URL,
 	apiVersion: ApiVersion.v01
 };

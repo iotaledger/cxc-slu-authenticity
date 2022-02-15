@@ -10,6 +10,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { mockDeviceRegistration, nonceMock, mockFaultyDeviceRegistrationObject, badNonceMock } from './mocks';
 
 jest.setTimeout(40000);
+
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationService: DeviceRegistrationService;
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
@@ -59,14 +60,17 @@ describe('DeviceRegistrationController', () => {
 	// Should return an error during creation of an identity and return the error
 	// Should return an error during creation of a channel  and return the error
 	// Successfully create the identity and channel
-	// it('Should return an error during creation of an identity and return the error', async () => {
-	// 	jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');
-	// 	try {
-	// 		const createIdentity = await deviceRegistrationService.createChannelAndIdentity();
-	// 	} catch (err) {
-	// 		expect(err.message).toBe('DeviceRegistration validation failed: nonce: Path `nonce` is required.');
-	// 	}
-	// });
+
+	it('Should return an error during creation of an identity and return the error', async () => {
+		const service = jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');
+		console.log('service: ', service);
+		try {
+			// const createIdentity = await nullIdentity1;
+			// console.log('create identity: ', createIdentity);
+		} catch (err) {
+			expect(err.message).toBe('Failed to create identity for your device');
+		}
+	});
 
 	it('should not validate an faulty data structure', async () => {
 		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');
