@@ -35,24 +35,21 @@ describe('bootstrap on device', () => {
 
     it('should fail to bootstrap: wrong file path', async () =>  {
         const wrongKey = '../../vpuf/tests/data/unclonable.ts';
-        const consoleSpy = jest.spyOn(console, 'log');
         const msg = "ENOENT: no such file or directory, open '../../vpuf/tests/data/unclonable.ts'";
-
-        await bootstrap(url, wrongKey, dest);
-     
-        expect(consoleSpy).toHaveBeenLastCalledWith(msg);
+        try{
+            await bootstrap(url, wrongKey, dest);
+        }catch(ex: any){
+            expect(ex.message).toBe(msg)
+        }
     })
 
     it('should fail to bootstrap: no env var provided', async () =>  {
         const noKey = '';
-        const consoleSpy = jest.spyOn(console, 'log');
-        const msg = 'One of the following env variables are not declared: URL, KEY, DEST';
-
-        await bootstrap(url, noKey, dest);
-     
-        expect(consoleSpy).toHaveBeenLastCalledWith(msg);
+        const msg = 'One or all of the env variables are not provided: --key_file, --registration_url, --dest';
+        try{
+            await bootstrap(url, noKey, dest);
+        }catch(ex: any){
+            expect(ex.message).toBe(msg);
+        }
     })
-
-
-    
 })
