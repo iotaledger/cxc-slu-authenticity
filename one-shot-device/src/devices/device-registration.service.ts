@@ -16,14 +16,13 @@ export class DeviceRegistrationService {
 		@Inject('IdentityClient')
 		private readonly identityClient: IdentityClient
 	) {}
-
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
 	async createChannelAndIdentity() {
 		// create device identity
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 
-		if (deviceIdentity == null) {
+		if (deviceIdentity === null) {
 			this.logger.error('Failed to create identity for your device');
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -36,7 +35,7 @@ export class DeviceRegistrationService {
 			topics: [{ type: 'example-data', source: 'data-creator' }]
 		});
 
-		if (newChannel == null) {
+		if (newChannel === null) {
 			this.logger.error('Failed creating a new channel for your device');
 			throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}

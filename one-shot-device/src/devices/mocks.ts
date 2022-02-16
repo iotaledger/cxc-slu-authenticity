@@ -38,4 +38,27 @@ export const nullIdentityDeviceRegistrationObject: dto | any = {
 export const nonceMock = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
 export const badNonceMock = '1b0e4a49-BaDD-Baddy-99f4-97fda845ff02';
 
-export const mockCreateIdentity = jest.fn();
+export const identityMock = {
+	doc: {
+		id: 'did:iota:7ph3tSwDL1GYvyaUCij2WseFUbme9Y3WMvAcMX2HCpbt',
+		authentication: [[Object]],
+		created: '2022-02-16T22:12:10Z',
+		updated: '2022-02-16T22:12:10Z',
+		proof: {
+			type: 'JcsEd25519Signature2020',
+			verificationMethod: '#key',
+			signatureValue: '3qMsZZk7UEs4qiJANLqzdARwqFYdUYVgNLWZ6cshqH6pKtUs1iBEDXdaK7rXk8cxdvGVJUaRMcSmp1qEKaGdP9CX'
+		}
+	},
+	key: {
+		type: 'ed25519',
+		public: 'DZvBAbf8SJHKtJgjSRy5QmUNFxstS2CBGZu2n9sGLxs',
+		secret: '4VMHqY95kvNjxsW9aqEpa1Nnthf4UAxQvZiosFsGNMnp',
+		encoding: 'base58'
+	}
+};
+
+export const channelMock = {
+	channelAddress: 'ed1ff8060f52f4c49dadf1a499a5ef81e5293eed161a5cb2ca4cee6b33d348ef0000000000000000:ae2c58ed2f980fbb5697be94',
+	seed: 'ewlvmojzfcopwliaufpfhjcidzrlmqhzhdmfxxulctunidgznyhxepzshyjxqpagkhxwrypq'
+};

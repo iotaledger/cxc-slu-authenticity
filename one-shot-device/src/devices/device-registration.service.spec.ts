@@ -7,7 +7,7 @@ import { DeviceRegistration, DeviceRegistrationDocument, DeviceRegistrationSchem
 import { Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { mockDeviceRegistration, nonceMock, mockFaultyDeviceRegistrationObject, badNonceMock } from './mocks';
+import { mockDeviceRegistration, nonceMock, mockFaultyDeviceRegistrationObject, badNonceMock, identityMock, channelMock } from './mocks';
 
 jest.setTimeout(40000);
 
@@ -36,13 +36,25 @@ describe('DeviceRegistrationController', () => {
 			providers: [
 				DeviceRegistrationService,
 				ConfigService,
-				// Add mock of identity client and channel client here
-				{ provide: 'ChannelClient', useValue: { create: console.log('####### chxhxhx') } },
-				{ provide: 'IdentityClient', useValue: { create: () => console.log('####### identity') } }
+				{
+					provide: 'ChannelClient',
+					useValue: {
+						create: () => channelMock,
+						authenticate: () => {
+							identityMock.doc.id, identityMock.key.secret;
+						}
+					}
+				},
+				{
+					provide: 'IdentityClient',
+					useValue: {
+						create: () => identityMock
+					}
+				}
 			]
 		}).compile();
 
-		deviceRegistrationService = await module.get<DeviceRegistrationService>(DeviceRegistrationService);
+		deviceRegistrationService = module.get<DeviceRegistrationService>(DeviceRegistrationService);
 		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
 	});
 
