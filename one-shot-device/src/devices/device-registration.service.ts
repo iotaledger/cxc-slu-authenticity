@@ -1,6 +1,5 @@
-import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { defaultConfig } from '../configuration/configuration';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateDeviceRegistrationDto } from './dto/create-device-registration.dto';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
@@ -11,17 +10,18 @@ import { IdentityClient, ChannelClient } from 'iota-is-sdk';
 export class DeviceRegistrationService {
 	constructor(
 		@InjectModel(DeviceRegistration.name)
-		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>
+		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>,
+		@Inject('ChannelClient')
+		private readonly channelClient: ChannelClient,
+		@Inject('IdentityClient')
+		private readonly identityClient: IdentityClient
 	) {}
 
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
 	async createChannelAndIdentity() {
-		const channelClient = new ChannelClient(defaultConfig);
-		const identityClient = new IdentityClient(defaultConfig);
-
 		// create device identity
-		const deviceIdentity = await identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
+		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 
 		if (deviceIdentity == null) {
 			this.logger.error('Failed to create identity for your device');
@@ -29,10 +29,10 @@ export class DeviceRegistrationService {
 		}
 
 		// Authenticate device identity
-		await channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
+		await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
 
 		// create new channel
-		const newChannel = await channelClient.create({
+		const newChannel = await this.channelClient.create({
 			topics: [{ type: 'example-data', source: 'data-creator' }]
 		});
 

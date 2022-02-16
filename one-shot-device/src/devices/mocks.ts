@@ -1,6 +1,4 @@
 import { CreateDeviceRegistrationDto as dto } from './dto/create-device-registration.dto';
-import { IdentityClient } from 'iota-is-sdk';
-jest.mock('./identity-client');
 
 export const mockDeviceRegistration: dto | any = {
 	identityKeys: {

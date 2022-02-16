@@ -33,7 +33,13 @@ describe('DeviceRegistrationController', () => {
 				MongooseModule.forFeature([{ name: DeviceRegistration.name, schema: DeviceRegistrationSchema }])
 			],
 			controllers: [DeviceRegistrationController],
-			providers: [DeviceRegistrationService, ConfigService]
+			providers: [
+				DeviceRegistrationService,
+				ConfigService,
+				// Add mock of identity client and channel client here
+				{ provide: 'ChannelClient', useValue: { create: console.log('####### chxhxhx') } },
+				{ provide: 'IdentityClient', useValue: { create: () => console.log('####### identity') } }
+			]
 		}).compile();
 
 		deviceRegistrationService = await module.get<DeviceRegistrationService>(DeviceRegistrationService);
