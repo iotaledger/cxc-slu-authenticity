@@ -21,20 +21,19 @@ const argv = yargs
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
-			.option('reqistration_url', { describe: 'The url of device registration microservice.' })
+			.option('reqistration_url', { describe: 'The url of device registration microservice.' });
 	})
 	.help().argv;
 
-const keyFilePath: string | undefined = process.env.npm_config_key_file;
-const inputData: string | undefined = process.env.npm_config_input;
-const destination: string | undefined = process.env.npm_config_dest;
-const interval: string | undefined = process.env.npm_config_interval;
-const collectorUrl: string | undefined = process.env.npm_config_collector_url;
-const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
-const registrationUrl: string | undefined = process.env.npm_config_registration_url;
-
-export async function sendingProof() {
-	if (argv._.includes('encrypt')) {	
+export async function execScript(argv: any) {
+	const keyFilePath: string | undefined = process.env.npm_config_key_file;
+	const inputData: string | undefined = process.env.npm_config_input;
+	const destination: string | undefined = process.env.npm_config_dest;
+	const interval: string | undefined = process.env.npm_config_interval;
+	const collectorUrl: string | undefined = process.env.npm_config_collector_url;
+	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
+	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
+	if (argv._.includes('encrypt')) {
 		try {
 			encryptData(keyFilePath, inputData, destination);
 		} catch (ex: any) {
@@ -47,16 +46,16 @@ export async function sendingProof() {
 			if (decryptedData && interval) {
 				setInterval(sendAuthProof, Number(interval), decryptedData, collectorUrl);
 			} else {
-				console.log('No --input_enc or no --interval in ms provided.');
+				throw Error('No --input_enc or no --interval in ms provided.');
 			}
 		} catch (ex: any) {
 			console.error(ex.message);
 			process.exit(1);
 		}
 	} else if (argv._.includes('bootstrap')) {
-		try{
-			bootstrap(registrationUrl, keyFilePath, destination)
-		}catch(ex: any){
+		try {
+			await bootstrap(registrationUrl, keyFilePath, destination);
+		} catch (ex: any) {
 			console.error(ex.message);
 			process.exit(1);
 		}
@@ -65,4 +64,4 @@ export async function sendingProof() {
 	}
 }
 
-sendingProof();
+execScript(argv);
