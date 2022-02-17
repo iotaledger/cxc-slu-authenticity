@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { mockDeviceRegistration, nonceMock, mockFaultyDeviceRegistrationObject, badNonceMock, identityMock, channelMock } from './mocks';
+import { IdentityClient, ChannelClient } from 'iota-is-sdk';
 
 jest.setTimeout(40000);
 
@@ -16,7 +17,7 @@ describe('DeviceRegistrationController', () => {
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
 	let module: TestingModule;
 
-	beforeEach(async () => {
+	const moduleCreator = async (identityClientMock: any, channelClientMock: any) => {
 		module = await Test.createTestingModule({
 			imports: [
 				HttpModule,
@@ -38,25 +39,18 @@ describe('DeviceRegistrationController', () => {
 				ConfigService,
 				{
 					provide: 'ChannelClient',
-					useValue: {
-						create: () => channelMock,
-						authenticate: () => {
-							identityMock.doc.id, identityMock.key.secret;
-						}
-					}
+					useValue: channelClientMock
 				},
 				{
 					provide: 'IdentityClient',
-					useValue: {
-						create: () => identityMock
-					}
+					useValue: identityClientMock
 				}
 			]
 		}).compile();
 
 		deviceRegistrationService = module.get<DeviceRegistrationService>(DeviceRegistrationService);
 		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
-	});
+	};
 
 	afterAll(async () => {
 		module.close();
@@ -64,6 +58,24 @@ describe('DeviceRegistrationController', () => {
 
 	it('deviceRegistrationService should be defined', () => {
 		expect(deviceRegistrationService).toBeDefined();
+	});
+
+	fit('deviceRegistrationService should return nonce and created a device and a channel', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				create: () => channelMock,
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				}
+			}
+		);
+		const res = await deviceRegistrationService.createChannelAndIdentity();
+		// we cant check for the exact nonce since it is a danymic string
+		expect(res.nonce).not.toBeNull();
+		expect(res.nonce.length).toEqual(36);
 	});
 
 	it('should validate the DTO and save device identity to MongoDB', async () => {
