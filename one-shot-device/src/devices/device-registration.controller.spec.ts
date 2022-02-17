@@ -15,8 +15,6 @@ describe('DeviceRegistrationController', () => {
 	let deviceRegistrationController: DeviceRegistrationController;
 	let deviceRegistrationService: DeviceRegistrationService;
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
-	let identityClient: IdentityClient;
-	let channelClient: ChannelClient;
 	let module: TestingModule;
 
 	afterEach(() => {
@@ -33,7 +31,7 @@ describe('DeviceRegistrationController', () => {
 				MongooseModule.forRootAsync({
 					useFactory: async () => {
 						const mongod = await MongoMemoryServer.create();
-						const uri = await mongod.getUri();
+						const uri = mongod.getUri();
 						return {
 							uri: uri
 						};
@@ -66,8 +64,6 @@ describe('DeviceRegistrationController', () => {
 		deviceRegistrationService = module.get<DeviceRegistrationService>(DeviceRegistrationService);
 		deviceRegistrationController = module.get<DeviceRegistrationController>(DeviceRegistrationController);
 		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
-		identityClient = module.get<IdentityClient>(IdentityClient);
-		channelClient = module.get<ChannelClient>(ChannelClient);
 	});
 
 	it('deviceRegistrationController should be defined', () => {
@@ -76,7 +72,6 @@ describe('DeviceRegistrationController', () => {
 
 	it('post route should return success true', async () => {
 		const result = await deviceRegistrationController.createChannelAndIdentity();
-		console.log('result', result);
 		expect(result.success).toBe(true);
 	});
 

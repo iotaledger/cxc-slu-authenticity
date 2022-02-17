@@ -1,4 +1,6 @@
 import { CreateDeviceRegistrationDto as dto } from './dto/create-device-registration.dto';
+import { CreateChannelResponse } from '../../node_modules/iota-is-sdk/lib/models/types/request-response-bodies';
+import { IdentityJson } from '../../node_modules/iota-is-sdk/lib/models/types/identity';
 
 export const mockDeviceRegistration: dto | any = {
 	identityKeys: {
@@ -15,7 +17,7 @@ export const mockDeviceRegistration: dto | any = {
 	nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02'
 };
 
-export const mockFaultyDeviceRegistrationObject: any = {
+export const mockFaultyDeviceRegistrationObject: dto | any = {
 	identityKeys: {
 		id: 'did:iota:5qmWjFWcqE3BNTB9KNCBH6reXEgig4gFUXiPENywB3wo',
 		key: {
@@ -38,10 +40,10 @@ export const nullIdentityDeviceRegistrationObject: dto | any = {
 export const nonceMock = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
 export const badNonceMock = '1b0e4a49-BaDD-Baddy-99f4-97fda845ff02';
 
-export const identityMock = {
+export const identityMock: IdentityJson | any = {
 	doc: {
 		id: 'did:iota:7ph3tSwDL1GYvyaUCij2WseFUbme9Y3WMvAcMX2HCpbt',
-		authentication: [[Object]],
+		authentication: [[Object]], // TODO: work with this
 		created: '2022-02-16T22:12:10Z',
 		updated: '2022-02-16T22:12:10Z',
 		proof: {
@@ -58,7 +60,7 @@ export const identityMock = {
 	}
 };
 
-export const channelMock = {
+export const channelMock: CreateChannelResponse = {
 	channelAddress: 'ed1ff8060f52f4c49dadf1a499a5ef81e5293eed161a5cb2ca4cee6b33d348ef0000000000000000:ae2c58ed2f980fbb5697be94',
 	seed: 'ewlvmojzfcopwliaufpfhjcidzrlmqhzhdmfxxulctunidgznyhxepzshyjxqpagkhxwrypq'
 };
