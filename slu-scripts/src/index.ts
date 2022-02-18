@@ -2,6 +2,9 @@
 import yargs from 'yargs';
 import { encryptData, decryptData, sendAuthProof } from './auth-proof/auth-proof';
 import { bootstrap } from './bootstrap/bootstrap';
+import { sendData } from './send-sensor-data/send-sensor-data';
+import fs from 'fs'
+import { createKey, decrypt } from './vpuf/vpuf';
 
 const argv = yargs
 	.command('encrypt', 'Encrypting data', (yargs) =>
@@ -23,6 +26,13 @@ const argv = yargs
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
 			.option('reqistration_url', { describe: 'The url of device registration microservice.' });
 	})
+	.command('send-data', 'Send sensor data to integration service', (yargs) =>
+		yargs
+			.option('key_file', { describe: 'The location of the key file.' })
+			.option('input_enc', { describe: 'The location of the encrypted data.' })
+			.option('config', { describe: 'Location of configuration file for the integration service.' })
+			.option('interval', { describe: 'The interval in millisecond during data is written to the channel' })
+	)
 	.help().argv;
 
 export async function execScript(argv: any) {
@@ -33,6 +43,7 @@ export async function execScript(argv: any) {
 	const collectorUrl: string | undefined = process.env.npm_config_collector_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
+	const isConfiguration: string | undefined = process.env.npm_config_config;
 	if (argv._.includes('encrypt')) {
 		try {
 			encryptData(keyFilePath, inputData, destination);
@@ -43,10 +54,10 @@ export async function execScript(argv: any) {
 	} else if (argv._.includes('send-proof')) {
 		try {
 			const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
-			if (decryptedData && interval) {
+			if (interval) {
 				setInterval(sendAuthProof, Number(interval), decryptedData, collectorUrl);
 			} else {
-				throw Error('No --input_enc or no --interval in ms provided.');
+				throw Error('No --interval in ms provided.');
 			}
 		} catch (ex: any) {
 			console.error(ex.message);
@@ -55,6 +66,17 @@ export async function execScript(argv: any) {
 	} else if (argv._.includes('bootstrap')) {
 		try {
 			await bootstrap(registrationUrl, keyFilePath, destination);
+		} catch (ex: any) {
+			console.error(ex.message);
+			process.exit(1);
+		}
+	} else if (argv._.includes('send-data')) {
+		try {
+			if (interval) {
+				setInterval(sendData, Number(interval), encryptedDataPath, keyFilePath, isConfiguration)
+			} else {
+				throw Error('No --interval in ms provided.');
+			}
 		} catch (ex: any) {
 			console.error(ex.message);
 			process.exit(1);

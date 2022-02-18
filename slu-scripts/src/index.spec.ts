@@ -77,7 +77,7 @@ describe('Send-proof tests', () => {
 		await execScript(argv);
 
 		expect(mockExit).toHaveBeenCalledWith(1);
-		expect(errorLog).toBeCalledWith('No --input_enc or no --interval in ms provided.');
+		expect(errorLog).toBeCalledWith('One or all of the env variables are not provided: --key_file, --input, --dest');
 		process.env.npm_config_interval = oldVal;
 	});
 });
@@ -122,5 +122,9 @@ describe('Bootstrap tests', () => {
 });
 
 afterAll(() => {
-	fs.rmSync(destinationPath! + '/data.json.enc');
+	try{
+		fs.rmSync(destinationPath! + '/data.json.enc');
+	}catch(ex: any){
+		
+	}
 });

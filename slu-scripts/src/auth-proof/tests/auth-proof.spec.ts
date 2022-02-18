@@ -4,12 +4,13 @@ import axios from 'axios';
 
 jest.mock('axios');
 
+const keyFilePath: string | undefined = process.env.npm_config_key_file;
+const inputDataPath: string | undefined = process.env.npm_config_input;
+const destinationPath: string | undefined = process.env.npm_config_dest;
+const collectorUrl: string | undefined = process.env.npm_config_collector_url;
+const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 describe('Encrypt data', () => {
-	const keyFilePath: string | undefined = process.env.npm_config_key_file;
-	const inputDataPath: string | undefined = process.env.npm_config_input;
-	const destinationPath: string | undefined = process.env.npm_config_dest;
-	const collectorUrl: string | undefined = process.env.npm_config_collector_url;
-	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
+
 
 	it('should encrypt data', () => {
 		encryptData(keyFilePath, inputDataPath, destinationPath);
@@ -76,8 +77,11 @@ describe('Encrypt data', () => {
 			expect(ex.message).toBe('Collector url for post request is not provided');
 		}
 	});
-
-	afterAll(() => {
+});
+afterAll(() => {
+	try{
 		fs.rmSync(destinationPath! + '/data.json.enc');
-	});
+	}catch(ex: any){
+		
+	}
 });

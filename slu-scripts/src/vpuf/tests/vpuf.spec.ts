@@ -8,7 +8,7 @@ describe('VPUF Tests', () => {
 	let data: string;
 	let storedEncryptedData: string;
 
-	beforeEach(() => {
+	beforeAll(() => {
 		key = vpuf.createKey('./test-data/unclonable.txt');
 		encryptedData = vpuf.encrypt('./test-data/data.json', key, './test-data');
 		storedEncryptedData = fs.readFileSync('./test-data/data.json.enc', 'utf-8');
@@ -28,4 +28,14 @@ describe('VPUF Tests', () => {
 		expect(decryptedData).toBe(data);
 		expect(decryptedData).not.toContain('U2FsdGVkX1');
 	});
+
 });
+afterAll(() => {
+	try{
+		fs.rmSync('./test-data/data.json.enc');
+	}catch(ex: any){
+		
+	}
+});
+
+

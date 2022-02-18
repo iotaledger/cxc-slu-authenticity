@@ -4,11 +4,12 @@ import * as fs from 'fs';
 import * as vpuf from '../../vpuf/vpuf';
 
 jest.mock('axios');
+const keyFilePath: string | undefined = process.env.npm_config_key_file;
+const destinationPath: string | undefined = process.env.npm_config_dest;
+const registrationUrl: string | undefined = process.env.npm_config_registration_url;
 
 describe('bootstrap on device', () => {
-	const keyFilePath: string | undefined = process.env.npm_config_key_file;
-	const destinationPath: string | undefined = process.env.npm_config_dest;
-	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
+
 
 	it('should get and encrypt data', async () => {
 		const response = {
@@ -57,7 +58,12 @@ describe('bootstrap on device', () => {
 			expect(ex.message).toBe(msg);
 		}
 	});
-	afterAll(() => {
+
+});	
+afterAll(() => {
+	try{
 		fs.rmSync(destinationPath! + '/data.json.enc');
-	});
+	}catch(ex: any){
+		
+	}
 });
