@@ -6,7 +6,7 @@ import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { DeviceRegistration, DeviceRegistrationSchema, DeviceRegistrationDocument } from './schemas/device-registration.schema';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { identityMock, mockDeviceRegistration, nonceMock, channelMock } from './mocks';
+import { channelMock, identityMock, mockDeviceRegistration, nonceMock } from './mocks';
 import { ChannelClient, IdentityClient } from 'iota-is-sdk';
 import { Model } from 'mongoose';
 
@@ -72,6 +72,7 @@ describe('DeviceRegistrationController', () => {
 
 	it('post route should return success true', async () => {
 		const result = await deviceRegistrationController.createChannelAndIdentity();
+		console.log('controller result: ', result);
 		expect(result.success).toBe(true);
 	});
 

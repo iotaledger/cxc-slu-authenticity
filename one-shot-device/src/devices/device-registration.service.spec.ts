@@ -7,7 +7,7 @@ import { DeviceRegistration, DeviceRegistrationDocument, DeviceRegistrationSchem
 import { Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { mockDeviceRegistration, mockFaultyDeviceRegistrationObject, badNonceMock, identityMock, channelMock } from './mocks';
+import { badNonceMock, identityMock, channelMock } from './mocks';
 import { CreateChannelResponse } from '../../node_modules/iota-is-sdk/lib/models/types/request-response-bodies';
 import { IdentityJson } from '../../node_modules/iota-is-sdk/lib/models/types/identity';
 
@@ -53,12 +53,12 @@ describe('DeviceRegistrationController', () => {
 		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
 	};
 
-	fit('deviceRegistrationService should be defined', async () => {
+	it('deviceRegistrationService should be defined', async () => {
 		await moduleCreator(identityMock, channelMock);
 		expect(deviceRegistrationService).toBeDefined();
 	});
 
-	fit('deviceRegistrationService should return nonce and created a device and a channel', async () => {
+	it('deviceRegistrationService should return nonce and created a device and a channel', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -71,13 +71,12 @@ describe('DeviceRegistrationController', () => {
 			}
 		);
 		const result = await deviceRegistrationService.createChannelAndIdentity();
-		console.log('fit result: ', result);
-		// we cant check for the exact nonce since it is a dynamic string
+
 		expect(result.nonce).not.toBeNull();
 		expect(result.nonce.length).toEqual(36);
 	});
 
-	fit('deviceRegistrationService should return error for a null channel value', async () => {
+	it('deviceRegistrationService should return error for a null channel value', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -96,7 +95,7 @@ describe('DeviceRegistrationController', () => {
 		}
 	});
 
-	fit('deviceRegistrationService should return error for a null identity value', async () => {
+	it('deviceRegistrationService should return error for a null identity value', async () => {
 		await moduleCreator(
 			{
 				create: () => null
@@ -115,38 +114,59 @@ describe('DeviceRegistrationController', () => {
 		}
 	});
 
-	// nonce with this setup is dynamic??
-	// fit('should validate the DTO and save device identity to MongoDB', async () => {
-	// 	jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');
-	// 	const createMongoDocument = deviceRegistrationService.createChannelAndIdentity();
-	// 	console.log('createMongoDocument: ', createMongoDocument);
-	// 	// await deviceRegistrationModel.create(mockDeviceRegistration);
-	// 	const savedDevice = await deviceRegistrationModel.find({});
-	// 	console.log('savedDevice: ', savedDevice);
-	// 	expect(savedDevice[0]).toMatchObject(mockDeviceRegistration);
-	// });
-
-	it('should not validate an faulty data structure', async () => {
-		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity');
-		try {
-			await deviceRegistrationModel.create(mockFaultyDeviceRegistrationObject);
-		} catch (err) {
-			expect(err.message).toBe('DeviceRegistration validation failed: nonce: Path `nonce` is required.');
-		}
+	it('should validate the DTO and save device identity to MongoDB', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				create: () => channelMock,
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				}
+			}
+		);
+		const createMongoDocument = await deviceRegistrationService.createChannelAndIdentity();
+		const savedDevice = await deviceRegistrationModel.find({});
+		expect(savedDevice[0].nonce).toStrictEqual(createMongoDocument.nonce);
 	});
 
 	it('should fail to remove device when provided with non existing nonce', async () => {
-		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice');
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				create: () => channelMock,
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				}
+			}
+		);
 		try {
-			await deviceRegistrationModel.create(mockDeviceRegistration);
-			deviceRegistrationModel.findOneAndDelete({ badNonceMock }).exec;
+			await deviceRegistrationService.createChannelAndIdentity();
+			await deviceRegistrationService.getRegisteredDevice(badNonceMock);
 		} catch (err) {
-			console.log('non existing nonce', err);
-			expect(err.message).toBe('Document does not exist in the collection');
+			expect(err.message).toBe('Could not find document in the collection.');
 		}
 	});
 
-	// 	So for instance getRegisteredDevice  could have several tests:
-	// Finds an item, deletes and returns it.
-	// fit('getDeviceRegistration should find an item, delete and return it');
+	it('getDeviceRegistration should find an item, delete and return it', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				create: () => channelMock,
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				}
+			}
+		);
+		const registeredDevice = await deviceRegistrationService.createChannelAndIdentity();
+		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
+		expect(deleteDeviceResult).toMatchObject(registeredDevice);
+		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
+		expect(checkForDeleteResult).toStrictEqual([]);
+	});
 });
