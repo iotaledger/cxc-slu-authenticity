@@ -28,14 +28,7 @@ describe('VPUF Tests', () => {
 		expect(decryptedData).toBe(data);
 		expect(decryptedData).not.toContain('U2FsdGVkX1');
 	});
-
-});
-afterAll(() => {
-	try{
+	afterAll(() => {
 		fs.rmSync('./test-data/data.json.enc');
-	}catch(ex: any){
-		
-	}
+	});
 });
-
-

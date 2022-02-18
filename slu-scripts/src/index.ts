@@ -2,9 +2,7 @@
 import yargs from 'yargs';
 import { encryptData, decryptData, sendAuthProof } from './auth-proof/auth-proof';
 import { bootstrap } from './bootstrap/bootstrap';
-import { sendData } from './send-sensor-data/send-sensor-data';
-import fs from 'fs'
-import { createKey, decrypt } from './vpuf/vpuf';
+import { sendData } from './sensor-data/sensor-data';
 
 const argv = yargs
 	.command('encrypt', 'Encrypting data', (yargs) =>
@@ -73,7 +71,7 @@ export async function execScript(argv: any) {
 	} else if (argv._.includes('send-data')) {
 		try {
 			if (interval) {
-				setInterval(sendData, Number(interval), encryptedDataPath, keyFilePath, isConfiguration)
+				setInterval(sendData, Number(interval), encryptedDataPath, keyFilePath, isConfiguration);
 			} else {
 				throw Error('No --interval in ms provided.');
 			}

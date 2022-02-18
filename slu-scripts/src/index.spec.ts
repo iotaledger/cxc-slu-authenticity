@@ -4,15 +4,18 @@ import axios from 'axios';
 import { execScript } from './index';
 import yargs from 'yargs';
 import * as vpuf from './vpuf/vpuf';
+import * as sendData from './sensor-data/sensor-data';
+import { ChannelData } from 'iota-is-sdk';
 
 jest.mock('axios');
 
 const keyFilePath: string | undefined = process.env.npm_config_key_file;
 const destinationPath: string | undefined = process.env.npm_config_dest;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
+const isConfiguration: string | undefined = process.env.npm_config_config;
 
 describe('Encrypt-file tests', () => {
-	it('should encrypt', async () => {
+	it('encrypt should execute', async () => {
 		process.argv[2] = 'encrypt';
 		const argv = yargs.parse(process.argv[2]);
 		await execScript(argv);
@@ -39,7 +42,7 @@ describe('Encrypt-file tests', () => {
 });
 
 describe('Send-proof tests', () => {
-	it('send-proof', async () => {
+	it('send-proof should execute', async () => {
 		process.argv[2] = 'send-proof';
 		const argv = yargs.parse(process.argv[2]);
 		const response = {
@@ -121,10 +124,47 @@ describe('Bootstrap tests', () => {
 	});
 });
 
+describe('Send sensor data tests', () => {
+	it('send-data should execute', async () => {
+		process.argv[2] = 'send-data';
+		const argv = yargs.parse(process.argv[2]);
+		const response: ChannelData = {
+			link: 'string',
+			imported: '2022-02-18T16:29:49.670Z',
+			messageId: 'string',
+			log: {
+				type: 'string',
+				created: '2022-02-18T16:29:49.670Z',
+				metadata: 'string',
+				publicPayload: 'string',
+				payload: { temperature: '60 degrees' }
+			}
+		};
+		const sendDataSpy = jest.spyOn(sendData, 'sendData').mockImplementation(async () => {
+			return Promise.resolve(response);
+		});
+		jest.useFakeTimers();
+		await execScript(argv);
+		jest.advanceTimersByTime(3000);
+		expect(sendDataSpy).toBeCalledTimes(3);
+		expect(sendDataSpy).toHaveBeenLastCalledWith(encryptedDataPath, keyFilePath, isConfiguration);
+		jest.useRealTimers();
+	});
+
+	it('bootstrap should fail', async () => {
+		const oldVal = process.env.npm_config_interval;
+		process.env.npm_config_interval = '';
+		process.argv[2] = 'send-data';
+		const argv = yargs.parse(process.argv[2]);
+		const consoleSpy = jest.spyOn(console, 'error');
+		const processSpy = jest.spyOn(process, 'exit');
+		await execScript(argv);
+		expect(consoleSpy).toBeCalledWith('No --interval in ms provided.');
+		expect(processSpy).toBeCalledWith(1);
+		process.env.npm_config_interval = oldVal;
+	});
+});
+
 afterAll(() => {
-	try{
-		fs.rmSync(destinationPath! + '/data.json.enc');
-	}catch(ex: any){
-		
-	}
+	fs.rmSync(destinationPath! + '/data.json.enc');
 });

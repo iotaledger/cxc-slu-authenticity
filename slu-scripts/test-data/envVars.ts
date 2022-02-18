@@ -5,4 +5,4 @@ process.env.npm_config_dest = './test-data';
 process.env.npm_config_collector_url = '/';
 process.env.npm_config_interval = '1000';
 process.env.npm_config_registration_url = '/registration-url';
-process.env.npm_config_config='./test-data/is-configuration.json'
+process.env.npm_config_config = './test-data/is-configuration.json';

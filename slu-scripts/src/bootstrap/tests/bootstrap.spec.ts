@@ -9,8 +9,6 @@ const destinationPath: string | undefined = process.env.npm_config_dest;
 const registrationUrl: string | undefined = process.env.npm_config_registration_url;
 
 describe('bootstrap on device', () => {
-
-
 	it('should get and encrypt data', async () => {
 		const response = {
 			data: {
@@ -58,12 +56,9 @@ describe('bootstrap on device', () => {
 			expect(ex.message).toBe(msg);
 		}
 	});
-
-});	
+});
 afterAll(() => {
-	try{
+	try {
 		fs.rmSync(destinationPath! + '/data.json.enc');
-	}catch(ex: any){
-		
-	}
+	} catch (ex: any) {}
 });

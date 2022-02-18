@@ -10,8 +10,6 @@ const destinationPath: string | undefined = process.env.npm_config_dest;
 const collectorUrl: string | undefined = process.env.npm_config_collector_url;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 describe('Encrypt data', () => {
-
-
 	it('should encrypt data', () => {
 		encryptData(keyFilePath, inputDataPath, destinationPath);
 		const encryptedData = fs.readFileSync(encryptedDataPath!, 'utf-8');
@@ -79,9 +77,7 @@ describe('Encrypt data', () => {
 	});
 });
 afterAll(() => {
-	try{
+	try {
 		fs.rmSync(destinationPath! + '/data.json.enc');
-	}catch(ex: any){
-		
-	}
+	} catch (ex: any) {}
 });
