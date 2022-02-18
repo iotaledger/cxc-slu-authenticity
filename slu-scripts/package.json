@@ -6,7 +6,7 @@
 	"scripts": {
 		"format": "prettier --write \"./**/*.ts\" \"./**/tests/**/*.ts\"",
 		"build": "tsc",
-		"test": "jest",
+		"test": "jest --runInBand",
 		"test:cov": "jest --coverage",
 		"encrypt-file": "node ./dist/src/index.js encrypt",
 		"send-proof": "node ./dist/src/index.js send-proof",
