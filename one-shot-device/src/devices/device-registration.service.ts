@@ -27,6 +27,11 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
+		if (deviceIdentity == null) {
+			this.logger.error('Failed to create identity for your device');
+			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		// Authenticate device identity
 		await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
 
