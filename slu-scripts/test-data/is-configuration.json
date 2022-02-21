@@ -1,5 +1,5 @@
 {
-    "apiKey?": "somestring",
-    "baseUrl": "/is",
-    "apiVersion": "v1"
+    "apiKey": "somestring",
+    "baseUrl": "http://ensuresec.solutions.iota.org",
+    "apiVersion": "v0.1"
 }
