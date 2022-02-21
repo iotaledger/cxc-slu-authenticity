@@ -3,6 +3,8 @@
 /dist
 /node_modules
 
+data.json.enc
+
 # Logs
 logs
 *.log
