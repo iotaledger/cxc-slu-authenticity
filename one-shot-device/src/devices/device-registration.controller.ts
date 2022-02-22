@@ -11,6 +11,7 @@ export class DeviceRegistrationController {
 	async createChannelAndIdentity() {
 		try {
 			const registerDevice = await this.deviceRegistrationService.createChannelAndIdentity();
+			console.log('Register device: ', registerDevice);
 			return {
 				success: true,
 				registerDevice
