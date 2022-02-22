@@ -1,20 +1,28 @@
-import { Logger } from '@nestjs/common';
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Logger } from '@nestjs/common';
 import { DeviceRegistrationService } from './device-registration.service';
+import { SaveChannelDto } from './dto/create-channel-info.dto';
 
 @Controller()
 export class DeviceRegistrationController {
 	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
+	// @Post()
+	// createMessage(@Body() message: MessageDto) {
+	// 	console.log(message);
+	// 	return message;
+	// }
+
 	@Post('/create')
-	async createChannelAndIdentity() {
+	async createChannelAndIdentity(@Body() body: SaveChannelDto) {
 		try {
 			const registerDevice = await this.deviceRegistrationService.createChannelAndIdentity();
 			console.log('Register device: ', registerDevice);
+			console.log('body: ', body);
 			return {
 				success: true,
-				registerDevice
+				registerDevice,
+				body
 			};
 		} catch (err) {
 			this.logger.error('Failed to create user and identity', err.message);
