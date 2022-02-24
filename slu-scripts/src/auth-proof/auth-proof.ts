@@ -45,11 +45,11 @@ export async function sendAuthProof(
 		timestamp: Date;
 		signature: string;
 	},
-	requestUrl: string | undefined
+	collectorUrl: string | undefined
 ): Promise<AxiosResponse<any, any> | undefined> {
-	if (requestUrl) {
-		return await axios.post(requestUrl, body);
+	if (collectorUrl) {
+		return await axios.post(collectorUrl, body);
 	} else {
-		throw Error('Url for post request is not provided');
+		throw Error('Collector url for post request is not provided');
 	}
 }
