@@ -11,6 +11,8 @@ import { badNonceMock, identityMock, channelMock } from './mocks';
 import { CreateChannelResponse } from '../../node_modules/iota-is-sdk/lib/models/types/request-response-bodies';
 import { IdentityJson } from '../../node_modules/iota-is-sdk/lib/models/types/identity';
 
+jest.setTimeout(40000);
+
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationService: DeviceRegistrationService;
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;

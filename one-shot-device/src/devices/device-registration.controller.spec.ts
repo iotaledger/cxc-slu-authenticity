@@ -10,6 +10,7 @@ import { channelMock, identityMock, mockDeviceRegistration, nonceMock } from './
 import { ChannelClient, IdentityClient } from 'iota-is-sdk';
 import { Model } from 'mongoose';
 
+jest.setTimeout(40000);
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationController: DeviceRegistrationController;
 	let deviceRegistrationService: DeviceRegistrationService;
