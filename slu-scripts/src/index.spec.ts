@@ -12,7 +12,8 @@ jest.mock('axios');
 const keyFilePath: string | undefined = process.env.npm_config_key_file;
 const destinationPath: string | undefined = process.env.npm_config_dest;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
-const isConfiguration: string | undefined = process.env.npm_config_config;
+const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
+const payload: any = process.env.npm_config_payload;
 
 describe('Encrypt-file tests', () => {
 	it('encrypt should execute', async () => {
@@ -128,6 +129,7 @@ describe('Send sensor data tests', () => {
 	it('send-data should execute', async () => {
 		process.argv[2] = 'send-data';
 		const argv = yargs.parse(process.argv[2]);
+		const payloadObject = JSON.parse(payload);
 		const response: ChannelData = {
 			link: 'string',
 			imported: '2022-02-18T16:29:49.670Z',
@@ -147,11 +149,11 @@ describe('Send sensor data tests', () => {
 		await execScript(argv);
 		jest.advanceTimersByTime(3000);
 		expect(sendDataSpy).toBeCalledTimes(3);
-		expect(sendDataSpy).toHaveBeenLastCalledWith(encryptedDataPath, keyFilePath, isConfiguration);
+		expect(sendDataSpy).toHaveBeenLastCalledWith(encryptedDataPath, keyFilePath, isConfigFile, payloadObject);
 		jest.useRealTimers();
 	});
 
-	it('bootstrap should fail', async () => {
+	it('send sensor data should fail because no interval provided', async () => {
 		const oldVal = process.env.npm_config_interval;
 		process.env.npm_config_interval = '';
 		process.argv[2] = 'send-data';
@@ -159,9 +161,22 @@ describe('Send sensor data tests', () => {
 		const consoleSpy = jest.spyOn(console, 'error');
 		const processSpy = jest.spyOn(process, 'exit');
 		await execScript(argv);
-		expect(consoleSpy).toBeCalledWith('No --interval in ms provided.');
+		expect(consoleSpy).toBeCalledWith('No --interval in ms or no --payload provided.');
 		expect(processSpy).toBeCalledWith(1);
 		process.env.npm_config_interval = oldVal;
+	});
+
+	it('send sensor data should fail because of false payload format', async () => {
+		const oldVal = process.env.npm_config_payload;
+		process.env.npm_config_payload = 'wrongFormat';
+		process.argv[2] = 'send-data';
+		const argv = yargs.parse(process.argv[2]);
+		const consoleSpy = jest.spyOn(console, 'error');
+		const processSpy = jest.spyOn(process, 'exit');
+		await execScript(argv);
+		expect(consoleSpy).toBeCalledWith('Unexpected token w in JSON at position 0');
+		expect(processSpy).toBeCalledWith(1);
+		process.env.npm_config_payload = oldVal;
 	});
 });
 

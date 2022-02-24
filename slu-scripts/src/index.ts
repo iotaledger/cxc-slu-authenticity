@@ -30,6 +30,10 @@ const argv = yargs
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
 			.option('config', { describe: 'Location of configuration file for the integration service.' })
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel' })
+			.option('payload', {
+				default: '{"temperature": "30 degree"}',
+				describe: 'The payload which is send from the device to the channel in format: {unit: value}'
+			})
 	)
 	.help().argv;
 
@@ -41,7 +45,8 @@ export async function execScript(argv: any) {
 	const collectorUrl: string | undefined = process.env.npm_config_collector_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
-	const isConfiguration: string | undefined = process.env.npm_config_config;
+	const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
+	const payload: any = process.env.npm_config_payload;
 	if (argv._.includes('encrypt')) {
 		try {
 			encryptData(keyFilePath, inputData, destination);
@@ -53,7 +58,7 @@ export async function execScript(argv: any) {
 		try {
 			const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
 			if (interval) {
-				setInterval(sendAuthProof, Number(interval), decryptedData, collectorUrl);
+				setInterval(() => sendAuthProof(decryptedData!, collectorUrl), Number(interval));
 			} else {
 				throw Error('No --interval in ms provided.');
 			}
@@ -70,10 +75,11 @@ export async function execScript(argv: any) {
 		}
 	} else if (argv._.includes('send-data')) {
 		try {
-			if (interval) {
-				setInterval(sendData, Number(interval), encryptedDataPath, keyFilePath, isConfiguration);
+			if (interval && payload) {
+				const payloadObject = JSON.parse(payload);
+				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, payloadObject), Number(interval));
 			} else {
-				throw Error('No --interval in ms provided.');
+				throw Error('No --interval in ms or no --payload provided.');
 			}
 		} catch (ex: any) {
 			console.error(ex.message);

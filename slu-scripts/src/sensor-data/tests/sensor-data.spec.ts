@@ -8,6 +8,7 @@ const inputData: string | undefined = process.env.npm_config_input;
 const destination: string | undefined = process.env.npm_config_dest;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 const isConfigPath: string | undefined = process.env.npm_config_is_config_file;
+const payload: string | undefined = process.env.npm_config_payload;
 
 describe('Send sensor data tests', () => {
 	beforeAll(() => {
@@ -30,7 +31,7 @@ describe('Send sensor data tests', () => {
 	});
 
 	it('should send data', async () => {
-		const payloadData = { temperature: '60 degrees' };
+		const payloadData = JSON.parse(payload!);
 		const dataString = fs.readFileSync(inputData!, 'utf-8');
 		const data = JSON.parse(dataString);
 		const channelData: ChannelData = {
