@@ -1,0 +1,435 @@
+{
+	"id": "82fe9217-4b5f-4be8-965b-8b9b18225894",
+	"name": "CBC Requests",
+	"events": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		}
+	],
+	"variables": [
+		{
+			"key": "api-key",
+			"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+		},
+		{
+			"key": "construction_channel",
+			"value": ""
+		},
+		{
+			"key": "construction_manager_jwt",
+			"value": ""
+		},
+		{
+			"key": "construction_manager_id",
+			"value": ""
+		},
+		{
+			"key": "deployment_url",
+			"value": "https://ensuresec.solutions.iota.org/api/v0.1"
+		}
+	],
+	"order": [],
+	"folders_order": ["0b85b685-c7eb-4fde-a9b5-cc26d257cc1a", "546fa5d0-90c3-4daa-b561-4935d65f46c3", "bae7a810-da2b-4d72-96bb-3a63ce107e42"],
+	"folders": [
+		{
+			"id": "0b85b685-c7eb-4fde-a9b5-cc26d257cc1a",
+			"name": "authentication",
+			"order": ["ea38da47-07e3-4ec9-a256-73bbbaab6ad1", "9299ece1-9364-4295-b6f8-720477759525"],
+			"folders_order": []
+		},
+		{
+			"id": "546fa5d0-90c3-4daa-b561-4935d65f46c3",
+			"name": "Channels",
+			"order": [
+				"094b5ff5-fd41-49be-81f7-386004932248",
+				"acc1d311-af09-461f-be3e-31254b5b6225",
+				"95439412-f71f-4634-9f4a-0646a1ffadf5",
+				"6069a38a-c610-4b1a-882c-094e1e44e655",
+				"a3673af5-cc9f-46d7-9920-1975b6149410",
+				"1e869673-8f19-408c-80da-52d46e53492c",
+				"a8decf80-25b9-473a-9e84-f9dba929d8ee"
+			],
+			"folders_order": []
+		},
+		{
+			"id": "bae7a810-da2b-4d72-96bb-3a63ce107e42",
+			"name": "Identities",
+			"order": ["e75f9e28-7bf5-484b-8524-2cbb9773d77a", "dadd0d53-1b74-4c7e-b804-08070e18faee", "beefa02a-58a6-436e-95e2-e60494a1af9a"],
+			"folders_order": []
+		}
+	],
+	"requests": [
+		{
+			"id": "ea38da47-07e3-4ec9-a256-73bbbaab6ad1",
+			"name": "Get Challenge",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "GET",
+			"headers": "// : ",
+			"url": "{{deployment_url}}/authentication/prove-ownership/{{construction_manager_id}}?api-key=94F5BA49-12B6-4E45-A487-BF91C442276D",
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+				}
+			],
+			"headerData": [
+				{
+					"key": "",
+					"value": "",
+					"type": "text",
+					"enabled": false
+				}
+			]
+		},
+		{
+			"id": "9299ece1-9364-4295-b6f8-720477759525",
+			"name": "Authenticate via signed challenge",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "POST",
+			"headers": "// : ",
+			"dataMode": "raw",
+			"rawModeData": "{\n    \"signedNonce\":\"832886f62742539dacdfdef957dd6abf8c4fd3a0e83e8b4b13208b069f9f69735841378054c2e67249cf8c25ef3004967358c097ba21b6fd4d736f13bf414500\"\n}",
+			"url": "{{deployment_url}}/authentication/prove-ownership/{{construction_manager_id}}?api-key=94F5BA49-12B6-4E45-A487-BF91C442276D",
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+				}
+			],
+			"headerData": [
+				{
+					"key": "",
+					"type": "text",
+					"value": "",
+					"enabled": false
+				}
+			]
+		},
+		{
+			"id": "094b5ff5-fd41-49be-81f7-386004932248",
+			"name": "Create Channel",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "POST",
+			"headers": "Authorization: {{construction_manager_jwt}}",
+			"dataMode": "raw",
+			"rawModeData": "{\n    \"topics\": [{\"type\":\"smart-audit-log\",\"source\":\"devices in construction sector\"}],\n    \"hasPresharedKey\":true\n}",
+			"url": "{{deployment_url}}/channels/create?api-key={{api-key}}",
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "{{construction_manager_jwt}}",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"id": "acc1d311-af09-461f-be3e-31254b5b6225",
+			"name": "Get Channel Info",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "GET",
+			"headers": "",
+			"url": "{{deployment_url}}/channel-info/channel/{{construction_channel}}?api-key={{api-key}}",
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": []
+		},
+		{
+			"id": "95439412-f71f-4634-9f4a-0646a1ffadf5",
+			"name": "Get Channel Logs as author",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "GET",
+			"headers": "Authorization: {{construction_manager_jwt}}",
+			"url": "{{deployment_url}}/channels/logs/{{construction_channel}}?api-key={{api-key}}",
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "{{construction_manager_jwt}}",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"id": "6069a38a-c610-4b1a-882c-094e1e44e655",
+			"name": "Add Channel log - as author",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "POST",
+			"headers": "Authorization: {{construction_manager_jwt}}",
+			"dataMode": "raw",
+			"rawModeData": "{\n    \"type\": \"author-test\",\n    \"payload\": { \"x\":\"I am also a payload\" }\n}",
+			"url": "{{deployment_url}}/channels/logs/{{deployment_channel_address}}{{deployment_api_key}}",
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "{{construction_manager_jwt}}",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"id": "a3673af5-cc9f-46d7-9920-1975b6149410",
+			"name": "Subscribe to channel",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "POST",
+			"headers": "Authorization: \n// : ",
+			"dataMode": "raw",
+			"rawModeData": "{\n    \"accessRights\":\"ReadAndWrite\"\n}",
+			"url": "{{deployment_url}}/subscriptions/request/{{deployment_channel_address}}{{deployment_api_key}}",
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "",
+					"description": "add device JWT here",
+					"type": "text"
+				},
+				{
+					"key": "",
+					"value": "",
+					"type": "text",
+					"enabled": false
+				}
+			]
+		},
+		{
+			"id": "1e869673-8f19-408c-80da-52d46e53492c",
+			"name": "Authorize to channel",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "POST",
+			"headers": "Authorization: {{construction_manager_jwt}}",
+			"dataMode": "raw",
+			"rawModeData": "{\n    \"id\": \"did:iota:3kLPuLPgJ981MpG88mgfwj67r99oxjtqGNEfMB2b8pM6\"\n}",
+			"url": "{{deployment_url}}/subscriptions/authorize/{{construction_channel}}?api-key={{api-key}}",
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "{{construction_manager_jwt}}",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"id": "a8decf80-25b9-473a-9e84-f9dba929d8ee",
+			"name": "Get Subscriptions of channel",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "GET",
+			"headers": "Authorization: {{construction_manager_jwt}}",
+			"url": "{{deployment_url}}/subscriptions/{{construction_channel}}?api-key={{api-key}}",
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "{{construction_manager_jwt}}",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"id": "e75f9e28-7bf5-484b-8524-2cbb9773d77a",
+			"name": "Create Identity: Construction Manager",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "POST",
+			"headers": "",
+			"dataMode": "raw",
+			"rawModeData": "{\n  \"username\": \"construction-manager\",\n  \"claim\": {\n        \"type\": \"Person\",\n        \"name\": \"Tom Smith\",\n        \"familyName\": \"Smith\",\n        \"givenName\": \"Tom\",\n        \"birthDate\": \"1980-06-21\"\n    }\n}",
+			"url": "{{deployment_url}}/identities/create?api-key={{api-key}}",
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": []
+		},
+		{
+			"id": "dadd0d53-1b74-4c7e-b804-08070e18faee",
+			"name": "Search Identity",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "GET",
+			"headers": "Authorization: {{construction_manager_jwt}}\n: ",
+			"url": "https://ensuresec.solutions.iota.org/api/v0.1/identities/search?username=construction&api-key={{api-key}}",
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "verified",
+					"value": "true",
+					"enabled": false
+				},
+				{
+					"key": "registration-date",
+					"value": "2021-02-27T10%3A03%3A22.758%2B00%3A00",
+					"enabled": false
+				},
+				{
+					"key": "limit",
+					"value": "2",
+					"enabled": false
+				},
+				{
+					"key": "username",
+					"value": "construction"
+				},
+				{
+					"key": "organization",
+					"value": "IOTA",
+					"enabled": false
+				},
+				{
+					"key": "classification",
+					"value": "device",
+					"enabled": false
+				},
+				{
+					"key": "subscribed-channel-ids",
+					"value": "test-address-c2",
+					"enabled": false
+				},
+				{
+					"key": "subscribed-channel-ids",
+					"value": "test-address",
+					"enabled": false
+				},
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "{{construction_manager_jwt}}",
+					"type": "text"
+				},
+				{
+					"key": "",
+					"value": "",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"id": "beefa02a-58a6-436e-95e2-e60494a1af9a",
+			"name": "Get Device Identity",
+			"collectionId": "a3c433d9-49cb-41c4-9504-3a18bcedb6ee",
+			"method": "GET",
+			"headers": "Authorization: {{construction_manager_jwt}}",
+			"url": "{{deployment_url}}/identities/identity/did:iota:58v1AaJXnKq4sxXnDBR32KtFTj3xZiEZFXLMNBsFbPnJ?api-key={{api-key}}",
+			"responses": [],
+			"responses_order": [],
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "api-key",
+					"value": "{{api-key}}"
+				}
+			],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "{{construction_manager_jwt}}",
+					"type": "text"
+				}
+			]
+		}
+	]
+}
