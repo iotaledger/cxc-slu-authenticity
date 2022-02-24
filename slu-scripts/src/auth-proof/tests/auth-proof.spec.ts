@@ -73,7 +73,7 @@ describe('Encrypt data', () => {
 		try {
 			await sendAuthProof({ did: 'did:iota:..', timestamp: new Date(), signature: 'isdnfcd' }, '');
 		} catch (ex: any) {
-			expect(ex.message).toBe('Url for post request is not provided');
+			expect(ex.message).toBe('Collector url for post request is not provided');
 		}
 	});
 
