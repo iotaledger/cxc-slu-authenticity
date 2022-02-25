@@ -6,6 +6,8 @@ import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device
 import { SaveChannelDto } from './dto/create-channel-info.dto';
 import { ChannelInfoDocument, ChannelInfo } from './schemas/channel-info.schema';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { firstValueFrom } from 'rxjs';
 import { IdentityClient, ChannelClient } from 'iota-is-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,6 +15,8 @@ import { v4 as uuidv4 } from 'uuid';
 export class DeviceRegistrationService {
 	constructor(
 		private readonly httpService: HttpService,
+
+		private readonly configService: ConfigService,
 
 		@InjectModel(DeviceRegistration.name)
 		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>,
@@ -33,7 +37,7 @@ export class DeviceRegistrationService {
 
 	// adjust POST /create
 	async createIdentityAndSubscribe() {
-		// create device identity
+		// 1. create device identity
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 		console.log('device identity: ', deviceIdentity);
 
@@ -42,8 +46,39 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
+		const createDeviceDto: CreateDeviceRegistrationDto = {
+			nonce: uuidv4(),
+			identityKeys: {
+				id: deviceIdentity.doc.id,
+				key: deviceIdentity.key
+			}
+		};
+		const deviceDocument = await this.deviceRegistrationModel.create(createDeviceDto);
+		await deviceDocument.save();
+		console.log('device Document nonce: ', deviceDocument.nonce);
+
+		//. Authenticate with nonce signer. The key needs to be encrypted and not shown to anyone:
+		console.log('secret: ', deviceIdentity.key.secret);
+
 		// It needs to receive a channelAddress in the payload where the device should subscribe to
 		// remove channel creation and subscribe to the received channeladdress
+
+		// make http / post to create channel and get it in the payload
+		// const integrationServicesUrl = this.configService.get<string>('IS_API_URL');
+		// const apiKey = this.configService.get<string>('IS_API_KEY');
+
+		// const createChannel = await firstValueFrom(
+		// 	this.httpService.post(
+		// 		`${integrationServicesUrl}/channels/create?api-key=${apiKey}`,
+		// 		{},
+		// 		{
+		// 			headers: { 'Content-Type': 'application/json' }
+		// 		}
+		// 	)
+		// );
+
+		// console.log('createChannel: ', createChannel);
+
 		// subscribe to the channel as user
 		// const { subscriptionLink } = await userClient.requestSubscription(channelAddress, {
 		// 	accessRights: AccessRights.ReadAndWrite
@@ -58,36 +93,29 @@ export class DeviceRegistrationService {
 		});
 		console.log('new channel: ', newChannel);
 
+		const saveChannelDto: SaveChannelDto = {
+			channelId: newChannel.channelAddress,
+			channelSeed: newChannel.seed
+		};
 		if (newChannel === null) {
 			this.logger.error('Failed creating a new channel for your device');
 			throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		const saveChannelDto: SaveChannelDto = {
-			channelId: newChannel.channelAddress,
-			channelSeed: newChannel.seed
-		};
-
 		const channelInfoDoc = await this.channelInfoModel.create(saveChannelDto);
 		await channelInfoDoc.save;
 		console.log('channelDoc: ', channelInfoDoc);
 
-		const createDeviceDto: CreateDeviceRegistrationDto = {
-			nonce: uuidv4(),
-			identityKeys: {
-				id: deviceIdentity.doc.id,
-				key: deviceIdentity.key
-			}
-		};
-		const deviceDocument = await this.deviceRegistrationModel.create(createDeviceDto);
-		await deviceDocument.save();
+		return;
+		{
+			nonce: createDeviceDto.nonce;
+		}
 
 		// return {
 		// const response = await (
 		// 	this.httpService.post(/create, {
 		// 		channelInfoDoc: channelInfoDoc
-		// 	}),
-		// { nonce: createDeviceDto.nonce }
+		// }),
 		// }
 		// const url = `https://clients.time.com/api/dataup/exec/${number}`;
 
