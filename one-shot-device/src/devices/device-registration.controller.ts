@@ -7,16 +7,10 @@ export class DeviceRegistrationController {
 	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
-	// @Post()
-	// createMessage(@Body() message: MessageDto) {
-	// 	console.log(message);
-	// 	return message;
-	// }
-
 	@Post('/create')
 	async createChannelAndIdentity(@Body() body: SaveChannelDto) {
 		try {
-			const registerDevice = await this.deviceRegistrationService.createChannelAndIdentity();
+			const registerDevice = await this.deviceRegistrationService.createIdentityAndSubscribe();
 			console.log('Register device: ', registerDevice);
 			console.log('body: ', body);
 			return {

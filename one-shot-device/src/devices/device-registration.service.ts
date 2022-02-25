@@ -20,15 +20,19 @@ export class DeviceRegistrationService {
 		@InjectModel(ChannelInfo.name)
 		private readonly channelInfoModel: Model<ChannelInfoDocument>,
 
-		@Inject('ChannelClient')
+		@Inject('OwnerClient')
 		private readonly channelClient: ChannelClient,
+
+		@Inject('UserClient')
+		private readonly userClient: ChannelClient,
+
 		@Inject('IdentityClient')
 		private readonly identityClient: IdentityClient
 	) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
 	// adjust POST /create
-	async createChannelAndIdentity() {
+	async createIdentityAndSubscribe() {
 		// create device identity
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 		console.log('device identity: ', deviceIdentity);
@@ -40,7 +44,12 @@ export class DeviceRegistrationService {
 
 		// It needs to receive a channelAddress in the payload where the device should subscribe to
 		// remove channel creation and subscribe to the received channeladdress
-		// Authenticate device identity
+		// subscribe to the channel as user
+		// const { subscriptionLink } = await userClient.requestSubscription(channelAddress, {
+		// 	accessRights: AccessRights.ReadAndWrite
+		// });
+
+		// Authenticate device identity - AUTHENTICATE VIA POSTMAN
 		await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
 
 		// create new channel
@@ -80,6 +89,23 @@ export class DeviceRegistrationService {
 		// 	}),
 		// { nonce: createDeviceDto.nonce }
 		// }
+		// const url = `https://clients.time.com/api/dataup/exec/${number}`;
+
+		// const BuyTelcoData = await this.httpService
+		// 	.post(
+		// 		url,
+		// 		{
+		// 			product_id: product_id,
+		// 			denomination: amount,
+		// 			customer_reference: reference_id
+		// 		},
+		// 		{
+		// 			headers: {
+		// 				Authorization: `Bearer ${dataToken.token}`
+		// 			}
+		// 		}
+		// 	)
+		// 	.toPromise();
 	}
 
 	async getRegisteredDevice(nonce: string) {

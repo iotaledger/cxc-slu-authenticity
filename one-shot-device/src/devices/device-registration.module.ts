@@ -7,9 +7,11 @@ import { DeviceRegistrationSchema, DeviceRegistration } from './schemas/device-r
 import { ChannelInfoSchema, ChannelInfo } from './schemas/channel-info.schema';
 import { defaultConfig } from '../configuration/configuration';
 import { ChannelClient, IdentityClient } from 'iota-is-sdk';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
 	imports: [
+		HttpModule,
 		MongooseModule.forFeature([
 			{ name: DeviceRegistration.name, schema: DeviceRegistrationSchema },
 			{ name: ChannelInfo.name, schema: ChannelInfoSchema }
@@ -19,7 +21,8 @@ import { ChannelClient, IdentityClient } from 'iota-is-sdk';
 	providers: [
 		DeviceRegistrationService,
 		ConfigService,
-		{ provide: 'ChannelClient', useValue: new ChannelClient(defaultConfig) },
+		{ provide: 'OwnerClient', useValue: new ChannelClient(defaultConfig) },
+		{ provide: 'UserClient', useValue: new ChannelClient(defaultConfig) },
 		{ provide: 'IdentityClient', useValue: new IdentityClient(defaultConfig) }
 	]
 })
