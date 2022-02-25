@@ -2,9 +2,9 @@ import { DeviceRegistrationController } from './device-registration.controller';
 import { DeviceRegistrationService } from './device-registration.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { MongooseModule, getModelToken } from '@nestjs/mongoose';
+import { MongooseModule, getModelToken, getConnectionToken } from '@nestjs/mongoose';
 import { DeviceRegistration, DeviceRegistrationDocument, DeviceRegistrationSchema } from './schemas/device-registration.schema';
-import { Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { badNonceMock, identityMock, channelMock } from './mocks';
@@ -15,6 +15,8 @@ describe('DeviceRegistrationController', () => {
 	let deviceRegistrationService: DeviceRegistrationService;
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
 	let module: TestingModule;
+	let mongod: MongoMemoryServer;
+	let connection: Connection;
 
 	const moduleCreator = async (identityClientMock: IdentityJson | any, channelClientMock: CreateChannelResponse | any) => {
 		module = await Test.createTestingModule({
@@ -23,7 +25,7 @@ describe('DeviceRegistrationController', () => {
 				ConfigModule,
 				MongooseModule.forRootAsync({
 					useFactory: async () => {
-						const mongod = await MongoMemoryServer.create();
+						mongod = await MongoMemoryServer.create();
 						const uri = mongod.getUri();
 						return {
 							uri: uri
@@ -49,6 +51,7 @@ describe('DeviceRegistrationController', () => {
 
 		deviceRegistrationService = module.get<DeviceRegistrationService>(DeviceRegistrationService);
 		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
+		connection = module.get<Connection>(getConnectionToken());
 	};
 
 	it('deviceRegistrationService should be defined', async () => {
@@ -166,5 +169,10 @@ describe('DeviceRegistrationController', () => {
 		expect(deleteDeviceResult).toMatchObject(registeredDevice);
 		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
 		expect(checkForDeleteResult).toStrictEqual([]);
+	});
+
+	afterEach(async () => {
+		connection.close();
+		if (mongod) mongod.stop();
 	});
 });
