@@ -10,12 +10,12 @@ export class DeviceRegistrationController {
 	@Post('/create')
 	async createChannelAndIdentity(@Body() body: SaveChannelDto) {
 		try {
-			const registerDevice = await this.deviceRegistrationService.createIdentity();
-			console.log('Register device: ', registerDevice);
+			const deviceIdentity = await this.deviceRegistrationService.createIdentity();
+			console.log('Register device: ', deviceIdentity);
 			console.log('body: ', body.channelId, body.channelSeed);
 			return {
 				success: true,
-				registerDevice,
+				registerDevice: deviceIdentity,
 				body
 			};
 		} catch (err) {

@@ -31,7 +31,7 @@ const getHexEncodedKey = (base58Key) => {
 };
 
 const signNonce = async (secretKey, nonce) => {
-	if (nonce.length !== 36) {
+	if (nonce.length !== 40) {
 		console.log('nonce does not match length of 40 characters!');
 		process.exit();
 	}
