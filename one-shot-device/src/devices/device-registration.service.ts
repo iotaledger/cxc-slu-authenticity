@@ -27,11 +27,6 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		if (deviceIdentity == null) {
-			this.logger.error('Failed to create identity for your device');
-			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
 		// Authenticate device identity
 		await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
 
@@ -60,12 +55,11 @@ export class DeviceRegistrationService {
 	}
 
 	async getRegisteredDevice(nonce: string) {
-		const response = await this.deviceRegistrationModel.findOne({ nonce });
 		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
 		if (deletedDocument === null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return response;
+		return deletedDocument;
 	}
 }
