@@ -26,7 +26,7 @@ describe('AppController (e2e)', () => {
 								port: 6000
 							}
 						});
-						let mongoUri = await mongod.getUri();
+						const mongoUri = await mongod.getUri();
 						return {
 							uri: mongoUri
 						};
@@ -52,23 +52,23 @@ describe('AppController (e2e)', () => {
 
 	it('/status/:id (GET)', async () => {
 		await new sluStatusModel(sluStatus).save();
-		let { status, text } = await request(app.getHttpServer())
+		const { status, text } = await request(app.getHttpServer())
 			.get('/status/did:iota:12345')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(200);
 		expect(text).toBe('created');
 	});
 
-	it('/status/:id (GET): bad request', async () => {
-		let { status, badRequest } = await request(app.getHttpServer())
+	it('/status/:id (GET): no slu-status found ', async () => {
+		const { status, body } = await request(app.getHttpServer())
 			.get('/status/did:iota:1234')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
-		expect(status).toBe(400);
-		expect(badRequest).toBeTruthy();
+		expect(status).toBe(200);
+		expect(body).toEqual({});
 	});
 
 	it('/status/:id (GET): wrong api-key', async () => {
-		let { status, body } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.get('/status/did:iota:12345')
 			.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(400);
@@ -76,41 +76,41 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/status/:id (GET):no api-key', async () => {
-		let { status, body } = await request(app.getHttpServer()).get('/status/did:iota:12345');
+		const { status, body } = await request(app.getHttpServer()).get('/status/did:iota:12345');
 		expect(status).toBe(400);
 		expect(body[0]).toBe('No valid api-key provided');
 	});
 
 	it('/status/ (POST)', async () => {
 		await sluStatusModel.deleteMany();
-		let { status, body } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.post('/status')
 			.send(sluStatus)
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
+		delete body._id;
 		expect(status).toBe(201);
 		expect(body).toEqual(sluStatus);
 	});
 
-	it('/status/ (POST): duplicate key', async () => {
+	it('/status/ (POST): duplicate key (Internal server error)', async () => {
 		await sluStatusModel.deleteMany();
 		await new sluStatusModel(sluStatus).save();
-		let { status, badRequest, body } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.post('/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(sluStatus);
-		expect(status).toBe(400);
-		expect(badRequest).toBeTruthy();
-		expect(body.message).toBe('E11000 duplicate key error collection: slu-status.slu_status index: id_1 dup key: { id: "did:iota:12345" }');
+		expect(status).toBe(500);
+		expect(body.message).toBe('Internal server error');
 	});
 
 	it('/status/ (POST): wrong status', async () => {
 		await sluStatusModel.deleteMany();
-		let wrongSluStatus = {
+		const wrongSluStatus = {
 			id: 'did:iota:12345',
 			status: 'destroyed',
 			channelAddress: 'anyKindOfAddress'
 		};
-		let { body } = await request(app.getHttpServer())
+		const { body } = await request(app.getHttpServer())
 			.post('/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(wrongSluStatus);
@@ -120,12 +120,12 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/status/ (POST): wrong id', async () => {
-		let wrongSluStatus = {
+		const wrongSluStatus = {
 			id: 'dd:iota:12345',
 			status: 'destroyed',
 			channelAddress: 'anyKindOfAddress'
 		};
-		let { body } = await request(app.getHttpServer())
+		const { body } = await request(app.getHttpServer())
 			.post('/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(wrongSluStatus);
@@ -135,7 +135,7 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/status (POST): wrong api-key', async () => {
-		let { status, body } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.post('/status')
 			.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(sluStatus);
@@ -144,14 +144,14 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/status (POST):no api-key', async () => {
-		let { status, body } = await request(app.getHttpServer()).post('/status').send(sluStatus);
+		const { status, body } = await request(app.getHttpServer()).post('/status').send(sluStatus);
 		expect(status).toBe(400);
 		expect(body[0]).toBe('No valid api-key provided');
 	});
 
 	it('/status (PUT)', async () => {
 		await new sluStatusModel(sluStatus).save();
-		let { status, body } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.put('/status/did:iota:12345/' + Status.INSTALLED)
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(200);
@@ -159,7 +159,7 @@ describe('AppController (e2e)', () => {
 		expect(body.id).toBe(sluStatus.id);
 	});
 	it('/status (PUT): validation of status fails', async () => {
-		let { status, body } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.put('/status/did:iota:12345/destroyed')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(400);
@@ -168,15 +168,15 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/status (PUT): no entry for the provided id', async () => {
-		let { status, badRequest } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.put('/status/did:iota:1345/installed')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
-		expect(status).toBe(400);
-		expect(badRequest).toBeTruthy();
+		expect(status).toBe(200);
+		expect(body).toEqual({});
 	});
 
 	it('/status (PUT): wrong api-key', async () => {
-		let { status, body } = await request(app.getHttpServer())
+		const { status, body } = await request(app.getHttpServer())
 			.put('/status/did:iota:1345/installed')
 			.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(400);
@@ -184,7 +184,7 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/status (PUT):no api-key', async () => {
-		let { status, body } = await request(app.getHttpServer()).put('/status/did:iota:1345/installed');
+		const { status, body } = await request(app.getHttpServer()).put('/status/did:iota:1345/installed');
 		expect(status).toBe(400);
 		expect(body[0]).toBe('No valid api-key provided');
 	});
