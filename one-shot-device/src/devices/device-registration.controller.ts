@@ -10,9 +10,9 @@ export class DeviceRegistrationController {
 	@Post('/create')
 	async createChannelAndIdentity(@Body() body: SaveChannelDto) {
 		try {
-			const registerDevice = await this.deviceRegistrationService.createIdentityAndSubscribe();
+			const registerDevice = await this.deviceRegistrationService.createIdentity();
 			console.log('Register device: ', registerDevice);
-			console.log('body: ', body);
+			console.log('body: ', body.channelId, body.channelSeed);
 			return {
 				success: true,
 				registerDevice,
@@ -25,6 +25,19 @@ export class DeviceRegistrationController {
 			};
 		}
 	}
+
+	// @Post('/subscribe')
+	// async authenticateAndSubscribe() {
+	// 	try {
+	// 		const authenticateDevice = await this.deviceRegistrationService.authenticateAndSubscribe(nonce, channelAddress);
+	// 		console.log('authenticate and subscribe: ', authenticateDevice);
+	// 	} catch (err) {
+	// 		this.logger.error('Failed to subscribe your device', err.message);
+	// 		return {
+	// 			success: false
+	// 		};
+	// 	}
+	// }
 
 	@Get('bootstrap/:nonce')
 	async getRegisteredDevice(@Param('nonce') nonce: string) {

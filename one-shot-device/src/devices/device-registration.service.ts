@@ -36,8 +36,7 @@ export class DeviceRegistrationService {
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
 	// adjust POST /create
-	async createIdentityAndSubscribe() {
-		// 1. create device identity
+	async createIdentity() {
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 		console.log('device identity: ', deviceIdentity);
 
@@ -55,11 +54,15 @@ export class DeviceRegistrationService {
 		};
 		const deviceDocument = await this.deviceRegistrationModel.create(createDeviceDto);
 		await deviceDocument.save();
-		console.log('device Document nonce: ', deviceDocument.nonce);
 
 		//. Authenticate with nonce signer. The key needs to be encrypted and not shown to anyone:
+		console.log('device Document nonce: ', deviceDocument.nonce);
 		console.log('secret: ', deviceIdentity.key.secret);
 
+		return { nonce: createDeviceDto.nonce };
+	}
+
+	async authenticateAndSubscribe(nonce, channelAddress) {
 		// It needs to receive a channelAddress in the payload where the device should subscribe to
 		// remove channel creation and subscribe to the received channeladdress
 
@@ -85,7 +88,7 @@ export class DeviceRegistrationService {
 		// });
 
 		// Authenticate device identity - AUTHENTICATE VIA POSTMAN
-		await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
+		// await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret); // params or???
 
 		// create new channel
 		const newChannel = await this.channelClient.create({
@@ -105,44 +108,14 @@ export class DeviceRegistrationService {
 		const channelInfoDoc = await this.channelInfoModel.create(saveChannelDto);
 		await channelInfoDoc.save;
 		console.log('channelDoc: ', channelInfoDoc);
-
-		return;
-		{
-			nonce: createDeviceDto.nonce;
-		}
-
-		// return {
-		// const response = await (
-		// 	this.httpService.post(/create, {
-		// 		channelInfoDoc: channelInfoDoc
-		// }),
-		// }
-		// const url = `https://clients.time.com/api/dataup/exec/${number}`;
-
-		// const BuyTelcoData = await this.httpService
-		// 	.post(
-		// 		url,
-		// 		{
-		// 			product_id: product_id,
-		// 			denomination: amount,
-		// 			customer_reference: reference_id
-		// 		},
-		// 		{
-		// 			headers: {
-		// 				Authorization: `Bearer ${dataToken.token}`
-		// 			}
-		// 		}
-		// 	)
-		// 	.toPromise();
 	}
 
 	async getRegisteredDevice(nonce: string) {
-		const response = await this.deviceRegistrationModel.findOne({ nonce });
 		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
 		if (deletedDocument === null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return response;
+		return deletedDocument;
 	}
 }
