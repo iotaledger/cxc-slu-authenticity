@@ -61,28 +61,32 @@ export class DeviceRegistrationService {
 		return { seed: deviceIdentity.key.secret, did: deviceIdentity.doc.id };
 	}
 
-	async authenticateAndSubscribe() {
+	async authenticateAndSubscribe(jwt: string) {
 		// It needs to receive a channelAddress in the payload where the device should subscribe to
 		// remove channel creation and subscribe to the received channeladdress
 		// make http / post to create channel and get it in the payload
-		// const integrationServicesUrl = this.configService.get<string>('IS_API_URL');
-		// const apiKey = this.configService.get<string>('IS_API_KEY');
-		// const newChannel = await firstValueFrom(
-		// 	this.httpService.post(
-		// 		`${integrationServicesUrl}/channels/create?api-key=${apiKey}`,
-		// 		{},
-		// 		{
-		// 			headers: { 'Content-Type': 'application/json' }
-		// 		}
-		// 	)
-		// );
-		// const channelAddress = newChannel.channelAddress;
+
+		const integrationServicesUrl = this.configService.get<string>('IS_API_URL');
+		const apiKey = this.configService.get<string>('IS_API_KEY');
+		const newChannel = await firstValueFrom(
+			this.httpService.post(
+				`${integrationServicesUrl}/channels/create?api-key=${apiKey}`,
+				{
+					channelAddress: '2cda038ca18d91e3fcdaac39eecb1ae530043037cfc39afae89742f23ec7fb960000000000000000:16f9131bd437682ad825525e',
+					presharedKey: '8439683d3aa1915575d95297f8205e50',
+					seed: 'ezcavmjkogwkrlbautfnhjlvmoalpdfqzngrlwddspfjplmaqbemxdnriqtqfppvxifjllww'
+				},
+				{
+					headers: { 'Authorization ': `${jwt}` }
+				}
+			)
+		);
+		const channelAddress = newChannel.channelAddress;
 		// subscribe to the channel as user
-		// const { subscriptionLink } = await userClient.requestSubscription(channelAddress, {
-		// 	accessRights: AccessRights.ReadAndWrite
-		// });
-		// Authenticate device identity - AUTHENTICATE VIA POSTMAN
-		// await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret); // params or???
+		const { subscriptionLink } = await this.userClient.requestSubscription(channelAddress, {
+			accessRights: AccessRights.ReadAndWrite
+		});
+
 		// const saveChannelDto: SaveChannelDto = {
 		// 	channelId: newChannel.channelAddress,
 		// 	channelSeed: newChannel.seed
