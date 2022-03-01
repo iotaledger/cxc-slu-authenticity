@@ -7,9 +7,9 @@ import { IdentityModule } from './identity/identity.module';
 	imports: [
 		IdentityModule,
 		ConfigModule.forRoot({
-			isGlobal: true
+			isGlobal: true,
 		}),
-		MongooseModule.forRoot(process.env.DATABASE_URL)
+		MongooseModule.forRoot(process.env.DATABASE_URL, {dbName: 'slu'})
 	]
 })
 export class AppModule {}
