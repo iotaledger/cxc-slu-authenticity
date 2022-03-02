@@ -29,7 +29,7 @@ describe('AppController (e2e)', () => {
 								port: 6000
 							}
 						});
-						let mongoUri = await mongod.getUri();
+						const mongoUri = await mongod.getUri();
 						return {
 							uri: mongoUri
 						};
