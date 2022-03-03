@@ -88,8 +88,8 @@ describe('AppController (e2e)', () => {
 			'/identity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=202201-27&to=2022-01-28'
 		);
 
-		expect(status).toBe(400);
-		expect(body.message).toEqual('Invalid time value');
+		expect(status).toBe(500);
+		expect(body.message).toEqual('Internal server error');
 	});
 
 	it('/prove (GET - Empty list)', async () => {

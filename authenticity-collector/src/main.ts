@@ -1,11 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { channelSubscription } from './channel-subscription/channelSubscription';
+import { ChannelSubscriptionService } from './channel-subscription/channel-subscription.service'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-	await app.listen(process.env.port || 4000);
-	channelSubscription();
+	await app.listen(process.env.port || 3000);
+	const channelSubscription = app.get(ChannelSubscriptionService);
+	channelSubscription.channelSubscription();
 }
 
 bootstrap();

@@ -15,7 +15,7 @@ export class IdentityService {
 		private httpService: HttpService,
 		private configService: ConfigService,
 		@InjectModel(Identity.name) private identityModel: Model<IdentityDocument>
-	) {}
+	) { }
 
 	async proveAndSaveSlu(identity: IdentityDto): Promise<Identity> {
 		const proveOwnershipUrl = this.configService.get<string>('PROVE_OF_OWNERSHIP_URL');
@@ -45,16 +45,11 @@ export class IdentityService {
 	}
 
 	async getAuthProves(did: string, from: any, to: any): Promise<Identity[]> {
-		try {
-			return await this.identityModel
-				.find({
-					did: did,
-					timestamp: { $gte: new Date(from).toISOString(), $lte: new Date(to).toISOString() }
-				})
-				.lean();
-		} catch (ex: any) {
-			this.logger.error(ex);
-			throw new BadRequestException(ex.message);
-		}
+		return await this.identityModel
+			.find({
+				did: did,
+				timestamp: { $gte: new Date(from).toISOString(), $lte: new Date(to).toISOString() }
+			})
+			.lean();
 	}
 }
