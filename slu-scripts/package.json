@@ -7,7 +7,7 @@
 		"format": "prettier --write \"./**/*.ts\" \"./**/tests/**/*.ts\"",
 		"build": "tsc",
 		"test": "jest --runInBand",
-		"test:cov": "jest --coverage",
+		"test:cov": "jest --coverage --runInBand",
 		"encrypt-file": "node ./dist/src/index.js encrypt",
 		"send-proof": "node ./dist/src/index.js send-proof",
 		"bootstrap": "node ./dist/src/index.js bootstrap"
@@ -18,7 +18,8 @@
 		"@noble/ed25519": "^1.5.3",
 		"axios": "^0.25.0",
 		"bs58": "^4.0.1",
-		"crypto-js": "^4.1.1"
+		"crypto-js": "^4.1.1",
+		"iota-is-sdk": "^0.0.9"
 	},
 	"devDependencies": {
 		"@types/axios": "^0.14.0",
