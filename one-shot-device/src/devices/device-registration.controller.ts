@@ -1,13 +1,12 @@
-import { Controller, Get, Param, Post, Body, Logger } from '@nestjs/common';
+import { Controller, Get, Param, Post, Logger } from '@nestjs/common';
 import { DeviceRegistrationService } from './device-registration.service';
-import { SaveChannelDto } from './dto/create-channel-info.dto';
 
 @Controller()
 export class DeviceRegistrationController {
 	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
-	@Post('/subscribe')
+	@Post('/create/:channelAddress')
 	async createAndSubscribe(@Param('channelAddress') channelAddress: string) {
 		try {
 			const deviceIdentity = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress);

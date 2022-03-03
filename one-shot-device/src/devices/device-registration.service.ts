@@ -3,11 +3,9 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateDeviceRegistrationDto } from './dto/create-device-registration.dto';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
-import { SaveChannelDto } from './dto/create-channel-info.dto';
 import { ChannelInfoDocument, ChannelInfo } from './schemas/channel-info.schema';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { defaultConfig } from './../configuration/configuration';
 import { IdentityClient, ChannelClient, AccessRights } from 'iota-is-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,9 +20,6 @@ export class DeviceRegistrationService {
 
 		@InjectModel(ChannelInfo.name)
 		private readonly channelInfoModel: Model<ChannelInfoDocument>,
-
-		@Inject('OwnerClient')
-		private readonly ownerClient: ChannelClient,
 
 		@Inject('UserClient')
 		private readonly userClient: ChannelClient,
@@ -42,34 +37,26 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		const createDeviceDto: CreateDeviceRegistrationDto = {
+		await this.userClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
+
+		// // subscribe to the channel as user
+		const { subscriptionLink, seed } = await this.userClient.requestSubscription(channelAddress, {
+			accessRights: AccessRights.ReadAndWrite
+		});
+		console.log('subscription Link: ', subscriptionLink);
+		console.log('subscription seed: ', seed);
+
+		const deviceDocument: CreateDeviceRegistrationDto = {
 			nonce: uuidv4(),
+			channelId: subscriptionLink,
+			channelSeed: seed,
 			identityKeys: {
 				id: deviceIdentity.doc.id,
 				key: deviceIdentity.key
 			}
 		};
-		const deviceDocument = await this.deviceRegistrationModel.create(createDeviceDto);
-		await deviceDocument.save();
-		console.log('deviceDocument: ', deviceDocument);
-
-		// // subscribe to the channel as user
-		const { subscriptionLink } = await this.userClient.requestSubscription(channelAddress, {
-			accessRights: AccessRights.ReadAndWrite
-		});
-		console.log('subscription Link: ', subscriptionLink);
-
-		// const saveChannelDto: SaveChannelDto = {
-		// 	channelId: newChannel.channelAddress,
-		// 	channelSeed: newChannel.seed
-		// };
-		// if (newChannel === null) {
-		// 	this.logger.error('Failed creating a new channel for your device');
-		// 	throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
-		// }
-		// const channelInfoDoc = await this.channelInfoModel.create(saveChannelDto);
-		// await channelInfoDoc.save;
-		// console.log('channelDoc: ', channelInfoDoc);
+		const doc = await this.deviceRegistrationModel.create(deviceDocument);
+		await doc.save();
 
 		return { nonce: deviceDocument.nonce };
 	}

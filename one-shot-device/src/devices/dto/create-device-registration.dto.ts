@@ -29,7 +29,12 @@ export class CreateDeviceRegistrationDto {
 	@IsNotEmpty()
 	@IsString()
 	readonly nonce: string;
-
+	@IsNotEmpty()
+	@IsString()
+	readonly channelId: string;
+	@IsNotEmpty()
+	@IsString()
+	readonly channelSeed: string;
 	@Type(() => IdentityKeysData)
 	@ValidateNested({ each: true })
 	readonly identityKeys: IdentityKeysData;
