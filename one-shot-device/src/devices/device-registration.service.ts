@@ -3,23 +3,14 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateDeviceRegistrationDto } from './dto/create-device-registration.dto';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
-import { ChannelInfoDocument, ChannelInfo } from './schemas/channel-info.schema';
-import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
 import { IdentityClient, ChannelClient, AccessRights } from 'iota-is-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class DeviceRegistrationService {
 	constructor(
-		private readonly httpService: HttpService,
-		private readonly configService: ConfigService,
-
 		@InjectModel(DeviceRegistration.name)
 		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>,
-
-		@InjectModel(ChannelInfo.name)
-		private readonly channelInfoModel: Model<ChannelInfoDocument>,
 
 		@Inject('UserClient')
 		private readonly userClient: ChannelClient,
@@ -43,8 +34,6 @@ export class DeviceRegistrationService {
 		const { subscriptionLink, seed } = await this.userClient.requestSubscription(channelAddress, {
 			accessRights: AccessRights.ReadAndWrite
 		});
-		console.log('subscription Link: ', subscriptionLink);
-		console.log('subscription seed: ', seed);
 
 		const deviceDocument: CreateDeviceRegistrationDto = {
 			nonce: uuidv4(),
