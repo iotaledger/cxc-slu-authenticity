@@ -56,8 +56,8 @@ describe('DeviceRegistrationController', () => {
 		expect(deviceRegistrationService).toBeDefined();
 	});
 
-	fit('deviceRegistrationService should return nonce and created a device and a channel', async () => {
-		const module = await moduleCreator(
+	it('deviceRegistrationService should return nonce and subscribe link to a channel', async () => {
+		await moduleCreator(
 			{
 				create: () => identityMock
 			},
@@ -66,13 +66,14 @@ describe('DeviceRegistrationController', () => {
 					identityMock.doc.id, identityMock.key.secret;
 				},
 				requestSubscription: () => {
-					requestSubscription.subscriptionLink, requestSubscription.seed;
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
 				}
 			}
 		);
 		const result = await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
-		console.log('module: ', module);
-		console.log('result: ', result);
 
 		expect(result.nonce).not.toBeNull();
 		expect(result.nonce.length).toEqual(36);
@@ -93,7 +94,7 @@ describe('DeviceRegistrationController', () => {
 		try {
 			await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
 		} catch (err) {
-			expect(err.message).toBe('Could not create the channel.');
+			expect(err.message).toBe('Could not subscribe your device to the channel.');
 		}
 	});
 
@@ -107,7 +108,10 @@ describe('DeviceRegistrationController', () => {
 					identityMock.doc.id, identityMock.key.secret;
 				},
 				requestSubscription: () => {
-					requestSubscription.subscriptionLink, requestSubscription.seed;
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
 				}
 			}
 		);
@@ -128,7 +132,10 @@ describe('DeviceRegistrationController', () => {
 					identityMock.doc.id, identityMock.key.secret;
 				},
 				requestSubscription: () => {
-					requestSubscription.subscriptionLink, requestSubscription.seed;
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
 				}
 			}
 		);
@@ -147,7 +154,10 @@ describe('DeviceRegistrationController', () => {
 					identityMock.doc.id, identityMock.key.secret;
 				},
 				requestSubscription: () => {
-					requestSubscription.subscriptionLink, requestSubscription.seed;
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
 				}
 			}
 		);
@@ -169,7 +179,10 @@ describe('DeviceRegistrationController', () => {
 					identityMock.doc.id, identityMock.key.secret;
 				},
 				requestSubscription: () => {
-					requestSubscription.subscriptionLink, requestSubscription.seed;
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
 				}
 			}
 		);

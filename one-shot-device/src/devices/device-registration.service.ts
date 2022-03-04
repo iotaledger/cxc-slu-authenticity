@@ -24,7 +24,7 @@ export class DeviceRegistrationService {
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 
 		if (deviceIdentity === null) {
-			this.logger.error('Failed to create identity for your device');
+			this.logger.error('Failed to create identity for your device.');
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -34,6 +34,11 @@ export class DeviceRegistrationService {
 		const requestSubscription = await this.userClient.requestSubscription(channelAddress, {
 			accessRights: AccessRights.ReadAndWrite
 		});
+
+		if (requestSubscription === null) {
+			this.logger.error('Failed to request subscriptionLink for your device.');
+			throw new HttpException('Could not subscribe your device to the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		console.log('subscriptionLink and seed :', { requestSubscription });
 		const deviceDocument: CreateDeviceRegistrationDto = {
