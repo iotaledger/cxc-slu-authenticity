@@ -15,7 +15,7 @@ export class IdentityService {
 		private httpService: HttpService,
 		private configService: ConfigService,
 		@InjectModel(Identity.name) private identityModel: Model<IdentityDocument>
-	) { }
+	) {}
 
 	async proveAndSaveSlu(identity: IdentityDto): Promise<Identity> {
 		const proveOwnershipUrl = this.configService.get<string>('PROVE_OF_OWNERSHIP_URL');

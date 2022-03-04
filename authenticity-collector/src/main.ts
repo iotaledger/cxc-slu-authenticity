@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ChannelSubscriptionService } from './channel-subscription/channel-subscription.service'
+import { ChannelSubscriptionService } from './channel-subscription/channel-subscription.service';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
