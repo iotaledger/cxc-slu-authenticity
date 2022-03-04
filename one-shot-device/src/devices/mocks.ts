@@ -64,3 +64,16 @@ export const channelMock: CreateChannelResponse = {
 	channelAddress: 'ed1ff8060f52f4c49dadf1a499a5ef81e5293eed161a5cb2ca4cee6b33d348ef0000000000000000:ae2c58ed2f980fbb5697be94',
 	seed: 'ewlvmojzfcopwliaufpfhjcidzrlmqhzhdmfxxulctunidgznyhxepzshyjxqpagkhxwrypq'
 };
+
+export const channelAddressMock =
+	'4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:cc6dfcd17a9b3035b95478ae';
+
+export const subscriptionLinkMock =
+	'4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:bfd017e56cc902e843b5aaa9';
+
+export const seedMock = 'obhzpqhoquayrsqosxdschwwuahecnrfrqyavetiobjkwetcxsuizfxxuktutqumqgvtdczz';
+
+export const requestSubscription = {
+	seed: 'exahojwtaoagvitcnlptjdamkmpyccyseeywibtvjncskpfjxblobnixyuvdjamrzmvwzqhd',
+	subscriptionLink: '4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:92139169668861075929845e'
+};

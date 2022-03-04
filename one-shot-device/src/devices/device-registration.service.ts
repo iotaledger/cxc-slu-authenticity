@@ -31,14 +31,15 @@ export class DeviceRegistrationService {
 		await this.userClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
 
 		// // subscribe to the channel as user
-		const { subscriptionLink, seed } = await this.userClient.requestSubscription(channelAddress, {
+		const requestSubscription = await this.userClient.requestSubscription(channelAddress, {
 			accessRights: AccessRights.ReadAndWrite
 		});
 
+		console.log('subscriptionLink and seed :', { requestSubscription });
 		const deviceDocument: CreateDeviceRegistrationDto = {
 			nonce: uuidv4(),
-			channelId: subscriptionLink,
-			channelSeed: seed,
+			channelId: requestSubscription.subscriptionLink,
+			channelSeed: requestSubscription.seed,
 			identityKeys: {
 				id: deviceIdentity.doc.id,
 				key: deviceIdentity.key
@@ -46,6 +47,8 @@ export class DeviceRegistrationService {
 		};
 		const doc = await this.deviceRegistrationModel.create(deviceDocument);
 		await doc.save();
+
+		console.log('deviceDocument: ', deviceDocument);
 
 		return { nonce: deviceDocument.nonce };
 	}
