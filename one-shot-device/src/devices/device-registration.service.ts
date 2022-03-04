@@ -40,11 +40,10 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not subscribe your device to the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		console.log('subscriptionLink and seed :', { requestSubscription });
 		const deviceDocument: CreateDeviceRegistrationDto = {
 			nonce: uuidv4(),
-			channelId: requestSubscription.subscriptionLink,
-			channelSeed: requestSubscription.seed,
+			subscriptionLink: requestSubscription.subscriptionLink,
+			seed: requestSubscription.seed,
 			identityKeys: {
 				id: deviceIdentity.doc.id,
 				key: deviceIdentity.key
@@ -52,8 +51,6 @@ export class DeviceRegistrationService {
 		};
 		const doc = await this.deviceRegistrationModel.create(deviceDocument);
 		await doc.save();
-
-		console.log('deviceDocument: ', deviceDocument);
 
 		return { nonce: deviceDocument.nonce };
 	}

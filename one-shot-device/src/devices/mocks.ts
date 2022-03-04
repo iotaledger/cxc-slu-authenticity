@@ -43,7 +43,7 @@ export const badNonceMock = '1b0e4a49-BaDD-Baddy-99f4-97fda845ff02';
 export const identityMock: IdentityJson | any = {
 	doc: {
 		id: 'did:iota:7ph3tSwDL1GYvyaUCij2WseFUbme9Y3WMvAcMX2HCpbt',
-		authentication: [[Object]], // TODO: work with this
+		authentication: [[Object]],
 		created: '2022-02-16T22:12:10Z',
 		updated: '2022-02-16T22:12:10Z',
 		proof: {

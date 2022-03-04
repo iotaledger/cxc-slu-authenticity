@@ -6,7 +6,7 @@ import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { DeviceRegistration, DeviceRegistrationSchema, DeviceRegistrationDocument } from './schemas/device-registration.schema';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { channelMock, identityMock, mockDeviceRegistration, nonceMock, channelAddress } from './mocks';
+import { channelMock, identityMock, mockDeviceRegistration, nonceMock, channelAddressMock } from './mocks';
 import { ChannelClient, IdentityClient } from 'iota-is-sdk';
 import { Model } from 'mongoose';
 
@@ -71,7 +71,7 @@ describe('DeviceRegistrationController', () => {
 
 	it('should save nonce, channel and device identity to MongoDb', async () => {
 		jest.spyOn(deviceRegistrationService, 'createIdentityAndSubscribe').mockResolvedValue(mockDeviceRegistration);
-		const saveDeviceToDb = await deviceRegistrationController.createAndSubscribe(channelAddress);
+		const saveDeviceToDb = await deviceRegistrationController.createAndSubscribe(channelAddressMock);
 		expect(saveDeviceToDb.registerDevice).toBe(mockDeviceRegistration);
 	});
 
