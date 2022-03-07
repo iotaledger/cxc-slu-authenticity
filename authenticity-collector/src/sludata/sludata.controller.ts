@@ -5,11 +5,10 @@ import { SludataService } from './sludata.service';
 
 @Controller('sludata')
 export class SludataController {
-    
-    constructor(private sludataService: SludataService){}
+	constructor(private sludataService: SludataService) {}
 
-    @Post('data')
-    async writeData(@Body() sluData: SluDataDto): Promise<ChannelData>{
-        return await this.sludataService.writeData(sluData);
-    }
+	@Post('data')
+	async writeData(@Body() sluData: SluDataDto): Promise<ChannelData> {
+		return await this.sludataService.writeData(sluData);
+	}
 }

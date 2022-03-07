@@ -1,12 +1,12 @@
-import { Contains, IsNotEmpty, IsString } from "class-validator"
+import { Contains, IsNotEmpty, IsString } from 'class-validator';
 
-export class SluDataDto{
-    @IsNotEmpty()
-    @IsString()
-    hashedData: string
+export class SluDataDto {
+	@IsNotEmpty()
+	@IsString()
+	hashedData: string;
 
-    @IsNotEmpty()
-    @IsString()
-    @Contains('did:iota:')
-    deviceId: string
+	@IsNotEmpty()
+	@IsString()
+	@Contains('did:iota:')
+	deviceId: string;
 }

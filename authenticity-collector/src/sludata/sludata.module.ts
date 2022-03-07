@@ -1,9 +1,11 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { SludataController } from './sludata/sludata.controller';
-import { SludataService } from './sludata/sludata.service';
+import { SludataController } from './sludata.controller';
+import { SludataService } from './sludata.service';
 
 @Module({
-  controllers: [SludataController],
-  providers: [SludataService]
+	imports: [HttpModule],
+	controllers: [SludataController],
+	providers: [SludataService]
 })
 export class SludataModule {}
