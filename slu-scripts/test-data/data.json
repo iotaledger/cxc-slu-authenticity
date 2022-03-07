@@ -24,5 +24,6 @@
 			"secret": "5KUUgkxFw2ajYBKwoTj7VDvu64bY4u2TTVcMr9WYoaGP",
 			"encoding": "base58"
 		}
-	}
+	},
+	"channelAddress": "186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e"
 }

@@ -4,13 +4,12 @@ import axios from 'axios';
 
 jest.mock('axios');
 
+const keyFilePath: string | undefined = process.env.npm_config_key_file;
+const inputDataPath: string | undefined = process.env.npm_config_input;
+const destinationPath: string | undefined = process.env.npm_config_dest;
+const collectorUrl: string | undefined = process.env.npm_config_collector_url;
+const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 describe('Encrypt data', () => {
-	const keyFilePath: string | undefined = process.env.npm_config_key_file;
-	const inputDataPath: string | undefined = process.env.npm_config_input;
-	const destinationPath: string | undefined = process.env.npm_config_dest;
-	const collectorUrl: string | undefined = process.env.npm_config_collector_url;
-	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
-
 	it('should encrypt data', () => {
 		encryptData(keyFilePath, inputDataPath, destinationPath);
 		const encryptedData = fs.readFileSync(encryptedDataPath!, 'utf-8');
@@ -32,7 +31,7 @@ describe('Encrypt data', () => {
 		const body = await decryptData(encryptedDataPath, keyFilePath);
 		const result = await sendAuthProof(body!, collectorUrl);
 
-		expect(axios.post).toBeCalledWith('/', body);
+		expect(axios.post).toBeCalledWith('http://localhost:4000/identity/', body);
 		expect(result?.status).toBe(200);
 	});
 
@@ -76,8 +75,9 @@ describe('Encrypt data', () => {
 			expect(ex.message).toBe('Collector url for post request is not provided');
 		}
 	});
-
-	afterAll(() => {
+});
+afterAll(() => {
+	try {
 		fs.rmSync(destinationPath! + '/data.json.enc');
-	});
+	} catch (ex: any) {}
 });

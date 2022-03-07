@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IdentityService } from './identity.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { getConnectionToken, getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Identity, IdentityDocument, IdentitySchema } from './schemas/identity.schema';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { ConfigModule } from '@nestjs/config';
-import { Model } from 'mongoose';
+import { Connection, Model, mongo } from 'mongoose';
 import { BadRequestException } from '@nestjs/common';
 import { IdentityDto } from './models/IdentityDto';
 
@@ -16,6 +16,7 @@ describe('IdentityService', () => {
 	let mongod: MongoMemoryServer;
 	let body: IdentityDto;
 	let identityModel: Model<IdentityDocument>;
+	let connection: Connection;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +39,8 @@ describe('IdentityService', () => {
 
 		service = module.get<IdentityService>(IdentityService);
 		httpService = module.get<HttpService>(HttpService);
+		connection = module.get<Connection>(getConnectionToken());
+
 		identityModel = module.get<Model<IdentityDocument>>(getModelToken(Identity.name));
 
 		body = {
@@ -172,5 +175,10 @@ describe('IdentityService', () => {
 		} catch (ex: any) {
 			expect(ex.message).toBe('Invalid time value');
 		}
+	});
+
+	afterEach(async () => {
+		await connection.close();
+		if (mongod) mongod.stop();
 	});
 });
