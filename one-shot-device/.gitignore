@@ -2,6 +2,7 @@
 .env
 /dist
 /node_modules
+/nonce-signer
 
 # Logs
 logs
