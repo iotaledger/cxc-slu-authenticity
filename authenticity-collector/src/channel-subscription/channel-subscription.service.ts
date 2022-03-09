@@ -15,8 +15,8 @@ export class ChannelSubscriptionService {
 		const collectorJson = fs.readFileSync(collectorIdPath, 'utf-8');
 		const collector = JSON.parse(collectorJson);
 		const clientConfig: ClientConfig = {
-			apiKey: this.configService.get('API_KEY'),
-			baseUrl: this.configService.get('API_URL'),
+			apiKey: this.configService.get('IS_API_KEY'),
+			baseUrl: this.configService.get('IS_API_URL'),
 			apiVersion: ApiVersion.v01
 		};
 		const channelClient = new ChannelClient(clientConfig);
