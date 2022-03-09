@@ -1,15 +1,15 @@
 {
 	"info": {
-		"_postman_id": "20b84a1d-9117-4593-8e01-b97a7690a12a",
+		"_postman_id": "8cbe2860-c240-4fd4-a68b-262a1f87b524",
 		"name": "is-one-shot-device-registration",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "authentication",
+			"name": "Authentication",
 			"item": [
 				{
-					"name": "prove manager's id",
+					"name": "Prove manager's id",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -28,7 +28,7 @@
 					"response": []
 				},
 				{
-					"name": "authenticate via signed nonce",
+					"name": "Authenticate via signed nonce",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {
 							"content-type": true
@@ -89,7 +89,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"topics\": [{\"type\":\"smart-audit-log\",\"source\":\"devices in construction sector\"}],\n    \"hasPresharedKey\":true\n}"
+							"raw": "{\n    \"topics\": [{\"type\":\"cxc-log\",\"source\":\"one-shot-device\"}],\n    \"hasPresharedKey\":true\n}"
 						},
 						"url": {
 							"raw": "{{is_url}}/channels/create?api-key={{api-key}}",
@@ -111,10 +111,25 @@
 			"name": "Identities",
 			"item": [
 				{
-					"name": "create managers id",
+					"name": "Create managers id",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"CxC\",\n\t\"lastname\": \"Manager\",\n\t\"username\": \"one-shot-manager-1\"\n}"
+						},
 						"url": {
 							"raw": "{{is_url}}/identities/create?api-key={{api-key}}",
 							"host": ["{{is_url}}"],
@@ -135,7 +150,7 @@
 			"name": "One Shot Device Actions",
 			"item": [
 				{
-					"name": "create device",
+					"name": "Create device",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -157,7 +172,7 @@
 					"response": []
 				},
 				{
-					"name": "delete by nonce",
+					"name": "Delete by nonce",
 					"request": {
 						"method": "GET",
 						"header": [],
