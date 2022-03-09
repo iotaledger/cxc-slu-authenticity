@@ -1,8 +1,7 @@
 # compiled output
 .env
 /dist
-/node_modules
-/nonce-signer
+node_modules
 
 # Logs
 logs
