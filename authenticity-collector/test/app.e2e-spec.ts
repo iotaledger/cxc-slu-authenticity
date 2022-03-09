@@ -240,17 +240,18 @@ describe('AppController (e2e)', () => {
 
 		it('/data (POST)', async () => {
 			const sluDataBody = {
-				hashedData: "1231392infiob9w7f2oinf",
+				payload: {"temperature": "60 degrees"},
 				deviceId: "did:iota:123456"
 			}
 			const {status, body} = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
 			expect(status).toBe(201);
-			expect(body.log.payload).toEqual(sluDataBody);
+			expect(body.log.payload.deviceId).toBe("did:iota:123456");
+			expect(body.log.payload.hashedData).toMatch("U2F")
 		});
 
 		it('/data (POST): Validation fails of id', async () => {
 			const sluDataBody = {
-				hashedData: "1231392infiob9w7f2oinf",
+				payload: {temperature: "60 degrees"},
 				deviceId: "dd:iota:123456"
 			}
 			const {status, body} = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
@@ -260,12 +261,12 @@ describe('AppController (e2e)', () => {
 
 		it('/data (POST): Validation fails of hashedData', async () => {
 			const sluDataBody = {
-				hashedData: "",
+				payload: "",
 				deviceId: "dd:iota:123456"
 			}
 			const {status, body} = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
 			expect(status).toBe(400);
-			expect(body.message[0]).toEqual('hashedData should not be empty');
+			expect(body.message[0]).toEqual('payload should not be empty');
 		});
 	})
 

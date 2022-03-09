@@ -2,8 +2,7 @@ import { Contains, IsNotEmpty, IsString } from 'class-validator';
 
 export class SluDataDto {
 	@IsNotEmpty()
-	@IsString()
-	hashedData: string;
+	payload: any;
 
 	@IsNotEmpty()
 	@IsString()

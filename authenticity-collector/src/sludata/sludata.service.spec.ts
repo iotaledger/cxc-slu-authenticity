@@ -1,9 +1,10 @@
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChannelClient, ChannelData} from 'iota-is-sdk/lib';
+import { ChannelClient, ChannelData } from 'iota-is-sdk/lib';
 import { of } from 'rxjs';
 import { SludataService } from './sludata.service';
+import { AES } from 'crypto-js'
 
 describe('SludataService', () => {
 	let service: SludataService;
@@ -57,14 +58,15 @@ describe('SludataService', () => {
 		}
 
 		const sluDataBody = {
-			hashedData: "121392infiob9w7f2oinf",
+			payload: { temperature: "60 degrees" },
 			deviceId: "did:iota:12345"
 		}
 
 		httpService.post = jest.fn().mockImplementationOnce(() => of(response));
 		const authSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValueOnce();
 		const searchSpy = jest.spyOn(ChannelClient.prototype, 'search').mockResolvedValue(searchResponse);
-		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData)
+		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
+		const cryptoSpy = jest.spyOn(AES, 'encrypt');
 
 		const result = await service.writeData(sluDataBody)
 
@@ -72,6 +74,7 @@ describe('SludataService', () => {
 		expect(authSpy).toBeCalled();
 		expect(searchSpy).toBeCalled();
 		expect(writeSpy).toBeCalled();
+		expect(cryptoSpy).toBeCalled();
 		expect(result).toBe(channelData);
 	})
 });
