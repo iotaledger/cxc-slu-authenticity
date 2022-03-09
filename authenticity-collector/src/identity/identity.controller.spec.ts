@@ -1,9 +1,10 @@
 import { HttpModule } from '@nestjs/axios';
 import { BadRequestException } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Connection } from 'mongoose';
 import { IdentityController } from './identity.controller';
 import { IdentityService } from './identity.service';
 import { Identity, IdentitySchema } from './schemas/identity.schema';
@@ -13,6 +14,8 @@ describe('IdentityController', () => {
 	let identityService: IdentityService;
 	let body;
 	let response: Identity;
+	let mongod: MongoMemoryServer;
+	let connection: Connection;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -21,7 +24,7 @@ describe('IdentityController', () => {
 				ConfigModule,
 				MongooseModule.forRootAsync({
 					useFactory: async () => {
-						let mongod = await MongoMemoryServer.create();
+						mongod = await MongoMemoryServer.create();
 						let mongoUri = await mongod.getUri();
 						return {
 							uri: mongoUri
@@ -36,6 +39,7 @@ describe('IdentityController', () => {
 
 		controller = module.get<IdentityController>(IdentityController);
 		identityService = module.get<IdentityService>(IdentityService);
+		connection = module.get<Connection>(getConnectionToken());
 
 		body = {
 			did: 'did:iota:2xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd',
@@ -89,5 +93,9 @@ describe('IdentityController', () => {
 		} catch (ex: any) {
 			expect(ex.message).toBe('Could not authenticate device');
 		}
+	});
+	afterEach(async () => {
+		await connection.close();
+		if (mongod) await mongod.stop();
 	});
 });

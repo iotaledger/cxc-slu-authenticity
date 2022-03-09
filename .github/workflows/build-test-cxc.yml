@@ -1,0 +1,42 @@
+name: Build and test cxc-slu-authenticity
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on pull request events but only for the main branch
+  pull_request:
+    branches: [main]
+    paths: 
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      # Setup node and build api
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: '14.x'
+      # build and test packages
+      - name: Build and test collector
+        run: |
+          cd authenticity-collector/
+          npm install
+          npm run build
+          npm run test
+      - name: Build and test one-shot-device
+        run: |
+          cd one-shot-device/
+          npm install
+          npm run build
+          npm run test
+      - name: Build and test slu-scripts
+        run: |
+          cd slu-scripts/
+          npm install
+          npm run build
+          npm run test
