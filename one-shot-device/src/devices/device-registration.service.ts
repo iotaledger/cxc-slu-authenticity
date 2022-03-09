@@ -56,6 +56,10 @@ export class DeviceRegistrationService {
 		};
 		const doc = await this.deviceRegistrationModel.create(dto);
 		await doc.save();
+		// 		Adjust the one-shot-device MS to the slu-satus MS.
+
+		// If a new device will be generated it shall call the POST endpoint of slu-status with the id.
+
 		return { nonce: dto.nonce };
 	}
 
@@ -66,6 +70,11 @@ export class DeviceRegistrationService {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+
+		// 		Adjust the one-shot-device MS to the slu-satus MS.
+
+		// If a new device will be generated it shall call the POST endpoint of slu-status with the id.
+		// If the device will be downloaded by the device (calling GET /bootstrap/[NONCE]) it shall call the slu-status MS and update its status to installed
 		return response;
 	}
 }
