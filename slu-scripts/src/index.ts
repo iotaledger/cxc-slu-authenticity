@@ -76,14 +76,14 @@ export async function execScript(argv: any) {
 	} else if (argv._.includes('send-data')) {
 		try {
 			if (interval && payload) {
-				let payloadObject: any;
+				let payloadObject: {hashedData: string, deviceId: string};
 				try {
 					payloadObject = JSON.parse(payload)
 				} catch (e: any) {
 					console.error(e.message);
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
-				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, payloadObject), Number(interval));
+				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorUrl, payloadObject), Number(interval));
 			} else {
 				throw Error('No --interval in ms or no --payload provided.');
 			}

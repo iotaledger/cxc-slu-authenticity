@@ -1,14 +1,19 @@
 import fs from 'fs';
 import { ClientConfig, ChannelClient, ChannelData } from 'iota-is-sdk';
 import { createKey, decrypt } from '../vpuf/vpuf';
+import { Axios } from 'axios';
+
+const axios = new Axios();
 
 export async function sendData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined,
 	isConfigPath: string | undefined,
-	payloadData: any
+	collectorUrl: string | undefined,
+	payloadData: {hashedData: string, deviceId: string}
 ): Promise<ChannelData> {
-	if (isConfigPath && encryptedDataPath && keyFilePath) {
+	if (isConfigPath && encryptedDataPath && keyFilePath && collectorUrl) {
+		await axios.post(collectorUrl, payloadData);
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
