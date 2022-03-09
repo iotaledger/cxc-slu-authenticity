@@ -40,3 +40,9 @@ jobs:
           npm install
           npm run build
           npm run test
+      - name: Build and test slu-status
+        run: |
+          cd slu-status/
+          npm install
+          npm run build
+          npm run test
