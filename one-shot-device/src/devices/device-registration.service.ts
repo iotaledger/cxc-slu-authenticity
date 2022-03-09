@@ -3,69 +3,64 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateDeviceRegistrationDto } from './dto/create-device-registration.dto';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
+import { IdentityClient, ChannelClient, AccessRights } from 'iota-is-sdk';
 import { v4 as uuidv4 } from 'uuid';
-import { IdentityClient, ChannelClient } from 'iota-is-sdk';
 
 @Injectable()
 export class DeviceRegistrationService {
 	constructor(
 		@InjectModel(DeviceRegistration.name)
 		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>,
-		@Inject('ChannelClient')
-		private readonly channelClient: ChannelClient,
+
+		@Inject('UserClient')
+		private readonly userClient: ChannelClient,
+
 		@Inject('IdentityClient')
 		private readonly identityClient: IdentityClient
 	) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
-	async createChannelAndIdentity() {
-		// create device identity
+	async createIdentityAndSubscribe(channelAddress: string) {
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 
 		if (deviceIdentity === null) {
-			this.logger.error('Failed to create identity for your device');
+			this.logger.error('Failed to create identity for your device.');
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		if (deviceIdentity == null) {
-			this.logger.error('Failed to create identity for your device');
-			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		await this.userClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
 
-		// Authenticate device identity
-		await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
-
-		// create new channel
-		const newChannel = await this.channelClient.create({
-			topics: [{ type: 'example-data', source: 'data-creator' }]
+		// // subscribe to the channel as user
+		const requestSubscription = await this.userClient.requestSubscription(channelAddress, {
+			accessRights: AccessRights.ReadAndWrite
 		});
 
-		if (newChannel === null) {
-			this.logger.error('Failed creating a new channel for your device');
-			throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
+		if (requestSubscription === null) {
+			this.logger.error('Failed to request subscriptionLink for your device.');
+			throw new HttpException('Could not subscribe your device to the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		const dto: CreateDeviceRegistrationDto = {
+		const deviceDocument: CreateDeviceRegistrationDto = {
 			nonce: uuidv4(),
-			channelId: newChannel.channelAddress,
-			channelSeed: newChannel.seed,
+			subscriptionLink: requestSubscription.subscriptionLink,
+			seed: requestSubscription.seed,
 			identityKeys: {
 				id: deviceIdentity.doc.id,
 				key: deviceIdentity.key
 			}
 		};
-		const doc = await this.deviceRegistrationModel.create(dto);
+		const doc = await this.deviceRegistrationModel.create(deviceDocument);
 		await doc.save();
-		return { nonce: dto.nonce };
+
+		return { nonce: deviceDocument.nonce };
 	}
 
 	async getRegisteredDevice(nonce: string) {
-		const response = await this.deviceRegistrationModel.findOne({ nonce });
 		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
 		if (deletedDocument === null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return response;
+		return deletedDocument;
 	}
 }

@@ -13,6 +13,7 @@ import {
 } from '../../one-shot-device/src/devices/schemas/device-registration.schema';
 import { CreateDeviceRegistrationDto as dto } from '../src/devices/dto/create-device-registration.dto';
 import { deviceStubData } from './stubs/device.stubs';
+import { channelAddressMock } from './../src/devices/mocks';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 jest.setTimeout(40000);
@@ -74,12 +75,13 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/create (POST) it should create channel, device identity and nonce', async () => {
+		console.log('createDevice: ', createDevice);
 		jest.spyOn(httpService, 'post').mockReturnValue(createDevice);
-		const response = await request(httpServer).post('/create').send(createDevice);
+		const response = await request(httpServer).post(`/create/:${channelAddressMock}`).send(createDevice);
 		expect(response.status).toBe(201);
 
 		const savedDevice = await deviceRegistrationModel.findOne({ nonce }, { _id: 0 });
-		expect(savedDevice).toMatchObject(createDevice);
+		expect(savedDevice.nonce).toStrictEqual(createDevice.nonce);
 	});
 
 	it('/:nonce (GET) it should return device to the creator and remove the document from the collection', async () => {
