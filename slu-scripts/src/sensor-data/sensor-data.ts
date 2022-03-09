@@ -9,11 +9,10 @@ export async function sendData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined,
 	isConfigPath: string | undefined,
-	collectorUrl: string | undefined,
-	payloadData: {hashedData: string, deviceId: string}
+	collectorDataUrl: string | undefined,
+	payloadData: any
 ): Promise<ChannelData> {
-	if (isConfigPath && encryptedDataPath && keyFilePath && collectorUrl) {
-		await axios.post(collectorUrl, payloadData);
+	if (isConfigPath && encryptedDataPath && keyFilePath && collectorDataUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
@@ -26,11 +25,12 @@ export async function sendData(
 			const response = await client.write(channelAddress, {
 				payload: payloadData
 			});
+			await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id });
 			return response;
 		} catch (ex: any) {
 			throw ex;
 		}
 	} else {
-		throw Error('One or all of the env variables are not provided: --input_enc, --key_file, --config');
+		throw Error('One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url');
 	}
 }

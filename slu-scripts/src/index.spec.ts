@@ -14,6 +14,7 @@ const destinationPath: string | undefined = process.env.npm_config_dest;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
 const payload: any = process.env.npm_config_payload;
+const collectorDataUrl: string | undefined = process.env.npm_config_collector_data_url;
 
 describe('Encrypt-file tests', () => {
 	it('encrypt should execute', async () => {
@@ -149,7 +150,7 @@ describe('Send sensor data tests', () => {
 		await execScript(argv);
 		jest.advanceTimersByTime(3000);
 		expect(sendDataSpy).toBeCalledTimes(3);
-		expect(sendDataSpy).toHaveBeenLastCalledWith(encryptedDataPath, keyFilePath, isConfigFile, payloadObject);
+		expect(sendDataSpy).toHaveBeenLastCalledWith(encryptedDataPath, keyFilePath, isConfigFile, collectorDataUrl, payloadObject);
 		jest.useRealTimers();
 	});
 
@@ -175,7 +176,7 @@ describe('Send sensor data tests', () => {
 		const processSpy = jest.spyOn(process, 'exit');
 		await execScript(argv);
 		expect(consoleSpy).toBeCalledWith('Unexpected token w in JSON at position 0');
-		expect(consoleSpy).toBeCalledWith('Could not parse payload, please provide an object as a string')
+		expect(consoleSpy).toBeCalledWith('Could not parse payload, please provide an object as a string');
 		expect(processSpy).toBeCalledWith(1);
 		process.env.npm_config_payload = oldVal;
 	});
