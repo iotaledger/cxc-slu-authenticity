@@ -1,20 +1,18 @@
-import { Body, Controller, Get, Param, ParseEnumPipe, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
-import { IsString } from 'class-validator';
+import { Body, Controller, Get, Param, ParseEnumPipe, Post, Put, UsePipes } from '@nestjs/common';
 import { SluStatusDto } from './model/SluStatusDto';
 import { Status } from './model/Status';
 import { SluStatusValidationPipe } from './pipes/slu-status-validation.pipe';
 import { SluStatus } from './schema/slu-status.schema';
 import { SluStatusService } from './slu-status.service';
-import { Contains } from 'class-validator';
 
 @Controller('status')
 export class SluStatusController {
 	constructor(private statuService: SluStatusService) {}
 
-	@Post()
+	@Post(':id/:channel')
 	@UsePipes(new SluStatusValidationPipe())
-	async createSluStatus(@Body() body: SluStatusDto): Promise<SluStatus> {
-		return await this.statuService.saveSluStatus(body);
+	async createSluStatus(@Body() body, @Param('id') id: string, @Param('channel') channel: string): Promise<SluStatus> {
+		return await this.statuService.saveSluStatus(body.status, id, channel);
 	}
 
 	@Put(':id/:status')
