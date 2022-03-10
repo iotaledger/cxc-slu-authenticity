@@ -17,6 +17,12 @@ export class DeviceRegistrationService {
 
 		private readonly configService: ConfigService,
 
+		private readonly requestConfig: AxiosRequestConfig<any> = {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		},
+
 		@InjectModel(DeviceRegistration.name)
 		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>,
 		@Inject('ChannelClient')
@@ -26,22 +32,19 @@ export class DeviceRegistrationService {
 	) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 
-	async createChannelAndIdentity() {
-		// create device identity
+	private async createIdentity() {
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
 
 		if (deviceIdentity === null) {
 			this.logger.error('Failed to create identity for your device');
 			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		return deviceIdentity;
+	}
 
-		if (deviceIdentity == null) {
-			this.logger.error('Failed to create identity for your device');
-			throw new HttpException('Could not create the device identity.', HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
+	private async createChannel(id: string, secret: string) {
 		// Authenticate device identity
-		await this.channelClient.authenticate(deviceIdentity.doc.id, deviceIdentity.key.secret);
+		await this.channelClient.authenticate(id, secret);
 
 		// create new channel
 		const newChannel = await this.channelClient.create({
@@ -52,64 +55,72 @@ export class DeviceRegistrationService {
 			this.logger.error('Failed creating a new channel for your device');
 			throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		return newChannel;
+	}
 
-		const dto: CreateDeviceRegistrationDto = {
-			nonce: uuidv4(),
-			channelId: newChannel.channelAddress,
-			channelSeed: newChannel.seed,
-			identityKeys: {
-				id: deviceIdentity.doc.id,
-				key: deviceIdentity.key
-			}
-		};
-		const doc = await this.deviceRegistrationModel.create(dto);
-		await doc.save();
-		console.log('document of identity (did): ', dto.identityKeys.id);
-		console.log('channel address: ', dto.channelId);
-
-		// 		Adjust the one-shot-device MS to the slu-status MS.
+	private async createSluStatus(id: string, channelId: string) {
 		// If a new device will be generated it shall call the POST endpoint of slu-status with the id.
-
-		// return this.httpService
-		// 	.post('https://api.example.com/authenticate_user', params, {
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		}
-		// 	})
-		// 	.pipe(
-		// 		map((res) => {
-		// 			return res.data;
-		// 		})
-		// 	);
 		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
-		const id = dto.identityKeys.id;
-		const channel = dto.channelId;
-		const requestConfig: AxiosRequestConfig<any> = {
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			data: {
-				status: 'created'
-			}
-		};
 
 		const sluStatus = await firstValueFrom(
-			this.httpService.post(`${sluStatusEndpoint}/${id}/${channel}`, null, requestConfig).pipe(map((response) => res.data))
+			this.httpService.post(
+				`${sluStatusEndpoint}/${id}/${channelId}`,
+				{
+					status: 'created'
+				},
+				this.requestConfig
+			)
 		);
-
-		console.log('slu status', sluStatus);
 
 		if (sluStatus === null) {
 			this.logger.error('Failed connecting with SLU-Status Microservice');
 			throw new HttpException('Could not connect with SLU-Status Microservice.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
 
-		return { nonce: dto.nonce };
+	async createChannelAndIdentity() {
+		const deviceIdentity = await this.createIdentity();
+		const {
+			doc: { id },
+			key
+		} = deviceIdentity;
+		const { secret } = key;
+		const newChannel = await this.createChannel(id, secret);
+		const { channelAddress: channelId, seed: channelSeed } = newChannel;
+		const nonce = uuidv4();
+
+		const dto: CreateDeviceRegistrationDto = {
+			nonce,
+			channelId,
+			channelSeed,
+			identityKeys: {
+				id,
+				key
+			}
+		};
+		const doc = await this.deviceRegistrationModel.create(dto);
+		await doc.save();
+
+		await this.createSluStatus(id, channelId);
+
+		return { nonce };
 	}
 
 	async getRegisteredDevice(nonce: string) {
 		const response = await this.deviceRegistrationModel.findOne({ nonce });
 		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
+		const id = response.identityKeys.id;
+		const body = {
+			status: 'installed'
+		};
+
+		const updateSluStatus = await firstValueFrom(
+			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
+		);
+
+		console.log('update Slu Status: ', updateSluStatus);
 
 		if (deletedDocument === null) {
 			this.logger.error('Document does not exist in the collection');
