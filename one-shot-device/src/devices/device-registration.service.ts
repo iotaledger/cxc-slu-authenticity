@@ -17,12 +17,6 @@ export class DeviceRegistrationService {
 
 		private readonly configService: ConfigService,
 
-		private readonly requestConfig: AxiosRequestConfig<any> = {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		},
-
 		@InjectModel(DeviceRegistration.name)
 		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>,
 		@Inject('ChannelClient')
@@ -31,6 +25,12 @@ export class DeviceRegistrationService {
 		private readonly identityClient: IdentityClient
 	) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
+	private readonly requestConfig: AxiosRequestConfig<any> = {
+		headers: {
+			'Content-Type': 'application/json',
+			'X-API-KEY': process.env.IS_API_KEY
+		}
+	};
 
 	private async createIdentity() {
 		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
@@ -59,7 +59,6 @@ export class DeviceRegistrationService {
 	}
 
 	private async createSluStatus(id: string, channelId: string) {
-		// If a new device will be generated it shall call the POST endpoint of slu-status with the id.
 		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
 
 		const sluStatus = await firstValueFrom(
@@ -77,17 +76,33 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not connect with SLU-Status Microservice.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	private async updateSluStatus(id) {
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
+		const body = {
+			status: 'installed'
+		};
+
+		const updateSluStatus = await firstValueFrom(
+			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
+		);
+
+		if (updateSluStatus === null) {
+			this.logger.error('Failed connecting with SLU-Status Microservice to update Slu status');
+			throw new HttpException('Could not connect with SLU-Status Microservice to update Slu status.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	async createChannelAndIdentity() {
+		const nonce = uuidv4();
 		const deviceIdentity = await this.createIdentity();
 		const {
 			doc: { id },
 			key
 		} = deviceIdentity;
 		const { secret } = key;
+
 		const newChannel = await this.createChannel(id, secret);
 		const { channelAddress: channelId, seed: channelSeed } = newChannel;
-		const nonce = uuidv4();
 
 		const dto: CreateDeviceRegistrationDto = {
 			nonce,
@@ -98,6 +113,7 @@ export class DeviceRegistrationService {
 				key
 			}
 		};
+
 		const doc = await this.deviceRegistrationModel.create(dto);
 		await doc.save();
 
@@ -108,29 +124,16 @@ export class DeviceRegistrationService {
 
 	async getRegisteredDevice(nonce: string) {
 		const response = await this.deviceRegistrationModel.findOne({ nonce });
-		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
-
-		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
 		const id = response.identityKeys.id;
-		const body = {
-			status: 'installed'
-		};
-
-		const updateSluStatus = await firstValueFrom(
-			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
-		);
-
-		console.log('update Slu Status: ', updateSluStatus);
+		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
 
 		if (deletedDocument === null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		// 		Adjust the one-shot-device MS to the slu-status MS.
+		await this.updateSluStatus(id);
 
-		// If a new device will be generated it shall call the POST endpoint of slu-status with the id.
-		// If the device will be downloaded by the device (calling GET /bootstrap/[NONCE]) it shall call the slu-status MS and update its status to installed
 		return response;
 	}
 }

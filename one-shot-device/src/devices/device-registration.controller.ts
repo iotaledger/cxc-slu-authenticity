@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { DeviceRegistrationService } from './device-registration.service';
 
 @Controller()
@@ -8,7 +8,7 @@ export class DeviceRegistrationController {
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
 	@Post('/create')
-	async createChannelAndIdentity(@Body() _body) {
+	async createChannelAndIdentity() {
 		try {
 			const registerDevice = await this.deviceRegistrationService.createChannelAndIdentity();
 			return {

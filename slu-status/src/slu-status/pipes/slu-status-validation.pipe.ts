@@ -1,4 +1,4 @@
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException, ValidationError } from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { SluStatusDto } from '../model/SluStatusDto';
@@ -21,8 +21,8 @@ export class SluStatusValidationPipe implements PipeTransform<SluStatusDto> {
 		return object;
 	}
 
-	private toValidate(metatype: Function): boolean {
-		const types: Function[] = [String, Boolean, Number, Array, Object];
+	private toValidate(metatype): boolean {
+		const types = [String, Boolean, Number, Array, Object];
 		return !types.includes(metatype);
 	}
 }

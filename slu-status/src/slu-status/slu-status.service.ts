@@ -13,19 +13,19 @@ export class SluStatusService {
 
 	async saveSluStatus(status: Status, id: string, channel: string): Promise<SluStatusDocument> {
 		const sluStatusDto: SluStatusDto = {
-			id: id,
-			status: status,
+			id,
+			status,
 			channelAddress: channel
 		};
 		return await new this.sluStatusModel(sluStatusDto).save();
 	}
 
 	async updateSluStatus(id: string, status: Status): Promise<SluStatusDocument> {
-		return await this.sluStatusModel.findOneAndUpdate({ id: id }, { status: status }, { new: true, fields: { _id: 0 } });
+		return await this.sluStatusModel.findOneAndUpdate({ id }, { status }, { new: true, fields: { _id: 0 } });
 	}
 
 	async getSluStatus(id: string): Promise<string> {
-		const slu = await this.sluStatusModel.find({ id: id }, undefined, { fields: { _id: 0 } }).lean();
+		const slu = await this.sluStatusModel.find({ id }, undefined, { fields: { _id: 0 } }).lean();
 		return slu[0]?.status;
 	}
 }
