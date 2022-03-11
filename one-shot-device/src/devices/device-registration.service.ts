@@ -44,13 +44,12 @@ export class DeviceRegistrationService {
 		return deviceIdentity;
 	}
 
-	private async createChannel(id: string, secret: string) {
-		//TODO: change method name to something more suitable
+	private async subscribeToChannel(id: string, secret: string, channelId: string) {
 		// Authenticate device identity
 		await this.userClient.authenticate(id, secret);
 
 		// // subscribe to the channel as user
-		const requestSubscription = await this.userClient.requestSubscription(channelAddress, {
+		const requestSubscription = await this.userClient.requestSubscription(channelId, {
 			accessRights: AccessRights.ReadAndWrite
 		});
 
@@ -58,7 +57,7 @@ export class DeviceRegistrationService {
 			this.logger.error('Failed to request subscriptionLink for your device.');
 			throw new HttpException('Could not subscribe your device to the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return newChannel; // check what is returned here
+		return requestSubscription; // check what is returned here
 	}
 
 	private async createSluStatus(id: string, channelId: string) {
@@ -95,7 +94,7 @@ export class DeviceRegistrationService {
 		}
 	}
 
-	async createIdentityAndSubscribe(channelAddress) {
+	async createIdentityAndSubscribe(channelAddress: string) {
 		const nonce = uuidv4();
 		const deviceIdentity = await this.createIdentity();
 		const {
@@ -104,13 +103,13 @@ export class DeviceRegistrationService {
 		} = deviceIdentity;
 		const { secret } = key;
 
-		const newChannel = await this.createChannel(id, secret);
-		const { channelAddress: channelId, seed: channelSeed } = newChannel;
+		const newChannel = await this.subscribeToChannel(id, secret, channelAddress);
+		const { subscriptionLink, seed } = newChannel;
 
 		const deviceDocument: CreateDeviceRegistrationDto = {
 			nonce,
-			channelId,
-			channelSeed,
+			subscriptionLink,
+			seed,
 			identityKeys: {
 				id,
 				key
@@ -120,8 +119,9 @@ export class DeviceRegistrationService {
 		const doc = await this.deviceRegistrationModel.create(deviceDocument);
 		await doc.save();
 
-		await this.createSluStatus(id, channelId);
+		await this.createSluStatus(id, channelAddress);
 
+		console.log(nonce);
 		return { nonce };
 	}
 
