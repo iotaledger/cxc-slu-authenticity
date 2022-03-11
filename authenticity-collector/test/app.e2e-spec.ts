@@ -233,42 +233,42 @@ describe('AppController (e2e)', () => {
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Validation failed');
 		});
-
 	});
 
 	describe('/sludata', () => {
-
 		it('/data (POST)', async () => {
 			const sluDataBody = {
-				payload: {"temperature": "60 degrees"},
-				deviceId: "did:iota:123456"
-			}
-			const {status, body} = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
+				payload: { temperature: '60 degrees' },
+				deviceId: 'did:iota:123456'
+			};
+			const { status, body } = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
 			expect(status).toBe(201);
-			expect(body.log.payload.deviceId).toBe("did:iota:123456");
-			expect(body.log.payload.hashedData).toMatch("U2F")
+			expect(body.log.payload.deviceId).toBe('did:iota:123456');
+			//SHA256 length in hex format
+			expect(body.log.payload.hashedData.length).toBe(64);
+			expect(body.log.payload.hashedData).not.toBe(sluDataBody.payload);
 		});
 
 		it('/data (POST): Validation fails of id', async () => {
 			const sluDataBody = {
-				payload: {temperature: "60 degrees"},
-				deviceId: "dd:iota:123456"
-			}
-			const {status, body} = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
+				payload: { temperature: '60 degrees' },
+				deviceId: 'dd:iota:123456'
+			};
+			const { status, body } = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
 			expect(status).toBe(400);
 			expect(body.message[0]).toEqual('deviceId must contain a did:iota: string');
 		});
 
 		it('/data (POST): Validation fails of hashedData', async () => {
 			const sluDataBody = {
-				payload: "",
-				deviceId: "dd:iota:123456"
-			}
-			const {status, body} = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
+				payload: '',
+				deviceId: 'dd:iota:123456'
+			};
+			const { status, body } = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
 			expect(status).toBe(400);
 			expect(body.message[0]).toEqual('payload should not be empty');
 		});
-	})
+	});
 
 	afterAll(async () => {
 		await connection.close();

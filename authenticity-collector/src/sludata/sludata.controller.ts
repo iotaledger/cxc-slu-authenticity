@@ -9,7 +9,7 @@ export class SludataController {
 
 	@Post('data')
 	@UsePipes(new ValidationPipe({ transform: true }))
-	async writeData(@Body()  sluData: SluDataDto): Promise<ChannelData> {
+	async writeData(@Body() sluData: SluDataDto): Promise<ChannelData> {
 		return await this.sludataService.writeData(sluData);
 	}
 }
