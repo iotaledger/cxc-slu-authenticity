@@ -3,8 +3,8 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Identity, IdentityDocument, IdentitySchema } from '../src/identity/schemas/identity.schema';
-import { Model } from 'mongoose';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Connection, Model, mongo } from 'mongoose';
+import { getConnectionToken, getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
@@ -14,6 +14,7 @@ describe('AppController (e2e)', () => {
 	let identityModel: Model<IdentityDocument>;
 	let mongod: MongoMemoryServer;
 	let httpService: HttpService;
+	let connection: Connection;
 	let identity;
 	let identity2;
 	let identity3;
@@ -29,7 +30,7 @@ describe('AppController (e2e)', () => {
 								port: 6000
 							}
 						});
-						let mongoUri = await mongod.getUri();
+						const mongoUri = await mongod.getUri();
 						return {
 							uri: mongoUri
 						};
@@ -43,6 +44,7 @@ describe('AppController (e2e)', () => {
 		await app.init();
 		httpService = moduleFixture.get<HttpService>(HttpService);
 		identityModel = moduleFixture.get<Model<IdentityDocument>>(getModelToken(Identity.name));
+		connection = moduleFixture.get<Connection>(getConnectionToken());
 
 		await identityModel.deleteMany();
 
@@ -88,8 +90,8 @@ describe('AppController (e2e)', () => {
 			'/identity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=202201-27&to=2022-01-28'
 		);
 
-		expect(status).toBe(400);
-		expect(body.message).toEqual('Invalid time value');
+		expect(status).toBe(500);
+		expect(body.message).toEqual('Internal server error');
 	});
 
 	it('/prove (GET - Empty list)', async () => {
@@ -231,7 +233,8 @@ describe('AppController (e2e)', () => {
 	});
 
 	afterAll(async () => {
-		app.close();
-		mongod.stop();
+		await connection.close();
+		if (mongod) await mongod.stop();
+		await app.close();
 	});
 });

@@ -3,8 +3,8 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateDeviceRegistrationDto } from './dto/create-device-registration.dto';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
+import { IdentityClient, ChannelClient, AccessRights } from 'iota-is-sdk';
 import { v4 as uuidv4 } from 'uuid';
-import { IdentityClient, ChannelClient } from 'iota-is-sdk';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
@@ -19,8 +19,10 @@ export class DeviceRegistrationService {
 
 		@InjectModel(DeviceRegistration.name)
 		private readonly deviceRegistrationModel: Model<DeviceRegistrationDocument>,
-		@Inject('ChannelClient')
-		private readonly channelClient: ChannelClient,
+
+		@Inject('UserClient')
+		private readonly userClient: ChannelClient,
+
 		@Inject('IdentityClient')
 		private readonly identityClient: IdentityClient
 	) {}
@@ -43,19 +45,20 @@ export class DeviceRegistrationService {
 	}
 
 	private async createChannel(id: string, secret: string) {
+		//TODO: change method name to something more suitable
 		// Authenticate device identity
-		await this.channelClient.authenticate(id, secret);
+		await this.userClient.authenticate(id, secret);
 
-		// create new channel
-		const newChannel = await this.channelClient.create({
-			topics: [{ type: 'example-data', source: 'data-creator' }]
+		// // subscribe to the channel as user
+		const requestSubscription = await this.userClient.requestSubscription(channelAddress, {
+			accessRights: AccessRights.ReadAndWrite
 		});
 
-		if (newChannel === null) {
-			this.logger.error('Failed creating a new channel for your device');
-			throw new HttpException('Could not create the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
+		if (requestSubscription === null) {
+			this.logger.error('Failed to request subscriptionLink for your device.');
+			throw new HttpException('Could not subscribe your device to the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return newChannel;
+		return newChannel; // check what is returned here
 	}
 
 	private async createSluStatus(id: string, channelId: string) {
@@ -92,7 +95,7 @@ export class DeviceRegistrationService {
 		}
 	}
 
-	async createChannelAndIdentity() {
+	async createIdentityAndSubscribe(channelAddress) {
 		const nonce = uuidv4();
 		const deviceIdentity = await this.createIdentity();
 		const {
@@ -104,7 +107,7 @@ export class DeviceRegistrationService {
 		const newChannel = await this.createChannel(id, secret);
 		const { channelAddress: channelId, seed: channelSeed } = newChannel;
 
-		const dto: CreateDeviceRegistrationDto = {
+		const deviceDocument: CreateDeviceRegistrationDto = {
 			nonce,
 			channelId,
 			channelSeed,
@@ -114,7 +117,7 @@ export class DeviceRegistrationService {
 			}
 		};
 
-		const doc = await this.deviceRegistrationModel.create(dto);
+		const doc = await this.deviceRegistrationModel.create(deviceDocument);
 		await doc.save();
 
 		await this.createSluStatus(id, channelId);

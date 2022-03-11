@@ -14,7 +14,8 @@ import { ChannelClient, IdentityClient } from 'iota-is-sdk';
 	providers: [
 		DeviceRegistrationService,
 		ConfigService,
-		{ provide: 'ChannelClient', useValue: new ChannelClient(defaultConfig) },
+		{ provide: 'OwnerClient', useValue: new ChannelClient(defaultConfig) },
+		{ provide: 'UserClient', useValue: new ChannelClient(defaultConfig) },
 		{ provide: 'IdentityClient', useValue: new IdentityClient(defaultConfig) }
 	]
 })

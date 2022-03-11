@@ -9,7 +9,6 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class IdentityService {
-	
 	private readonly logger: Logger = new Logger(IdentityService.name);
 
 	constructor(
@@ -37,25 +36,20 @@ export class IdentityService {
 			}
 		}
 		if (response.data.error) {
-			this.logger.error('Proving identity failed.')
+			this.logger.error('Proving identity failed.');
 			throw new BadRequestException(response.data.error);
 		} else {
-			this.logger.error('Verification failed.')
+			this.logger.error('Verification failed.');
 			throw new BadRequestException('Verification failed: wrong signature');
 		}
 	}
 
 	async getAuthProves(did: string, from: any, to: any): Promise<Identity[]> {
-		try {
-			return await this.identityModel
-				.find({
-					did: did,
-					timestamp: { $gte: new Date(from).toISOString(), $lte: new Date(to).toISOString() }
-				})
-				.lean();
-		} catch (ex: any) {
-			this.logger.error(ex)
-			throw new BadRequestException(ex.message);
-		}
+		return await this.identityModel
+			.find({
+				did: did,
+				timestamp: { $gte: new Date(from).toISOString(), $lte: new Date(to).toISOString() }
+			})
+			.lean();
 	}
 }

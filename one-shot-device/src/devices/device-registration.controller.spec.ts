@@ -2,19 +2,21 @@ import { DeviceRegistrationController } from './device-registration.controller';
 import { DeviceRegistrationService } from './device-registration.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { MongooseModule, getModelToken } from '@nestjs/mongoose';
+import { MongooseModule, getModelToken, getConnectionToken } from '@nestjs/mongoose';
 import { DeviceRegistration, DeviceRegistrationSchema, DeviceRegistrationDocument } from './schemas/device-registration.schema';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { channelMock, identityMock, mockDeviceRegistration, nonceMock } from './mocks';
+import { channelMock, identityMock, mockDeviceRegistration, nonceMock, channelAddressMock } from './mocks';
 import { ChannelClient, IdentityClient } from 'iota-is-sdk';
-import { Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationController: DeviceRegistrationController;
 	let deviceRegistrationService: DeviceRegistrationService;
 	let deviceRegistrationModel: Model<DeviceRegistrationDocument>;
 	let module: TestingModule;
+	let mongod: MongoMemoryServer;
+	let connection: Connection;
 
 	afterEach(() => {
 		module.close();
@@ -29,7 +31,7 @@ describe('DeviceRegistrationController', () => {
 				IdentityClient,
 				MongooseModule.forRootAsync({
 					useFactory: async () => {
-						const mongod = await MongoMemoryServer.create();
+						mongod = await MongoMemoryServer.create();
 						const uri = mongod.getUri();
 						return {
 							uri: uri
@@ -43,7 +45,7 @@ describe('DeviceRegistrationController', () => {
 				DeviceRegistrationService,
 				ConfigService,
 				{
-					provide: 'ChannelClient',
+					provide: 'UserClient',
 					useValue: {
 						create: () => channelMock,
 						authenticate: () => {
@@ -63,21 +65,16 @@ describe('DeviceRegistrationController', () => {
 		deviceRegistrationService = module.get<DeviceRegistrationService>(DeviceRegistrationService);
 		deviceRegistrationController = module.get<DeviceRegistrationController>(DeviceRegistrationController);
 		deviceRegistrationModel = module.get<Model<DeviceRegistrationDocument>>(getModelToken(DeviceRegistration.name));
+		connection = module.get<Connection>(getConnectionToken());
 	});
 
 	it('deviceRegistrationController should be defined', () => {
 		expect(deviceRegistrationController).toBeDefined();
 	});
 
-	it('post route should return success true', async () => {
-		const result = await deviceRegistrationController.createChannelAndIdentity();
-		console.log('controller result: ', result);
-		expect(result.success).toBe(true);
-	});
-
 	it('should save nonce, channel and device identity to MongoDb', async () => {
-		jest.spyOn(deviceRegistrationService, 'createChannelAndIdentity').mockResolvedValue(mockDeviceRegistration);
-		const saveDeviceToDb = await deviceRegistrationController.createChannelAndIdentity();
+		jest.spyOn(deviceRegistrationService, 'createIdentityAndSubscribe').mockResolvedValue(mockDeviceRegistration);
+		const saveDeviceToDb = await deviceRegistrationController.createAndSubscribe(channelAddressMock);
 		expect(saveDeviceToDb.registerDevice).toBe(mockDeviceRegistration);
 	});
 
@@ -86,5 +83,10 @@ describe('DeviceRegistrationController', () => {
 		const saveDeviceToDb = await deviceRegistrationModel.create(mockDeviceRegistration);
 		const deleteDeviceFromCollection = await deviceRegistrationController.getRegisteredDevice(nonceMock);
 		expect(deleteDeviceFromCollection.registeredDeviceInfo.nonce).toBe(saveDeviceToDb.nonce);
+	});
+
+	afterEach(async () => {
+		await connection.close();
+		if (mongod) mongod.stop();
 	});
 });

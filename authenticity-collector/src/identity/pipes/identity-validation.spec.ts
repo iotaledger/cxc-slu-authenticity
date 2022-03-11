@@ -30,7 +30,7 @@ describe('transform', () => {
 				timestamp: '2022-01-27T10:14:14Z',
 				signature: '2MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNm'
 			};
-			const bodyDto = {...body, timestamp: new Date(body.timestamp)}
+			const bodyDto = { ...body, timestamp: new Date(body.timestamp) };
 			expect(await identityValidation.transform(body, metadata)).toEqual(bodyDto);
 		});
 	});
