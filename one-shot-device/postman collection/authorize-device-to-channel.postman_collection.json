@@ -1,0 +1,243 @@
+{
+	"info": {
+		"_postman_id": "8cbe2860-c240-4fd4-a68b-262a1f87b524",
+		"name": "is-one-shot-device-registration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Prove manager's id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{is_url}}/authentication/prove-ownership/{{manager_id}}?api-key={{api-key}}",
+							"host": ["{{is_url}}"],
+							"path": ["authentication", "prove-ownership", "{{manager_id}}"],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate via signed nonce",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"signedNonce\":\"8a7c73113028abbc6dc385c0bdc66d477c18b0a47b28a0d9f6c62b1e019e501788d54fa34ba177ebae1ced723465e318f247cef1e09585aa9ca194b9cfec1d0a\"\n}"
+						},
+						"url": {
+							"raw": "{{is_url}}/authentication/prove-ownership/{{manager_id}}?api-key={{api-key}}",
+							"host": ["{{is_url}}"],
+							"path": ["authentication", "prove-ownership", "{{manager_id}}"],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Channels",
+			"item": [
+				{
+					"name": "Create channel as manager",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{manager_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"topics\": [{\"type\":\"cxc-log\",\"source\":\"one-shot-device\"}],\n    \"hasPresharedKey\":true\n}"
+						},
+						"url": {
+							"raw": "{{is_url}}/channels/create?api-key={{api-key}}",
+							"host": ["{{is_url}}"],
+							"path": ["channels", "create"],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Identities",
+			"item": [
+				{
+					"name": "Create managers id",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"CxC\",\n\t\"lastname\": \"Manager\",\n\t\"username\": \"one-shot-manager-1\"\n}"
+						},
+						"url": {
+							"raw": "{{is_url}}/identities/create?api-key={{api-key}}",
+							"host": ["{{is_url}}"],
+							"path": ["identities", "create"],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "One Shot Device Actions",
+			"item": [
+				{
+					"name": "Create device",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{one_shot_device_url}}/create/4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:cc6dfcd17a9b3035b95478ae",
+							"host": ["{{one_shot_device_url}}"],
+							"path": [
+								"create",
+								"4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:cc6dfcd17a9b3035b95478ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by nonce",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{one_shot_device_url}}/bootstrap/{{nonce}}",
+							"host": ["{{one_shot_device_url}}"],
+							"path": ["bootstrap", "{{nonce}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "manager_jwt",
+			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6MjE2TnVBQ1g2Tmh6MkJZdUNzdnRWdGVVWU1lcXlQWE5NQ3R1RDJvNktxekMiLCJwdWJsaWNLZXkiOiI4b3o1N3g5MTVubWZXemFleXBIaU0xcXhIdFZHaVVQNHg5WDRHRFJwTWNVZyIsInJlZ2lzdHJhdGlvbkRhdGUiOiIyMDIyLTAzLTAzVDE1OjM2OjUwKzAxOjAwIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjQ2MzE4ODQyLCJleHAiOjE2NDY0MDUyNDJ9.RzkNuK9rTJeI0sl2rXuYNvqYK9b4iUdLqq0Ix6oF2bM",
+			"type": "string"
+		},
+		{
+			"key": "one_shot_device_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "api-key",
+			"value": "94F5BA49-12A6-4E45-A487-BF91C442276D",
+			"type": "string"
+		},
+		{
+			"key": "signed_nonce",
+			"value": "8a7c73113028abbc6dc385c0bdc66d477c18b0a47b28a0d9f6c62b1e019e501788d54fa34ba177ebae1ced723465e318f247cef1e09585aa9ca194b9cfec1d0a",
+			"type": "string"
+		},
+		{
+			"key": "is_url",
+			"value": "http://localhost:3099/api/v0.1",
+			"type": "string"
+		},
+		{
+			"key": "authorized_channel",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "manager_id",
+			"value": "did:iota:216NuACX6Nhz2BYuCsvtVteUYMeqyPXNMCtuD2o6KqzC",
+			"type": "string"
+		}
+	]
+}
