@@ -1,14 +1,18 @@
 import fs from 'fs';
 import { ClientConfig, ChannelClient, ChannelData } from 'iota-is-sdk';
 import { createKey, decrypt } from '../vpuf/vpuf';
+import { Axios } from 'axios';
+
+const axios = new Axios();
 
 export async function sendData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined,
 	isConfigPath: string | undefined,
+	collectorDataUrl: string | undefined,
 	payloadData: any
 ): Promise<ChannelData> {
-	if (isConfigPath && encryptedDataPath && keyFilePath) {
+	if (isConfigPath && encryptedDataPath && keyFilePath && collectorDataUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
@@ -21,11 +25,12 @@ export async function sendData(
 			const response = await client.write(channelAddress, {
 				payload: payloadData
 			});
+			await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id });
 			return response;
 		} catch (ex: any) {
 			throw ex;
 		}
 	} else {
-		throw Error('One or all of the env variables are not provided: --input_enc, --key_file, --config');
+		throw Error('One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url');
 	}
 }

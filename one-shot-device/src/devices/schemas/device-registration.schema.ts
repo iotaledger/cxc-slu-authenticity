@@ -10,12 +10,6 @@ export class DeviceRegistration extends Document {
 	nonce: string;
 
 	@Prop({ required: true })
-	channelId: string;
-
-	@Prop({ required: true })
-	channelSeed: string;
-
-	@Prop({ required: true })
 	identityKeys: IdentityKeysData;
 }
 
