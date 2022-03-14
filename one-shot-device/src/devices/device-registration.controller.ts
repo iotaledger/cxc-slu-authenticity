@@ -1,5 +1,4 @@
-import { Logger } from '@nestjs/common';
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post, Logger } from '@nestjs/common';
 import { DeviceRegistrationService } from './device-registration.service';
 
 @Controller()
@@ -7,13 +6,13 @@ export class DeviceRegistrationController {
 	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
-	@Post('/create')
-	async createChannelAndIdentity() {
+	@Post('/create/:channelAddress')
+	async createAndSubscribe(@Param('channelAddress') channelAddress: string) {
 		try {
-			const registerDevice = await this.deviceRegistrationService.createChannelAndIdentity();
+			const deviceIdentity = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress);
 			return {
 				success: true,
-				registerDevice
+				registerDevice: deviceIdentity
 			};
 		} catch (err) {
 			this.logger.error('Failed to create user and identity', err.message);
