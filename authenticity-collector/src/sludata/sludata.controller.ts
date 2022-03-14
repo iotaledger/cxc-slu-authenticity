@@ -3,7 +3,7 @@ import { ChannelData } from 'iota-is-sdk/lib';
 import { SluDataDto } from './model/SluDataDto';
 import { SludataService } from './sludata.service';
 
-@Controller('sludata')
+@Controller('controller')
 export class SludataController {
 	constructor(private sludataService: SludataService) {}
 

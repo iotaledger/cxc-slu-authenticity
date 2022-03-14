@@ -6,12 +6,24 @@ import { firstValueFrom } from 'rxjs';
 import { SluDataDto } from './model/SluDataDto';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
+import { IdentityService } from 'src/identity/identity.service';
+import { Identity } from 'src/identity/schemas/identity.schema';
 
 @Injectable()
 export class SludataService {
-	constructor(private configService: ConfigService, private httpService: HttpService) {}
+	constructor(private configService: ConfigService, private httpService: HttpService,
+		private identitiyService: IdentityService) {}
+
+
+	async checkAuthProve(id: string){
+		const expirationTime = this.configService.get('AUTH_PROVE_EXPIRATION');
+		const from = new Date().getMilliseconds() - expirationTime;
+		const identities: Identity[] = await this.identitiyService.getAuthProves(id, from, new Date());
+		if(identities.length === 0) throw new Error(); 
+	}	
 
 	async writeData(data: SluDataDto): Promise<ChannelData> {
+		
 		const mpowerUrl = this.configService.get<string>('MPOWER_CONNECTOR_URL');
 		await firstValueFrom(this.httpService.post(mpowerUrl, data));
 
