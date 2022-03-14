@@ -26,6 +26,7 @@ export class DeviceRegistrationController {
 	async getRegisteredDevice(@Param('nonce') nonce: string) {
 		try {
 			const registeredDeviceInfo = await this.deviceRegistrationService.getRegisteredDevice(nonce);
+			console.log('registeredDeviceInfo: ', registeredDeviceInfo);
 			return {
 				success: true,
 				registeredDeviceInfo

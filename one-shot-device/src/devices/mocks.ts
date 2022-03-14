@@ -65,8 +65,8 @@ export const channelMock: CreateChannelResponse = {
 	seed: 'ewlvmojzfcopwliaufpfhjcidzrlmqhzhdmfxxulctunidgznyhxepzshyjxqpagkhxwrypq'
 };
 
-export const channelAddressMock =
-	'4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:cc6dfcd17a9b3035b95478ae';
+export const authorizedChannelMock =
+	'2e7c282c139005009b07676a0ad19f3ae504324002429116615723f4b1e990e10000000000000000:c748edb3fc0c987b407bc617';
 
 export const subscriptionLinkMock =
 	'4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:bfd017e56cc902e843b5aaa9';

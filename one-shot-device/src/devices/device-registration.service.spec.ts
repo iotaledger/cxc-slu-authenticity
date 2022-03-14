@@ -7,7 +7,7 @@ import { DeviceRegistration, DeviceRegistrationDocument, DeviceRegistrationSchem
 import { Connection, Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { badNonceMock, identityMock, channelMock, channelAddressMock, requestSubscription } from './mocks';
+import { badNonceMock, identityMock, channelMock, authorizedChannelMock, requestSubscription } from './mocks';
 import { RequestSubscriptionResponse } from '../../node_modules/iota-is-sdk/lib/models/types/request-response-bodies';
 import { IdentityJson } from '../../node_modules/iota-is-sdk/lib/models/types/identity';
 
@@ -54,12 +54,12 @@ describe('DeviceRegistrationController', () => {
 		connection = module.get<Connection>(getConnectionToken());
 	};
 
-	it('deviceRegistrationService should be defined', async () => {
+	fit('deviceRegistrationService should be defined', async () => {
 		await moduleCreator(identityMock, channelMock);
 		expect(deviceRegistrationService).toBeDefined();
 	});
 
-	it('deviceRegistrationService should return nonce and subscribe link to a channel', async () => {
+	fit('deviceRegistrationService should return nonce and subscribe link to a channel', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -76,13 +76,13 @@ describe('DeviceRegistrationController', () => {
 				}
 			}
 		);
-		const result = await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
+		const result = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 
 		expect(result.nonce).not.toBeNull();
 		expect(result.nonce.length).toEqual(36);
 	});
 
-	it('deviceRegistrationService should return error for a null request subscriptionLink', async () => {
+	fit('deviceRegistrationService should return error for a null request subscriptionLink', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -95,13 +95,13 @@ describe('DeviceRegistrationController', () => {
 			}
 		);
 		try {
-			await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
+			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		} catch (err) {
 			expect(err.message).toBe('Could not subscribe your device to the channel.');
 		}
 	});
 
-	it('deviceRegistrationService should return error for a null identity value', async () => {
+	fit('deviceRegistrationService should return error for a null identity value', async () => {
 		await moduleCreator(
 			{
 				create: () => null
@@ -119,13 +119,13 @@ describe('DeviceRegistrationController', () => {
 			}
 		);
 		try {
-			await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
+			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		} catch (err) {
 			expect(err.message).toBe('Could not create the device identity.');
 		}
 	});
 
-	it('should validate the DTO and save device identity to MongoDB', async () => {
+	fit('should validate the DTO and save device identity to MongoDB', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -142,12 +142,12 @@ describe('DeviceRegistrationController', () => {
 				}
 			}
 		);
-		const createMongoDocument = await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
+		const createMongoDocument = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		const savedDevice = await deviceRegistrationModel.find({});
 		expect(savedDevice[0].nonce).toStrictEqual(createMongoDocument.nonce);
 	});
 
-	it('should fail to remove device when provided with non existing nonce', async () => {
+	fit('should fail to remove device when provided with non existing nonce', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -165,14 +165,14 @@ describe('DeviceRegistrationController', () => {
 			}
 		);
 		try {
-			await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
+			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 			await deviceRegistrationService.getRegisteredDevice(badNonceMock);
 		} catch (err) {
 			expect(err.message).toBe('Could not find document in the collection.');
 		}
 	});
 
-	it('getDeviceRegistration should find an item, delete and return it', async () => {
+	fit('getDeviceRegistration should find an item, delete and return it', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -189,7 +189,7 @@ describe('DeviceRegistrationController', () => {
 				}
 			}
 		);
-		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(channelAddressMock);
+		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
 		expect(deleteDeviceResult).toMatchObject(registeredDevice);
 		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });

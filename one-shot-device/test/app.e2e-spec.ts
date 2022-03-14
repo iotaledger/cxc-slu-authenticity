@@ -13,7 +13,7 @@ import {
 } from '../../one-shot-device/src/devices/schemas/device-registration.schema';
 import { CreateDeviceRegistrationDto as dto } from '../src/devices/dto/create-device-registration.dto';
 import { deviceStubData } from './stubs/device.stubs';
-import { channelAddressMock } from './../src/devices/mocks';
+import { authorizedChannelMock } from './../src/devices/mocks';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 jest.setTimeout(40000);
@@ -28,7 +28,7 @@ describe('AppController (e2e)', () => {
 
 	const createDevice: dto | any = {
 		nonce: deviceStubData().nonce,
-		channelId: deviceStubData().channelId,
+		channelId: deviceStubData().subscriptionLink,
 		channelSeed: deviceStubData().channelSeed,
 		identityKeys: deviceStubData().identityKeys
 	};
@@ -74,10 +74,10 @@ describe('AppController (e2e)', () => {
 		app.close();
 	});
 
-	it('/create (POST) it should create channel, device identity and nonce', async () => {
-		console.log('createDevice: ', createDevice);
+	fit('/create (POST) it should create channel, device identity and nonce', async () => {
 		jest.spyOn(httpService, 'post').mockReturnValue(createDevice);
-		const response = await request(httpServer).post(`/create/:${channelAddressMock}`).send(createDevice);
+		const response = await request(httpServer).post(`/create/:${authorizedChannelMock}`).send(createDevice);
+		console.log('response: ', response);
 		expect(response.status).toBe(201);
 
 		const savedDevice = await deviceRegistrationModel.findOne({ nonce }, { _id: 0 });

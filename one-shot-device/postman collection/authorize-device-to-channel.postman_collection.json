@@ -15,14 +15,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{is_url}}/authentication/prove-ownership/{{manager_id}}?api-key={{api-key}}",
-							"host": [
-								"{{is_url}}"
-							],
-							"path": [
-								"authentication",
-								"prove-ownership",
-								"{{manager_id}}"
-							],
+							"host": ["{{is_url}}"],
+							"path": ["authentication", "prove-ownership", "{{manager_id}}"],
 							"query": [
 								{
 									"key": "api-key",
@@ -55,14 +49,8 @@
 						},
 						"url": {
 							"raw": "{{is_url}}/authentication/prove-ownership/{{manager_id}}?api-key={{api-key}}",
-							"host": [
-								"{{is_url}}"
-							],
-							"path": [
-								"authentication",
-								"prove-ownership",
-								"{{manager_id}}"
-							],
+							"host": ["{{is_url}}"],
+							"path": ["authentication", "prove-ownership", "{{manager_id}}"],
 							"query": [
 								{
 									"key": "api-key",
@@ -105,13 +93,8 @@
 						},
 						"url": {
 							"raw": "{{is_url}}/channels/create?api-key={{api-key}}",
-							"host": [
-								"{{is_url}}"
-							],
-							"path": [
-								"channels",
-								"create"
-							],
+							"host": ["{{is_url}}"],
+							"path": ["channels", "create"],
 							"query": [
 								{
 									"key": "api-key",
@@ -149,13 +132,8 @@
 						},
 						"url": {
 							"raw": "{{is_url}}/identities/create?api-key={{api-key}}",
-							"host": [
-								"{{is_url}}"
-							],
-							"path": [
-								"identities",
-								"create"
-							],
+							"host": ["{{is_url}}"],
+							"path": ["identities", "create"],
 							"query": [
 								{
 									"key": "api-key",
@@ -184,13 +162,8 @@
 						],
 						"url": {
 							"raw": "{{one_shot_device_url}}/create/e83d047377{{authorized_channel}}",
-							"host": [
-								"{{one_shot_device_url}}"
-							],
-							"path": [
-								"create",
-								"e83d047377{{authorized_channel}}"
-							]
+							"host": ["{{one_shot_device_url}}"],
+							"path": ["create", "e83d047377{{authorized_channel}}"]
 						}
 					},
 					"response": []
@@ -202,13 +175,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{one_shot_device_url}}/bootstrap/{{nonce}}",
-							"host": [
-								"{{one_shot_device_url}}"
-							],
-							"path": [
-								"bootstrap",
-								"{{nonce}}"
-							]
+							"host": ["{{one_shot_device_url}}"],
+							"path": ["bootstrap", "{{nonce}}"]
 						}
 					},
 					"response": []
@@ -221,25 +189,21 @@
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		},
 		{
 			"listen": "test",
 			"script": {
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		}
 	],
 	"variable": [
 		{
 			"key": "manager_jwt",
-			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6QlNFTlkxdjNzTXNFUG1tYng4akV5NWhEbTRzNm55aUVrOUFhcGhBNTE4RXMiLCJwdWJsaWNLZXkiOiJIUlpoYlpmWkgya1Rhc1BBcDNkcUNuMnVXdkJzS0xTQ29GOW5xZk5YczUzZSIsInVzZXJuYW1lIjoib25lLXNob3QtbWFuYWdlci0xMTEiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xNFQxMDo0NToxNiswMTowMCIsInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzI1MTQxNCwiZXhwIjoxNjQ3MzM3ODE0fQ.cTBtWyEtLl01gd24Hk-O8Tv4kNUE6UDfy9vng_K2bls",
+			"value": "",
 			"type": "string"
 		},
 		{
