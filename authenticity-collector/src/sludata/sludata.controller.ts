@@ -10,6 +10,8 @@ export class SludataController {
 	@Post('data')
 	@UsePipes(new ValidationPipe({ transform: true }))
 	async writeData(@Body() sluData: SluDataDto): Promise<ChannelData> {
-		return await this.sludataService.writeData(sluData);
+		await this.sludataService.checkAuthProve(sluData.deviceId);
+		await this.sludataService.sendDataToConnector(sluData);
+		return await this.sludataService.writeDataToChannel(sluData);
 	}
 }

@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiVersion, ChannelClient, ChannelData, ChannelInfo, ClientConfig } from 'iota-is-sdk/lib';
 import { firstValueFrom } from 'rxjs';
@@ -15,18 +15,19 @@ export class SludataService {
 		private identitiyService: IdentityService) {}
 
 
-	async checkAuthProve(id: string){
+	async checkAuthProve(id: string): Promise<void>{
 		const expirationTime = this.configService.get('AUTH_PROVE_EXPIRATION');
 		const from = new Date().getMilliseconds() - expirationTime;
 		const identities: Identity[] = await this.identitiyService.getAuthProves(id, from, new Date());
-		if(identities.length === 0) throw new Error(); 
+		if(identities.length === 0) throw new BadRequestException('authentication prove expired'); 
 	}	
 
-	async writeData(data: SluDataDto): Promise<ChannelData> {
-		
+	async sendDataToConnector(data: SluDataDto): Promise<void>{
 		const mpowerUrl = this.configService.get<string>('MPOWER_CONNECTOR_URL');
 		await firstValueFrom(this.httpService.post(mpowerUrl, data));
+	}
 
+	async writeDataToChannel(data: SluDataDto): Promise<ChannelData> {
 		const collectorIdPath = this.configService.get<string>('COLLECTOR_ID_PATH');
 		const collectorJson = fs.readFileSync(collectorIdPath, 'utf-8');
 		const collector = JSON.parse(collectorJson);
