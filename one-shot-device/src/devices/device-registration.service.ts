@@ -121,7 +121,6 @@ export class DeviceRegistrationService {
 
 		await this.createSluStatus(id, channelAddress);
 
-		console.log(nonce);
 		return { nonce };
 	}
 
