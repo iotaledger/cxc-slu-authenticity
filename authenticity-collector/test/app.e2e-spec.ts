@@ -70,10 +70,10 @@ describe('AppController (e2e)', () => {
 		await new identityModel(identity3).save();
 	});
 
-	describe('/identity', () => {
+	describe('/collector (Authentication)', () => {
 		it('/prove (GET)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/identity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-28'
+				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-28'
 			);
 
 			let device = body[0];
@@ -89,7 +89,7 @@ describe('AppController (e2e)', () => {
 
 		it('/prove (GET - Invalid time value)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/identity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=202201-27&to=2022-01-28'
+				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=202201-27&to=2022-01-28'
 			);
 
 			expect(status).toBe(500);
@@ -98,7 +98,7 @@ describe('AppController (e2e)', () => {
 
 		it('/prove (GET - Empty list)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/identity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-25&to=2022-01-25'
+				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-25&to=2022-01-25'
 			);
 
 			expect(status).toBe(200);
@@ -107,7 +107,7 @@ describe('AppController (e2e)', () => {
 
 		it('/prove (GET - should return two entries)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/identity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-29'
+				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-29'
 			);
 
 			let device = body[0];
@@ -148,7 +148,7 @@ describe('AppController (e2e)', () => {
 
 			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
-			let { status, body } = await request(app.getHttpServer()).post('/identity/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
 
 			let savedIdentity: Identity = {
 				did: body.did,
@@ -179,7 +179,7 @@ describe('AppController (e2e)', () => {
 
 			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
-			let { status, body } = await request(app.getHttpServer()).post('/identity/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Prove failed');
@@ -204,7 +204,7 @@ describe('AppController (e2e)', () => {
 
 			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
-			let { status, body } = await request(app.getHttpServer()).post('/identity/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Verification failed: wrong signature');
@@ -216,7 +216,7 @@ describe('AppController (e2e)', () => {
 				timestamp: '2021-11-27T08:4733Z',
 				signature: '2MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNm'
 			};
-			let { status, body } = await request(app.getHttpServer()).post('/identity/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Validation failed');
@@ -228,20 +228,20 @@ describe('AppController (e2e)', () => {
 				timestamp: '2022-01-27T13:04:18.559Z',
 				signature: '2MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNm'
 			};
-			let { status, body } = await request(app.getHttpServer()).post('/identity/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Validation failed');
 		});
 	});
 
-	describe('/sludata', () => {
+	describe('/collector (Slu data)', () => {
 		it('/data (POST)', async () => {
 			const sluDataBody = {
 				payload: { temperature: '60 degrees' },
 				deviceId: 'did:iota:123456'
 			};
-			const { status, body } = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
+			const { status, body } = await request(app.getHttpServer()).post('/collector/data').send(sluDataBody);
 			expect(status).toBe(201);
 			expect(body.log.payload.deviceId).toBe('did:iota:123456');
 			//SHA256 length in hex format
@@ -254,7 +254,7 @@ describe('AppController (e2e)', () => {
 				payload: { temperature: '60 degrees' },
 				deviceId: 'dd:iota:123456'
 			};
-			const { status, body } = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
+			const { status, body } = await request(app.getHttpServer()).post('/collector/data').send(sluDataBody);
 			expect(status).toBe(400);
 			expect(body.message[0]).toEqual('deviceId must contain a did:iota: string');
 		});
@@ -264,7 +264,7 @@ describe('AppController (e2e)', () => {
 				payload: '',
 				deviceId: 'dd:iota:123456'
 			};
-			const { status, body } = await request(app.getHttpServer()).post('/sludata/data').send(sluDataBody);
+			const { status, body } = await request(app.getHttpServer()).post('/collector/data').send(sluDataBody);
 			expect(status).toBe(400);
 			expect(body.message[0]).toEqual('payload should not be empty');
 		});
