@@ -31,7 +31,7 @@ describe('Encrypt data', () => {
 		const body = await decryptData(encryptedDataPath, keyFilePath);
 		const result = await sendAuthProof(body!, collectorUrl);
 
-		expect(axios.post).toBeCalledWith('http://localhost:4000/identity/', body);
+		expect(axios.post).toBeCalledWith('http://localhost:4000/collector/', body);
 		expect(result?.status).toBe(200);
 	});
 
