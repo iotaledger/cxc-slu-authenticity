@@ -9,10 +9,10 @@ export async function sendData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined,
 	isConfigPath: string | undefined,
-	collectorDataUrl: string | undefined,
+	collectorBaseUrl: string | undefined,
 	payloadData: any
 ): Promise<ChannelData> {
-	if (isConfigPath && encryptedDataPath && keyFilePath && collectorDataUrl) {
+	if (isConfigPath && encryptedDataPath && keyFilePath && collectorBaseUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
@@ -25,7 +25,7 @@ export async function sendData(
 			const response = await client.write(channelAddress, {
 				payload: payloadData
 			});
-			await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id });
+			await axios.post(collectorBaseUrl + '/data', { payload: payloadData, deviceId: identity.doc.id });
 			return response;
 		} catch (ex: any) {
 			throw ex;

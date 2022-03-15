@@ -16,7 +16,7 @@ const argv = yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('interval', { describe: 'The interval in millisecond during requests to the collector microservice are done.' })
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
-			.option('collector_prove_url', { describe: 'The url of the collector microservice for sending authentication prove.' })
+			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 	)
 	.command('bootstrap', 'Requests the nonce from device registration microservice and saves it encrypted on the device.', (yargs) => {
 		yargs
@@ -30,11 +30,7 @@ const argv = yargs
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
 			.option('config', { describe: 'Location of configuration file for the integration service.' })
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel' })
-			.option('collector_data_url', { describe: 'The url of the collector-microservice where the sensor data is send to' })
-			.option('payload', {
-				default: '{"temperature": "30 degree"}',
-				describe: 'The payload which is send from the device to the channel in format: {unit: value}'
-			})
+			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 	)
 	.help().argv;
 
@@ -43,12 +39,11 @@ export async function execScript(argv: any) {
 	const inputData: string | undefined = process.env.npm_config_input;
 	const destination: string | undefined = process.env.npm_config_dest;
 	const interval: string | undefined = process.env.npm_config_interval;
-	const collectorProveUrl: string | undefined = process.env.npm_config_collector_prove_url;
+	const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
 	const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
-	const collectorDataUrl: string | undefined = process.env.npm_config_collector_data_url;
-	const payload: any = process.env.npm_config_payload;
+
 	if (argv._.includes('encrypt')) {
 		try {
 			encryptData(keyFilePath, inputData, destination);
@@ -60,7 +55,7 @@ export async function execScript(argv: any) {
 		try {
 			const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
 			if (interval) {
-				setInterval(() => sendAuthProof(decryptedData!, collectorProveUrl), Number(interval));
+				setInterval(() => sendAuthProof(decryptedData!, collectorBaseUrl), Number(interval));
 			} else {
 				throw Error('No --interval in ms provided.');
 			}
@@ -77,17 +72,17 @@ export async function execScript(argv: any) {
 		}
 	} else if (argv._.includes('send-data')) {
 		try {
-			if (interval && payload) {
+			if (interval) {
 				let payloadObject: any;
 				try {
-					payloadObject = JSON.parse(payload);
+					payloadObject = JSON.parse('{"temperature": "100 degree"}');
 				} catch (e: any) {
 					console.error(e.message);
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
-				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorDataUrl, payloadObject), Number(interval));
+				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject), Number(interval));
 			} else {
-				throw Error('No --interval in ms or no --payload provided.');
+				throw Error('No --interval in ms.');
 			}
 		} catch (ex: any) {
 			console.error(ex.message);
