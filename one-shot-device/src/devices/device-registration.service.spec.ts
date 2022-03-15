@@ -8,8 +8,8 @@ import { Connection, Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { badNonceMock, identityMock, channelMock, authorizedChannelMock, requestSubscription } from './mocks';
-import { RequestSubscriptionResponse } from '../../node_modules/iota-is-sdk/lib/models/types/request-response-bodies';
-import { IdentityJson } from '../../node_modules/iota-is-sdk/lib/models/types/identity';
+import { RequestSubscriptionResponse } from 'iota-is-sdk/lib/models/types/request-response-bodies';
+import { IdentityJson } from 'iota-is-sdk/lib/models/types/identity';
 
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationService: DeviceRegistrationService;

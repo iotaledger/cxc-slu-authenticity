@@ -30,9 +30,8 @@ export class DeviceRegistrationService {
 	private readonly requestConfig: AxiosRequestConfig<any> = {
 		headers: {
 			'Content-Type': 'application/json',
-			// 'X-API-KEY': process.env.IS_API_KEY
-			// 'X-API-KEY': this.configService.get('IS_API_KEY')
-			'X-API-KEY': '94F5BA49-12A6-4E45-A487-BF91C442276D'
+			'X-API-KEY': this.configService.get('IS_API_KEY')
+			// 'X-API-KEY': '94F5BA49-12A6-4E45-A487-BF91C442276D'
 		}
 	};
 
@@ -82,23 +81,12 @@ export class DeviceRegistrationService {
 	}
 	private async updateSluStatus(id: string) {
 		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
-		// const body = {
-		// 	status: 'installed'
-		// };
-
-		// const updateSluStatus = await firstValueFrom(
-		// 	this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
-		// );
+		const body = {
+			status: 'installed'
+		};
 
 		const updateSluStatus = await firstValueFrom(
-			this.httpService.put(
-				`
-			${sluStatusEndpoint}/${id}/'installed'`,
-				{
-					status: 'installed'
-				},
-				this.requestConfig
-			)
+			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
 		);
 
 		if (updateSluStatus === null) {
@@ -139,14 +127,15 @@ export class DeviceRegistrationService {
 
 	async getRegisteredDevice(nonce: string) {
 		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+		const id = deletedDocument.identityKeys.id;
 
 		if (deletedDocument === null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		const id = deletedDocument.identityKeys.id;
 
 		await this.updateSluStatus(id);
+
 		return deletedDocument;
 	}
 }
