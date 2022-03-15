@@ -31,7 +31,6 @@ export class DeviceRegistrationService {
 		headers: {
 			'Content-Type': 'application/json',
 			'X-API-KEY': this.configService.get('IS_API_KEY')
-			// 'X-API-KEY': '94F5BA49-12A6-4E45-A487-BF91C442276D'
 		}
 	};
 

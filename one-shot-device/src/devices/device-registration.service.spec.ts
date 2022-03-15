@@ -17,8 +17,14 @@ describe('DeviceRegistrationController', () => {
 	let module: TestingModule;
 	let mongod: MongoMemoryServer;
 	let connection: Connection;
+	const originalEnv = process.env;
+	// const nodeEnv = `IS_API_KEY = '94F5BA49-12A6-4E45-A487-BF91C44227
 
 	const moduleCreator = async (identityClientMock: IdentityJson | any, subscriptionResponseMock: RequestSubscriptionResponse | any) => {
+		jest.resetModules();
+		process.env = {
+			...originalEnv
+		};
 		module = await Test.createTestingModule({
 			imports: [
 				HttpModule,
@@ -194,10 +200,5 @@ describe('DeviceRegistrationController', () => {
 		expect(deleteDeviceResult).toMatchObject(registeredDevice);
 		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
 		expect(checkForDeleteResult).toStrictEqual([]);
-	});
-
-	afterEach(async () => {
-		connection.close();
-		if (mongod) mongod.stop();
 	});
 });

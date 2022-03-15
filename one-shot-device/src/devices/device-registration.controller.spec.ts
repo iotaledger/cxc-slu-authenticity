@@ -18,20 +18,6 @@ describe('DeviceRegistrationController', () => {
 	let mongod: MongoMemoryServer;
 	let connection: Connection;
 
-	const originalEnv = process.env;
-	// const nodeEnv = `IS_API_KEY = '94F5BA49-12A6-4E45-A487-BF91C442276D`;
-
-	// afterEach(() => {
-	// 	// process.env = originalEnv;
-	// });
-
-	// beforeEach(() => {
-	// 	jest.resetModules();
-	// 	process.env = {
-	// 		...originalEnv
-	// 	};
-	// });
-
 	beforeEach(async () => {
 		module = await Test.createTestingModule({
 			imports: [
@@ -94,7 +80,6 @@ describe('DeviceRegistrationController', () => {
 		const deleteDeviceFromCollection = await deviceRegistrationController.getRegisteredDevice(nonceMock);
 		expect(deleteDeviceFromCollection.registeredDeviceInfo.nonce).toBe(saveDeviceToDb.nonce);
 	});
-
 	afterEach(async () => {
 		module.close();
 		await connection.close();
