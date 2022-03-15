@@ -2,6 +2,7 @@ import fs from 'fs';
 import { ClientConfig, ChannelClient, ChannelData } from 'iota-is-sdk';
 import { createKey, decrypt } from '../vpuf/vpuf';
 import { Axios } from 'axios';
+import { decryptData, sendAuthProof } from 'src/auth-proof/auth-proof';
 
 const axios = new Axios();
 
@@ -10,9 +11,10 @@ export async function sendData(
 	keyFilePath: string | undefined,
 	isConfigPath: string | undefined,
 	collectorDataUrl: string | undefined,
+	collectorUrl: string | undefined,
 	payloadData: any
-): Promise<ChannelData> {
-	if (isConfigPath && encryptedDataPath && keyFilePath && collectorDataUrl) {
+): Promise<void> {
+	if (isConfigPath && encryptedDataPath && keyFilePath && collectorDataUrl && collectorUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
@@ -22,15 +24,20 @@ export async function sendData(
 		try {
 			const client = new ChannelClient(clientConfig);
 			await client.authenticate(identity.doc.id, identity.key.secret);
-			const response = await client.write(channelAddress, {
+			await client.write(channelAddress, {
 				payload: payloadData
 			});
-			await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id });
-			return response;
+			await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id }, {headers: {'authorisation': 'Bearer' + 'string'}});
 		} catch (ex: any) {
-			throw ex;
+			if(ex.message.equals('authentication prove expired')){
+				const body = await decryptData(encryptedData, keyFilePath);
+				await sendAuthProof(body, collectorUrl);
+				await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id });
+			}else{
+				throw ex;
+			}
 		}
 	} else {
-		throw Error('One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url');
+		throw Error('One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url, --collector_url');
 	}
 }

@@ -31,6 +31,7 @@ const argv = yargs
 			.option('config', { describe: 'Location of configuration file for the integration service.' })
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel' })
 			.option('collector_data_url', { describe: 'The url of the collector-microservice where the sensor data is send to' })
+			.option('collector_url', { describe: 'The url of the collector microservice.' })
 			.option('payload', {
 				default: '{"temperature": "30 degree"}',
 				describe: 'The payload which is send from the device to the channel in format: {unit: value}'
@@ -85,7 +86,7 @@ export async function execScript(argv: any) {
 					console.error(e.message);
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
-				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorDataUrl, payloadObject), Number(interval));
+				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorDataUrl, collectorUrl, payloadObject), Number(interval));
 			} else {
 				throw Error('No --interval in ms or no --payload provided.');
 			}

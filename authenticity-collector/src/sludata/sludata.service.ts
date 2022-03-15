@@ -14,7 +14,6 @@ export class SludataService {
 	constructor(private configService: ConfigService, private httpService: HttpService,
 		private identitiyService: IdentityService) {}
 
-
 	async checkAuthProve(id: string): Promise<void>{
 		const expirationTime = this.configService.get('AUTH_PROVE_EXPIRATION');
 		const from = new Date().getMilliseconds() - expirationTime;

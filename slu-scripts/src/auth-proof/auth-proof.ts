@@ -17,7 +17,7 @@ export function encryptData(keyFilePath: string | undefined, inputData: string |
 export async function decryptData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined
-): Promise<{ did: string; timestamp: Date; signature: string } | undefined> {
+): Promise<{ did: string; timestamp: Date; signature: string }> {
 	if (encryptedDataPath && keyFilePath) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = vpuf.createKey(keyFilePath);
@@ -46,10 +46,10 @@ export async function sendAuthProof(
 		signature: string;
 	},
 	collectorUrl: string | undefined
-): Promise<AxiosResponse<any, any> | undefined> {
+): Promise<AxiosResponse<any, any>> {
 	if (collectorUrl) {
 		return await axios.post(collectorUrl, body);
 	} else {
-		throw Error('Collector url for post request is not provided');
+		throw Error('--collector_url for post request is not provided');
 	}
 }
