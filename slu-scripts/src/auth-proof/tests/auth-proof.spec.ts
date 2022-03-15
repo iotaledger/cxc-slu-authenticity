@@ -7,7 +7,7 @@ jest.mock('axios');
 const keyFilePath: string | undefined = process.env.npm_config_key_file;
 const inputDataPath: string | undefined = process.env.npm_config_input;
 const destinationPath: string | undefined = process.env.npm_config_dest;
-const collectorUrl: string | undefined = process.env.npm_config_collector_url;
+const collectorProveUrl: string | undefined = process.env.npm_config_collector_prove_url;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 describe('Encrypt data', () => {
 	it('should encrypt data', () => {
@@ -29,9 +29,9 @@ describe('Encrypt data', () => {
 
 		encryptData(keyFilePath, inputDataPath, destinationPath);
 		const body = await decryptData(encryptedDataPath, keyFilePath);
-		const result = await sendAuthProof(body!, collectorUrl);
+		const result = await sendAuthProof(body!, collectorProveUrl);
 
-		expect(axios.post).toBeCalledWith('http://localhost:4000/collector/', body);
+		expect(axios.post).toBeCalledWith('http://localhost:3030/collector/prove', body);
 		expect(result?.status).toBe(200);
 	});
 

@@ -16,7 +16,7 @@ const argv = yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('interval', { describe: 'The interval in millisecond during requests to the collector microservice are done.' })
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
-			.option('collector_url', { describe: 'The url of the collector microservice.' })
+			.option('collector_prove_url', { describe: 'The url of the collector microservice for sending authentication prove.' })
 	)
 	.command('bootstrap', 'Requests the nonce from device registration microservice and saves it encrypted on the device.', (yargs) => {
 		yargs
@@ -43,7 +43,7 @@ export async function execScript(argv: any) {
 	const inputData: string | undefined = process.env.npm_config_input;
 	const destination: string | undefined = process.env.npm_config_dest;
 	const interval: string | undefined = process.env.npm_config_interval;
-	const collectorUrl: string | undefined = process.env.npm_config_collector_url;
+	const collectorProveUrl: string | undefined = process.env.npm_config_collector_prove_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
 	const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
@@ -60,7 +60,7 @@ export async function execScript(argv: any) {
 		try {
 			const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
 			if (interval) {
-				setInterval(() => sendAuthProof(decryptedData!, collectorUrl), Number(interval));
+				setInterval(() => sendAuthProof(decryptedData!, collectorProveUrl), Number(interval));
 			} else {
 				throw Error('No --interval in ms provided.');
 			}
