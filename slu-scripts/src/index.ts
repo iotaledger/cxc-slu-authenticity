@@ -14,7 +14,7 @@ const argv = yargs
 	.command('send-proof', 'Decrypt data and send auth proof of device', (yargs) =>
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
-			.option('interval', { describe: 'The interval in millisecond during requests to the collector microservice are done.' })
+			.option('interval', { describe: 'The interval in millisecond during requests to the collector microservice are done.', default: '600000' })
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 	)
@@ -29,7 +29,7 @@ const argv = yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
 			.option('config', { describe: 'Location of configuration file for the integration service.' })
-			.option('interval', { describe: 'The interval in millisecond during data is written to the channel' })
+			.option('interval', { describe: 'The interval in millisecond during data is written to the channel', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 	)
 	.help().argv;
