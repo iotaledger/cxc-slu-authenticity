@@ -10,11 +10,10 @@ export async function sendData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined,
 	isConfigPath: string | undefined,
-	collectorDataUrl: string | undefined,
-	collectorUrl: string | undefined,
+	collectorBaseUrl: string | undefined,
 	payloadData: any
 ): Promise<void> {
-	if (isConfigPath && encryptedDataPath && keyFilePath && collectorDataUrl && collectorUrl) {
+	if (isConfigPath && encryptedDataPath && keyFilePath && collectorBaseUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
@@ -27,12 +26,12 @@ export async function sendData(
 			await client.write(channelAddress, {
 				payload: payloadData
 			});
-			await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id }, {headers: {'authorisation': 'Bearer' + 'string'}});
+			await axios.post(collectorBaseUrl + '/data', { payload: payloadData, deviceId: identity.doc.id }, {headers: {'authorisation': 'Bearer' + 'string'}});
 		} catch (ex: any) {
 			if(ex.message.equals('authentication prove expired')){
 				const body = await decryptData(encryptedData, keyFilePath);
-				await sendAuthProof(body, collectorUrl);
-				await axios.post(collectorDataUrl, { payload: payloadData, deviceId: identity.doc.id });
+				await sendAuthProof(body, collectorBaseUrl + '/prove');
+				await axios.post(collectorBaseUrl + '/data', { payload: payloadData, deviceId: identity.doc.id });
 			}else{
 				throw ex;
 			}
