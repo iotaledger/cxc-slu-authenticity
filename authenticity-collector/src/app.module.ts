@@ -19,6 +19,6 @@ import { SluAuthorizationMiddleware } from './middleware/slu-authorization.middl
 })
 export class AppModule {
 	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(SluAuthorizationMiddleware).forRoutes('controller/data');
+		consumer.apply(SluAuthorizationMiddleware).forRoutes('collector/data');
 	}
 }

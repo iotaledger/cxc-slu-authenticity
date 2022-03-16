@@ -22,7 +22,8 @@ const argv = yargs
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
-			.option('reqistration_url', { describe: 'The url of device registration microservice.' });
+			.option('reqistration_url', { describe: 'The url of device registration microservice.' })
+			.option('nonce', {describe: 'Nonce of the device'});
 	})
 	.command('send-data', 'Send sensor data to integration service', (yargs) =>
 		yargs
@@ -31,6 +32,8 @@ const argv = yargs
 			.option('config', { describe: 'Location of configuration file for the integration service.' })
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
+			.option('is_url', {describe: "The integration services url"})
+			.option('api_key', {describe: 'Api key for integration services'})
 	)
 	.help().argv;
 
@@ -43,6 +46,9 @@ export async function execScript(argv: any) {
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
 	const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
+	const is: string | undefined = process.env.npm_config_is_url;
+	const apiKey: string | undefined = process.env.npm_config_api_key;
+	const nonce: string | undefined = process.env.npm_config_nonce;
 
 	if (argv._.includes('encrypt')) {
 		try {
@@ -65,7 +71,7 @@ export async function execScript(argv: any) {
 		}
 	} else if (argv._.includes('bootstrap')) {
 		try {
-			await bootstrap(registrationUrl, keyFilePath, destination);
+			await bootstrap(registrationUrl, keyFilePath, destination, nonce);
 		} catch (ex: any) {
 			console.error(ex.message);
 			process.exit(1);
@@ -80,7 +86,7 @@ export async function execScript(argv: any) {
 					console.error(e.message);
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
-				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject), Number(interval));
+				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject, is, apiKey ), Number(interval));
 			} else {
 				throw Error('No --interval in ms.');
 			}

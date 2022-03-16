@@ -1,11 +1,11 @@
 import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class SluAuthorizationMiddleware implements NestMiddleware {
 
-  constructor(private configService: ConfigService){}
+  constructor(private configService: ConfigService) { }
 
   use(req: any, res: any, next: () => void) {
 

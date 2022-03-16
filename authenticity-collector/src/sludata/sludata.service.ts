@@ -16,7 +16,8 @@ export class SludataService {
 
 	async checkAuthProve(id: string): Promise<void>{
 		const expirationTime = this.configService.get('AUTH_PROVE_EXPIRATION');
-		const from = new Date().getMilliseconds() - expirationTime;
+		const from = new Date();
+		from.setMilliseconds(from.getMilliseconds() - expirationTime);
 		const identities: Identity[] = await this.identitiyService.getAuthProves(id, from, new Date());
 		if(identities.length === 0) throw new BadRequestException('authentication prove expired'); 
 	}	

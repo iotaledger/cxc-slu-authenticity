@@ -6,3 +6,6 @@ process.env.npm_config_collector_base_url = 'http://localhost:3030/collector';
 process.env.npm_config_interval = '1000';
 process.env.npm_config_registration_url = 'http://localhost:3333/bootstrap/';
 process.env.npm_config_is_config_file = './test-data/is-configuration.json';
+process.env.npm_config_is_url = "any kind of url";
+process.env.npm_config_api_key = "api key";
+process.env.npm_config_nonce = "nonce";
