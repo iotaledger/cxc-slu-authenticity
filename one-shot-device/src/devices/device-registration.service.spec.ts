@@ -121,6 +121,7 @@ describe('DeviceRegistrationController', () => {
 				}
 			}
 		);
+		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(createSluStatusMock);
 		try {
 			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		} catch (err) {
@@ -168,7 +169,7 @@ describe('DeviceRegistrationController', () => {
 			}
 		);
 		try {
-			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock1);
+			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 			await deviceRegistrationService.getRegisteredDevice(badNonceMock);
 		} catch (err) {
 			expect(err.message).toBe('Could not find document in the collection.');
@@ -192,7 +193,7 @@ describe('DeviceRegistrationController', () => {
 				}
 			}
 		);
-		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock1);
+		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
 		expect(deleteDeviceResult).toMatchObject(registeredDevice);
 		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });

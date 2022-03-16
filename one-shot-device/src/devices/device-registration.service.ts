@@ -60,7 +60,7 @@ export class DeviceRegistrationService {
 		return requestSubscription;
 	}
 
-	private async createSluStatus(id: string, channelId: string) {
+	public async createSluStatus(id: string, channelId: string) {
 		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
 
 		const sluStatus = await firstValueFrom(
