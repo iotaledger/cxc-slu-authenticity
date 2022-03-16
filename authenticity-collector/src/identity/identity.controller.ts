@@ -4,7 +4,7 @@ import { IdentityDto } from './models/IdentityDto';
 import { IdentityValidationPipe } from './pipes/identity-validation.pipe';
 import { Identity } from './schemas/identity.schema';
 
-@Controller('identity')
+@Controller('collector')
 export class IdentityController {
 	constructor(private identityService: IdentityService) {}
 

@@ -69,16 +69,18 @@ describe('DeviceRegistrationController', () => {
 	});
 
 	it('should save nonce, channel and device identity to MongoDb', async () => {
-		jest.spyOn(deviceRegistrationService, 'createIdentityAndSubscribe').mockResolvedValue(mockDeviceRegistration);
-		const saveDeviceToDb = await deviceRegistrationController.createAndSubscribe(authorizedChannelMock);
-		expect(saveDeviceToDb.registerDevice).toBe(mockDeviceRegistration);
+		jest.spyOn(deviceRegistrationService, 'createIdentityAndSubscribe').mockResolvedValue({ nonce: nonceMock });
+		const saveDeviceToDb = (await deviceRegistrationController.createAndSubscribe(authorizedChannelMock)) as { nonce: string };
+		expect(saveDeviceToDb.nonce).toBe(nonceMock);
 	});
 
 	it('should delete the device from slu-bootstrap collection ', async () => {
 		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice').mockResolvedValue(mockDeviceRegistration);
 		const saveDeviceToDb = await deviceRegistrationModel.create(mockDeviceRegistration);
-		const deleteDeviceFromCollection = await deviceRegistrationController.getRegisteredDevice(nonceMock);
-		expect(deleteDeviceFromCollection.registeredDeviceInfo.nonce).toBe(saveDeviceToDb.nonce);
+		const deleteDeviceFromCollection = (await deviceRegistrationController.getRegisteredDevice(nonceMock)) as DeviceRegistration;
+
+		expect(deleteDeviceFromCollection.nonce).toBe(saveDeviceToDb.nonce);
+		expect(deleteDeviceFromCollection.channelId).toBe(saveDeviceToDb.channelId);
 	});
 	afterEach(async () => {
 		module.close();
