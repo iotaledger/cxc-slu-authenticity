@@ -1,7 +1,6 @@
 import { Injectable, Logger, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateDeviceRegistrationDto } from './dto/create-device-registration.dto';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
 import { IdentityClient, ChannelClient, AccessRights } from 'iota-is-sdk';
 import { v4 as uuidv4 } from 'uuid';
@@ -40,10 +39,11 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not subscribe your device to the channel.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		const deviceDocument: CreateDeviceRegistrationDto = {
+		const deviceDocument: DeviceRegistration = {
 			nonce: uuidv4(),
 			subscriptionLink: requestSubscription.subscriptionLink,
-			seed: requestSubscription.seed,
+			channelSeed: requestSubscription.seed,
+			channelId: channelAddress,
 			identityKeys: {
 				id: deviceIdentity.doc.id,
 				key: deviceIdentity.key
@@ -55,12 +55,18 @@ export class DeviceRegistrationService {
 		return { nonce: deviceDocument.nonce };
 	}
 
-	async getRegisteredDevice(nonce: string) {
-		const deletedDocument = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
-		if (deletedDocument === null) {
+	async getRegisteredDevice(nonce: string): Promise<DeviceRegistration> {
+		const device = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+		if (device == null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return deletedDocument;
+		return {
+			channelId: device.channelId,
+			channelSeed: device.channelSeed,
+			identityKeys: device.identityKeys,
+			nonce: device.nonce,
+			subscriptionLink: device.subscriptionLink
+		};
 	}
 }
