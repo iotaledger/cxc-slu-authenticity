@@ -1,4 +1,4 @@
-import { Encoding as encoding } from '../../../node_modules/iota-is-sdk/lib/models/schemas/identity';
+import { Encoding as encoding } from 'iota-is-sdk/lib/models/schemas/identity';
 import { IsEnum, IsNotEmpty, IsObject, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 export class IdentityKeyObject {

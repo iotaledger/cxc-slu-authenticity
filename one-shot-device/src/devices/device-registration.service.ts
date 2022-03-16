@@ -119,7 +119,7 @@ export class DeviceRegistrationService {
 		const doc = await this.deviceRegistrationModel.create(deviceDocument);
 		await doc.save();
 
-		const setSluStatus = await this.createSluStatus(id, channelAddress);
+		await this.createSluStatus(id, channelAddress);
 
 		return { nonce };
 	}
