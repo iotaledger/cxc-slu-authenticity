@@ -9,10 +9,10 @@ export class DeviceRegistrationController {
 	@Post('/create/:channelAddress')
 	async createAndSubscribe(@Param('channelAddress') channelAddress: string) {
 		try {
-			const deviceIdentity = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress);
+			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress);
 			return {
 				success: true,
-				registerDevice: deviceIdentity
+				...nonce
 			};
 		} catch (err) {
 			this.logger.error('Failed to create user and identity', err.message);
@@ -28,7 +28,7 @@ export class DeviceRegistrationController {
 			const registeredDeviceInfo = await this.deviceRegistrationService.getRegisteredDevice(nonce);
 			return {
 				success: true,
-				registeredDeviceInfo
+				...registeredDeviceInfo
 			};
 		} catch (err) {
 			this.logger.error('Failed to get user and identity information', err.message);
