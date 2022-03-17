@@ -1,4 +1,4 @@
-process.env.IS_API_KEY = '94F5BA49-12A6-4E45-A487-BF91C442276D';
+process.env.SLU_STATUS_API_KEY = '94F5BA49-12A6-4E45-A487-BF91C442276D';
 
 process.env.MONGO_URL = 'mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false';
 

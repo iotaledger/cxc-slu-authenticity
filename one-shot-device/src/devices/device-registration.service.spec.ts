@@ -7,12 +7,9 @@ import { DeviceRegistration, DeviceRegistrationDocument, DeviceRegistrationSchem
 import { Model, Connection } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { badNonceMock, identityMock, channelMock, authorizedChannelMock, requestSubscription, updateSluStatusMock } from './mocks';
+import { badNonceMock, identityMock, channelMock, authorizedChannelMock, requestSubscription } from './mocks';
 import { RequestSubscriptionResponse } from 'iota-is-sdk/lib/models/types/request-response-bodies';
 import { IdentityJson } from 'iota-is-sdk/lib/models/types/identity';
-import axios, { AxiosRequestConfig } from 'axios';
-
-jest.mock('axios');
 
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationService: DeviceRegistrationService;
@@ -30,7 +27,6 @@ describe('DeviceRegistrationController', () => {
 					useFactory: async () => {
 						mongod = await MongoMemoryServer.create();
 						const uri = mongod.getUri();
-						console.log(uri);
 						return {
 							uri: uri
 						};
@@ -202,80 +198,72 @@ describe('DeviceRegistrationController', () => {
 		);
 
 		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
-		const saveDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
-		const savedDevice = await deviceRegistrationModel.find({});
-
-		const requestConfig: AxiosRequestConfig<any> = {
-			headers: {
-				'Content-Type': 'application/json',
-				'X-API-KEY': '94F5BA49-12A6-4E45-A487-BF91C442276D'
-			}
-		};
-
-		const updateStatusSpy = jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockImplementation(() =>
-			axios.post(
-				`http://localhost:3000/status`,
-				{
-					status: 'installed'
-				},
-				requestConfig
-			)
-		);
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		await deviceRegistrationModel.find({});
+		jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
 
 		try {
 			const tryWithBadNonce = await deviceRegistrationService.getRegisteredDevice(badNonceMock);
-			console.log('try with bad: ', tryWithBadNonce);
 		} catch (err) {
 			expect(err.message).toBe('Could not find document in the collection.');
 		}
 	});
 
-	// it('getDeviceRegistration should call updateSluStatus', async () => {
-	// 	await moduleCreator(
-	// 		{
-	// 			create: () => identityMock
-	// 		},
-	// 		{
-	// 			authenticate: () => {
-	// 				identityMock.doc.id, identityMock.key.secret;
-	// 			},
-	// 			requestSubscription: () => {
-	// 				return {
-	// 					subscriptionLink: requestSubscription.subscriptionLink,
-	// 					seed: requestSubscription.seed
-	// 				};
-	// 			}
-	// 		}
-	// 	);
-	// 	const updateSluStatusSpy = jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
-	// 	const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
-	// 	const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
-	// 	expect(updateSluStatusSpy).toHaveBeenCalled();
-	// });
+	it('getDeviceRegistration should call updateSluStatus', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				},
+				requestSubscription: () => {
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
+				}
+			}
+		);
 
-	// it('getDeviceRegistration should find an item, delete and return it', async () => {
-	// 	await moduleCreator(
-	// 		{
-	// 			create: () => identityMock
-	// 		},
-	// 		{
-	// 			authenticate: () => {
-	// 				identityMock.doc.id, identityMock.key.secret;
-	// 			},
-	// 			requestSubscription: () => {
-	// 				return {
-	// 					subscriptionLink: requestSubscription.subscriptionLink,
-	// 					seed: requestSubscription.seed
-	// 				};
-	// 			}
-	// 		}
-	// 	);
-	// 	const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
-	// 	const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
-	// 	expect(deleteDeviceResult).toMatchObject(registeredDevice);
-	// 	const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
-	// 	expect(checkForDeleteResult).toStrictEqual([]);
-	// });
+		const updateSluStatusSpy = jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
+		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
+
+		expect(updateSluStatusSpy).toHaveBeenCalled();
+	});
+
+	it('getDeviceRegistration should find an item, delete and return it', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				},
+				requestSubscription: () => {
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
+				}
+			}
+		);
+
+		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
+		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
+
+		expect(deleteDeviceResult).toMatchObject(registeredDevice);
+		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
+		expect(checkForDeleteResult).toStrictEqual([]);
+	});
 
 	afterEach(async () => {
 		module.close();
