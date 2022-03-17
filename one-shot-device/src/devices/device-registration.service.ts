@@ -29,7 +29,7 @@ export class DeviceRegistrationService {
 	private readonly requestConfig: AxiosRequestConfig<any> = {
 		headers: {
 			'Content-Type': 'application/json',
-			'X-API-KEY': this.configService.get('IS_API_KEY')
+			'X-API-KEY': this.configService.get('SLU_STATUS_API_KEY')
 		}
 	};
 
@@ -64,7 +64,7 @@ export class DeviceRegistrationService {
 
 		const sluStatus = await firstValueFrom(
 			this.httpService.post(
-				`${sluStatusEndpoint}/${id}/${channelId}`,
+				`${sluStatusEndpoint}/status/${id}/${channelId}`,
 				{
 					status: 'created'
 				},
@@ -84,7 +84,7 @@ export class DeviceRegistrationService {
 		};
 
 		const updateSluStatus = await firstValueFrom(
-			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
+			this.httpService.put(`${sluStatusEndpoint}/status/${id}/${body.status}`, body, this.requestConfig)
 		);
 		console.log('udp: updateSluStatus:', updateSluStatus);
 
