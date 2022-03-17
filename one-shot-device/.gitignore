@@ -2,7 +2,7 @@
 .env
 /dist
 node_modules
-/jest/setEnvVars
+jest/setEnvVars.ts
 
 # Logs
 logs
