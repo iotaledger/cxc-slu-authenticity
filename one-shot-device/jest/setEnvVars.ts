@@ -6,6 +6,6 @@ process.env.DB_NAME = 'slu';
 
 process.env.IS_API_URL = 'http://localhost:3099';
 
-process.env.SLU_STATUS_URL = 'http://localhost:3000/status';
+process.env.SLU_STATUS_URL = 'http://localhost:3000';
 
 process.env.PORT = '8080';
