@@ -79,12 +79,16 @@ describe('DeviceRegistrationController', () => {
 	});
 
 	it('should delete the device from slu-bootstrap collection ', async () => {
-		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice').mock;
-		const saveDeviceToDb = await deviceRegistrationModel.create(mockDeviceRegistration);
-		const deleteDeviceFromCollection = (await deviceRegistrationController.getRegisteredDevice(nonceMock)) as DeviceRegistration;
+		const updateSluStatusSpy = jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockImplementation();
+		const saveDeviceToDb = await (await deviceRegistrationModel.create(mockDeviceRegistration)).save();
 
-		expect(deleteDeviceFromCollection.nonce).toBe(saveDeviceToDb.nonce);
-		expect(deleteDeviceFromCollection.channelId).toBe(saveDeviceToDb.channelId);
+		const deleteDeviceFromCollection = (await deviceRegistrationController.getRegisteredDevice(
+			mockDeviceRegistration.nonce
+		)) as DeviceRegistration;
+
+		expect(updateSluStatusSpy).toHaveBeenCalled();
+		expect(deleteDeviceFromCollection.nonce).toBe(mockDeviceRegistration.nonce);
+		expect(deleteDeviceFromCollection.channelId).toBe(mockDeviceRegistration.channelId);
 	});
 
 	afterEach(async () => {
