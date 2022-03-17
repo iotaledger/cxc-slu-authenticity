@@ -127,7 +127,6 @@ export class DeviceRegistrationService {
 
 	async getRegisteredDevice(nonce: string): Promise<DeviceRegistration> {
 		const device = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
-		console.log('device.id: ', device.identityKeys.id);
 		const id = device.identityKeys.id;
 
 		if (device == null) {
