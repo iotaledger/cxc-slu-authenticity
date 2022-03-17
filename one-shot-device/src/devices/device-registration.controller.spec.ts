@@ -86,9 +86,12 @@ describe('DeviceRegistrationController', () => {
 			mockDeviceRegistration.nonce
 		)) as DeviceRegistration;
 
-		expect(updateSluStatusSpy).toHaveBeenCalled();
-		expect(deleteDeviceFromCollection.nonce).toBe(mockDeviceRegistration.nonce);
-		expect(deleteDeviceFromCollection.channelId).toBe(mockDeviceRegistration.channelId);
+		expect(updateSluStatusSpy).toHaveBeenCalledWith(saveDeviceToDb.identityKeys.id);
+		expect(deleteDeviceFromCollection.nonce).toBe(saveDeviceToDb.nonce);
+		expect(deleteDeviceFromCollection.channelId).toBe(saveDeviceToDb.channelId);
+		expect(deleteDeviceFromCollection.channelSeed).toBe(saveDeviceToDb.channelSeed);
+		expect(deleteDeviceFromCollection.identityKeys).toEqual(saveDeviceToDb.identityKeys);
+		expect(deleteDeviceFromCollection.subscriptionLink).toBe(saveDeviceToDb.subscriptionLink);
 	});
 
 	afterEach(async () => {
