@@ -107,7 +107,7 @@ export class DeviceRegistrationService {
 		const { subscriptionLink, seed } = newChannel;
 
 		const deviceDocument: DeviceRegistration = {
-			nonce: uuidv4(),
+			nonce,
 			subscriptionLink: subscriptionLink,
 			channelSeed: seed,
 			channelId: channelAddress,
@@ -127,13 +127,13 @@ export class DeviceRegistrationService {
 
 	async getRegisteredDevice(nonce: string): Promise<DeviceRegistration> {
 		const device = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
-		console.log('device.id: ', device.identityKeys.id);
-		const id = device.identityKeys.id;
 
 		if (device == null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		const id = device.identityKeys.id;
+
 		await this.updateSluStatus(id);
 
 		return {
