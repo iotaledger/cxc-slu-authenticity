@@ -2,7 +2,7 @@
 .env
 /dist
 node_modules
-setEnvVars
+./setEnvVars
 
 # Logs
 logs
