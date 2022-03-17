@@ -74,7 +74,7 @@ describe('AppController (e2e)', () => {
 		app.close();
 	});
 
-	fit('/create (POST) it should create channel, device identity and nonce', async () => {
+	it('/create (POST) it should create channel, device identity and nonce', async () => {
 		jest.spyOn(httpService, 'post').mockReturnValue(createDevice);
 		const response = await request(httpServer).post(`/create/:${authorizedChannelMock}`).send(createDevice);
 		console.log('response: ', response);

@@ -7,9 +7,12 @@ import { DeviceRegistration, DeviceRegistrationDocument, DeviceRegistrationSchem
 import { Model, Connection } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { badNonceMock, identityMock, channelMock, authorizedChannelMock, authorizedChannelMock1, requestSubscription } from './mocks';
+import { badNonceMock, identityMock, channelMock, authorizedChannelMock, requestSubscription, updateSluStatusMock } from './mocks';
 import { RequestSubscriptionResponse } from 'iota-is-sdk/lib/models/types/request-response-bodies';
 import { IdentityJson } from 'iota-is-sdk/lib/models/types/identity';
+import axios, { AxiosRequestConfig } from 'axios';
+
+jest.mock('axios');
 
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationService: DeviceRegistrationService;
@@ -55,12 +58,12 @@ describe('DeviceRegistrationController', () => {
 		connection = module.get<Connection>(getConnectionToken());
 	};
 
-	fit('deviceRegistrationService should be defined', async () => {
+	it('deviceRegistrationService should be defined', async () => {
 		await moduleCreator(identityMock, channelMock);
 		expect(deviceRegistrationService).toBeDefined();
 	});
 
-	fit('deviceRegistrationService should validate the DTO and save device identity to MongoDB then return nonce and subscribe link to a channel', async () => {
+	it('deviceRegistrationService should call createSluStatus', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -77,15 +80,38 @@ describe('DeviceRegistrationController', () => {
 				}
 			}
 		);
+		const createSluStatusSpy = jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		expect(createSluStatusSpy).toHaveBeenCalled();
+	});
+
+	it('deviceRegistrationService should validate the DTO and save device identity to MongoDB then return nonce and subscribe link to a channel', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				},
+				requestSubscription: () => {
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
+				}
+			}
+		);
+
+		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		const createMongoDocument = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 
 		expect(createMongoDocument.nonce).not.toBeNull();
 		expect(createMongoDocument.nonce.length).toEqual(36);
-		const savedDevice = await deviceRegistrationModel.find({});
-		expect(savedDevice[0].nonce).toStrictEqual(createMongoDocument.nonce);
 	});
 
-	fit('deviceRegistrationService should return error for a null request subscriptionLink', async () => {
+	it('deviceRegistrationService should return error for a null request subscriptionLink', async () => {
 		await moduleCreator(
 			{
 				create: () => identityMock
@@ -104,7 +130,7 @@ describe('DeviceRegistrationController', () => {
 		}
 	});
 
-	fit('deviceRegistrationService should return error for a null identity value', async () => {
+	it('deviceRegistrationService should return error for a null identity value', async () => {
 		await moduleCreator(
 			{
 				create: () => null
@@ -121,22 +147,97 @@ describe('DeviceRegistrationController', () => {
 				}
 			}
 		);
-		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(createSluStatusMock);
+
+		let error: Error;
+
 		try {
 			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		} catch (err) {
-			expect(err.message).toBe('Could not create the device identity.');
+			error = err;
+		}
+
+		expect(error?.message).toBe('Could not create the device identity.');
+	});
+
+	it('should validate the DTO and save device identity to MongoDB', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				},
+				requestSubscription: () => {
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
+				}
+			}
+		);
+
+		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		const savedDevice = await deviceRegistrationModel.find({});
+		expect(savedDevice[0].channelId).toStrictEqual(authorizedChannelMock);
+	});
+
+	it('should fail to remove device when provided with non existing nonce', async () => {
+		await moduleCreator(
+			{
+				create: () => identityMock
+			},
+			{
+				authenticate: () => {
+					identityMock.doc.id, identityMock.key.secret;
+				},
+				requestSubscription: () => {
+					return {
+						subscriptionLink: requestSubscription.subscriptionLink,
+						seed: requestSubscription.seed
+					};
+				}
+			}
+		);
+
+		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
+		const saveDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+		const savedDevice = await deviceRegistrationModel.find({});
+
+		const requestConfig: AxiosRequestConfig<any> = {
+			headers: {
+				'Content-Type': 'application/json',
+				'X-API-KEY': '94F5BA49-12A6-4E45-A487-BF91C442276D'
+			}
+		};
+
+		const updateStatusSpy = jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockImplementation(() =>
+			axios.post(
+				`http://localhost:3000/status`,
+				{
+					status: 'installed'
+				},
+				requestConfig
+			)
+		);
+
+		try {
+			const tryWithBadNonce = await deviceRegistrationService.getRegisteredDevice(badNonceMock);
+			console.log('try with bad: ', tryWithBadNonce);
+		} catch (err) {
+			expect(err.message).toBe('Could not find document in the collection.');
 		}
 	});
 
-	// fit('should validate the DTO and save device identity to MongoDB', async () => {
+	// it('getDeviceRegistration should call updateSluStatus', async () => {
 	// 	await moduleCreator(
 	// 		{
 	// 			create: () => identityMock
 	// 		},
 	// 		{
 	// 			authenticate: () => {
-	// 				generateDid(), identityMock.key.secret;
+	// 				identityMock.doc.id, identityMock.key.secret;
 	// 			},
 	// 			requestSubscription: () => {
 	// 				return {
@@ -146,59 +247,35 @@ describe('DeviceRegistrationController', () => {
 	// 			}
 	// 		}
 	// 	);
-	// 	const createMongoDocument = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
-	// 	const savedDevice = await deviceRegistrationModel.find({});
-	// 	expect(savedDevice[0].nonce).toStrictEqual(createMongoDocument.nonce);
+	// 	const updateSluStatusSpy = jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
+	// 	const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+	// 	const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
+	// 	expect(updateSluStatusSpy).toHaveBeenCalled();
 	// });
 
-	fit('should fail to remove device when provided with non existing nonce', async () => {
-		await moduleCreator(
-			{
-				create: () => identityMock
-			},
-			{
-				authenticate: () => {
-					identityMock.doc.id, identityMock.key.secret;
-				},
-				requestSubscription: () => {
-					return {
-						subscriptionLink: requestSubscription.subscriptionLink,
-						seed: requestSubscription.seed
-					};
-				}
-			}
-		);
-		try {
-			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
-			await deviceRegistrationService.getRegisteredDevice(badNonceMock);
-		} catch (err) {
-			expect(err.message).toBe('Could not find document in the collection.');
-		}
-	});
-
-	fit('getDeviceRegistration should find an item, delete and return it', async () => {
-		await moduleCreator(
-			{
-				create: () => identityMock
-			},
-			{
-				authenticate: () => {
-					identityMock.doc.id, identityMock.key.secret;
-				},
-				requestSubscription: () => {
-					return {
-						subscriptionLink: requestSubscription.subscriptionLink,
-						seed: requestSubscription.seed
-					};
-				}
-			}
-		);
-		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
-		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
-		expect(deleteDeviceResult).toMatchObject(registeredDevice);
-		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
-		expect(checkForDeleteResult).toStrictEqual([]);
-	});
+	// it('getDeviceRegistration should find an item, delete and return it', async () => {
+	// 	await moduleCreator(
+	// 		{
+	// 			create: () => identityMock
+	// 		},
+	// 		{
+	// 			authenticate: () => {
+	// 				identityMock.doc.id, identityMock.key.secret;
+	// 			},
+	// 			requestSubscription: () => {
+	// 				return {
+	// 					subscriptionLink: requestSubscription.subscriptionLink,
+	// 					seed: requestSubscription.seed
+	// 				};
+	// 			}
+	// 		}
+	// 	);
+	// 	const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
+	// 	const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
+	// 	expect(deleteDeviceResult).toMatchObject(registeredDevice);
+	// 	const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
+	// 	expect(checkForDeleteResult).toStrictEqual([]);
+	// });
 
 	afterEach(async () => {
 		module.close();

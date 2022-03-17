@@ -77,7 +77,7 @@ export class DeviceRegistrationService {
 			throw new HttpException('Could not connect with SLU-Status Microservice.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	private async updateSluStatus(id: string) {
+	public async updateSluStatus(id: string) {
 		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
 		const body = {
 			status: 'installed'
@@ -86,6 +86,7 @@ export class DeviceRegistrationService {
 		const updateSluStatus = await firstValueFrom(
 			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
 		);
+		console.log('udp: updateSluStatus:', updateSluStatus);
 
 		if (updateSluStatus === null) {
 			this.logger.error('Failed connecting with SLU-Status Microservice to update Slu status');
@@ -126,7 +127,9 @@ export class DeviceRegistrationService {
 
 	async getRegisteredDevice(nonce: string): Promise<DeviceRegistration> {
 		const device = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
+		console.log('device.id: ', device.identityKeys.id);
 		const id = device.identityKeys.id;
+
 		if (device == null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);

@@ -18,6 +18,10 @@ describe('DeviceRegistrationController', () => {
 	let mongod: MongoMemoryServer;
 	let connection: Connection;
 
+	afterEach(() => {
+		module.close();
+	});
+
 	beforeEach(async () => {
 		module = await Test.createTestingModule({
 			imports: [
@@ -75,15 +79,15 @@ describe('DeviceRegistrationController', () => {
 	});
 
 	it('should delete the device from slu-bootstrap collection ', async () => {
-		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice').mockResolvedValue(mockDeviceRegistration);
+		jest.spyOn(deviceRegistrationService, 'getRegisteredDevice').mock;
 		const saveDeviceToDb = await deviceRegistrationModel.create(mockDeviceRegistration);
 		const deleteDeviceFromCollection = (await deviceRegistrationController.getRegisteredDevice(nonceMock)) as DeviceRegistration;
 
 		expect(deleteDeviceFromCollection.nonce).toBe(saveDeviceToDb.nonce);
 		expect(deleteDeviceFromCollection.channelId).toBe(saveDeviceToDb.channelId);
 	});
+
 	afterEach(async () => {
-		module.close();
 		await connection.close();
 		if (mongod) mongod.stop();
 	});
