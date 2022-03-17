@@ -107,7 +107,7 @@ export class DeviceRegistrationService {
 		const { subscriptionLink, seed } = newChannel;
 
 		const deviceDocument: DeviceRegistration = {
-			nonce: uuidv4(),
+			nonce,
 			subscriptionLink: subscriptionLink,
 			channelSeed: seed,
 			channelId: channelAddress,
