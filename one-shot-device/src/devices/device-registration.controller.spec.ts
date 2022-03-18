@@ -90,7 +90,7 @@ describe('DeviceRegistrationController', () => {
 
 		expect(updateSluStatusSpy).toHaveBeenCalledWith(saveDeviceToDb.identityKeys.id);
 		expect(deleteDeviceFromCollection.nonce).toBe(saveDeviceToDb.nonce);
-		expect(deleteDeviceFromCollection.channelId).toBe(saveDeviceToDb.channelId);
+		expect(deleteDeviceFromCollection.channelAddress).toBe(saveDeviceToDb.channelAddress);
 		expect(deleteDeviceFromCollection.channelSeed).toBe(saveDeviceToDb.channelSeed);
 		expect(deleteDeviceFromCollection.identityKeys).toEqual(saveDeviceToDb.identityKeys);
 		expect(deleteDeviceFromCollection.subscriptionLink).toBe(saveDeviceToDb.subscriptionLink);

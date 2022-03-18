@@ -43,12 +43,12 @@ export class DeviceRegistrationService {
 		return deviceIdentity;
 	}
 
-	private async subscribeToChannel(id: string, secret: string, channelId: string) {
+	private async subscribeToChannel(id: string, secret: string, channelAddress: string) {
 		// Authenticate device identity
 		await this.userClient.authenticate(id, secret);
 
 		// // subscribe to the channel as user
-		const requestSubscription = await this.userClient.requestSubscription(channelId, {
+		const requestSubscription = await this.userClient.requestSubscription(channelAddress, {
 			accessRights: AccessRights.ReadAndWrite
 		});
 
@@ -59,12 +59,12 @@ export class DeviceRegistrationService {
 		return requestSubscription;
 	}
 
-	public async createSluStatus(id: string, channelId: string) {
+	public async createSluStatus(id: string, channelAddress: string) {
 		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
 
 		const sluStatus = await firstValueFrom(
 			this.httpService.post(
-				`${sluStatusEndpoint}/status/${id}/${channelId}`,
+				`${sluStatusEndpoint}/status/${id}/${channelAddress}`,
 				{
 					status: 'created'
 				},
@@ -109,7 +109,7 @@ export class DeviceRegistrationService {
 			nonce,
 			subscriptionLink: subscriptionLink,
 			channelSeed: seed,
-			channelId: channelAddress,
+			channelAddress,
 			identityKeys: {
 				id,
 				key
@@ -136,7 +136,7 @@ export class DeviceRegistrationService {
 		await this.updateSluStatus(id);
 
 		return {
-			channelId: device.channelId,
+			channelAddress: device.channelAddress,
 			channelSeed: device.channelSeed,
 			identityKeys: device.identityKeys,
 			nonce: device.nonce,

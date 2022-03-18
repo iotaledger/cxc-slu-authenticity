@@ -176,7 +176,7 @@ describe('DeviceRegistrationController', () => {
 		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
 		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		const savedDevice = await deviceRegistrationModel.find({});
-		expect(savedDevice[0].channelId).toStrictEqual(authorizedChannelMock);
+		expect(savedDevice[0].channelAddress).toStrictEqual(authorizedChannelMock);
 	});
 
 	it('should fail to remove device when provided with non existing nonce', async () => {
@@ -260,7 +260,7 @@ describe('DeviceRegistrationController', () => {
 		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock);
 		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
 
-		expect(deleteDeviceResult.channelId).toEqual(registeredDevice.channelAddress);
+		expect(deleteDeviceResult.channelAddress).toEqual(registeredDevice.channelAddress);
 		expect(deleteDeviceResult.identityKeys.id).toEqual(registeredDevice.id);
 		expect(deleteDeviceResult.nonce).toEqual(registeredDevice.nonce);
 		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
