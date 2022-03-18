@@ -22,8 +22,8 @@ export async function decryptData(
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = vpuf.createKey(keyFilePath);
 		const decryptedData = vpuf.decrypt(encryptedData, key);
-		const identity = JSON.parse(decryptedData).identity;
-		const did = identity?.doc?.id;
+		const identity = JSON.parse(decryptedData).identityKeys;
+		const did = identity?.id;
 		const timestamp = new Date();
 		const privateKey = bs58.decode(identity?.key?.secret);
 		const signatureBuffer = await ed.sign(Buffer.from(timestamp.getTime().toString()), privateKey);

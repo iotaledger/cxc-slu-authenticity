@@ -14,6 +14,9 @@ const destinationPath: string | undefined = process.env.npm_config_dest;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
 const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
+const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
+const apiKey: string | undefined = process.env.npm_config_api_key;
+const jwt: string | undefined = process.env.npm_config_jwt;
 
 describe('Encrypt-file tests', () => {
 	it('encrypt should execute', async () => {
@@ -92,10 +95,20 @@ describe('Bootstrap tests', () => {
 		const argv = yargs.parse(process.argv[2]);
 		const response = {
 			data: {
-				nonce: 'nonce',
-				channelId: 'channelId',
-				channelSeed: 'channelSeed',
-				identityKeys: 'identityKeys'
+				"success": true,
+				"channelId": "100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:c2fe471fd08bc988b9cb2de8",
+				"channelSeed": "aklfuwikrvquowywyznhlmstimkzimytuvrgstdynrdgcwzcspweuoskslyfgcmkfhhitfig",
+				"identityKeys": {
+					"id": "did:iota:FJKwRVsx3gxTUqryCmsdREZiAuXX4xYYDDyiYa8T35w7",
+					"key": {
+						"type": "ed25519",
+						"public": "C9VKC424LHdLnnvGsjMEBf82Ho4SQAtzjW9iBgwF29Kg",
+						"secret": "AdxMYDJwzSo4Arn21uysKpfjdZGEUFxLwPFpVcn1CRsw",
+						"encoding": "base58"
+					}
+				},
+				"nonce": "c7b732a4-d9be-449e-bf28-73d31b68b512",
+				"subscriptionLink": "100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:6a1e113d99e13dc967fc32d0"
 			},
 			headers: {},
 			config: {},
@@ -120,7 +133,7 @@ describe('Bootstrap tests', () => {
 		const errorLog = jest.spyOn(console, 'error');
 		await execScript(argv);
 		expect(mockExit).toHaveBeenCalledWith(1);
-		expect(errorLog).toBeCalledWith('One or all of the env variables are not provided: --key_file, --registration_url, --dest');
+		expect(errorLog).toBeCalledWith('One or all of the env variables are not provided: --key_file, --registration_url, --dest, --nonce');
 		process.env.npm_config_registration_url = oldVal;
 	});
 });
@@ -149,7 +162,7 @@ describe('Send sensor data tests', () => {
 		await execScript(argv);
 		jest.advanceTimersByTime(3000);
 		expect(sendDataSpy).toBeCalledTimes(3);
-		expect(sendDataSpy).toHaveBeenLastCalledWith(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject);
+		expect(sendDataSpy).toHaveBeenLastCalledWith(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject, isAuthUrl, apiKey, jwt);
 		jest.useRealTimers();
 	});
 

@@ -1,6 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { IdentityModule } from 'src/identity/identity.module';
+import { IdentityModule } from '../identity/identity.module';
 import { SludataController } from './sludata.controller';
 import { SludataService } from './sludata.service';
 

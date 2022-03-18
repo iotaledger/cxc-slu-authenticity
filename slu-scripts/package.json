@@ -10,7 +10,8 @@
 		"test:cov": "jest --coverage --runInBand",
 		"encrypt-file": "node ./dist/src/index.js encrypt",
 		"send-proof": "node ./dist/src/index.js send-proof",
-		"bootstrap": "node ./dist/src/index.js bootstrap"
+		"bootstrap": "node ./dist/src/index.js bootstrap",
+		"send-data": "node ./dist/src/index.js send-data"
 	},
 	"author": "",
 	"license": "ISC",

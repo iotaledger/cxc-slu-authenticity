@@ -237,36 +237,71 @@ describe('AppController (e2e)', () => {
 
 	describe('/collector (Slu data)', () => {
 		it('/data (POST)', async () => {
+			const identity = {
+				did: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV',
+				timestamp: new Date().toISOString(),
+				signature: '2MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNm'
+			};
+
+			await new identityModel(identity).save();
+
 			const sluDataBody = {
 				payload: { temperature: '60 degrees' },
-				deviceId: 'did:iota:123456'
+				deviceId: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV'
 			};
-			const { status, body } = await request(app.getHttpServer()).post('/collector/data').send(sluDataBody);
+
+			const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34'
+
+			const { status, body } = await request(app.getHttpServer()).post('/collector/data').set('Authorization', 'Bearer ' + jwt).send(sluDataBody);
+
 			expect(status).toBe(201);
-			expect(body.log.payload.deviceId).toBe('did:iota:123456');
+			expect(body.log.payload.deviceId).toBe(sluDataBody.deviceId);
 			//SHA256 length in hex format
 			expect(body.log.payload.hashedData.length).toBe(64);
 			expect(body.log.payload.hashedData).not.toBe(sluDataBody.payload);
 		});
 
-		it('/data (POST): Validation fails of id', async () => {
+		it('/data (POST): Validation fails: old timestamp', async () => {
+			const identity = {
+				did: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV',
+				timestamp: '2022-03-18T15:36:57',
+				signature: '2MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNm'
+			};
+
+			await new identityModel(identity).save();
+
 			const sluDataBody = {
 				payload: { temperature: '60 degrees' },
-				deviceId: 'dd:iota:123456'
+				deviceId: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV'
 			};
-			const { status, body } = await request(app.getHttpServer()).post('/collector/data').send(sluDataBody);
-			expect(status).toBe(400);
-			expect(body.message[0]).toEqual('deviceId must contain a did:iota: string');
+
+			const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34'
+
+			const { status, body } = await request(app.getHttpServer()).post('/collector/data').set('Authorization', 'Bearer ' + jwt).send(sluDataBody);
+
+			expect(status).toBe(409);
+			expect(body).toEqual({error: "authentication prove expired"});
 		});
 
-		it('/data (POST): Validation fails of hashedData', async () => {
+		it('/data (POST): Validation fails: no payload', async () => {
+			const sluDataBody = {
+				payload: '',
+				deviceId: 'dd:iota:123456'
+			};
+			const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34'
+			const { status, body } = await request(app.getHttpServer()).post('/collector/data').set('Authorization', 'Bearer ' + jwt).send(sluDataBody);
+			expect(status).toBe(400);
+			expect(body.message[0]).toEqual('payload should not be empty');
+		});
+
+		it('/data (POST): Validation fails: missing jwt', async () => {
 			const sluDataBody = {
 				payload: '',
 				deviceId: 'dd:iota:123456'
 			};
 			const { status, body } = await request(app.getHttpServer()).post('/collector/data').send(sluDataBody);
-			expect(status).toBe(400);
-			expect(body.message[0]).toEqual('payload should not be empty');
+			expect(status).toBe(401);
+			expect(body).toEqual({ error: 'not authenticated' });
 		});
 	});
 
