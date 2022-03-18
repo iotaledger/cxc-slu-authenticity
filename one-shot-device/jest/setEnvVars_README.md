@@ -3,7 +3,7 @@
 To run the tests for One-Shot-Device Microservice you need to copy the example.setEnvVars.ts
 
 ```bash
-    $ cp example.setEnvVars.ts .setEnvVars.ts
+cp example.setEnvVars.ts .setEnvVars.ts
 ```
 
 and populate the fields:

@@ -86,7 +86,6 @@ export class DeviceRegistrationService {
 		const updateSluStatus = await firstValueFrom(
 			this.httpService.put(`${sluStatusEndpoint}/status/${id}/${body.status}`, body, this.requestConfig)
 		);
-		console.log('udp: updateSluStatus:', updateSluStatus);
 
 		if (updateSluStatus === null) {
 			this.logger.error('Failed connecting with SLU-Status Microservice to update Slu status');
@@ -122,12 +121,11 @@ export class DeviceRegistrationService {
 
 		await this.createSluStatus(id, channelAddress);
 
-		return { nonce };
+		return { nonce, channelAddress, id };
 	}
 
 	async getRegisteredDevice(nonce: string): Promise<DeviceRegistration> {
 		const device = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
-		console.log('device', device);
 
 		if (device == null) {
 			this.logger.error('Document does not exist in the collection');
