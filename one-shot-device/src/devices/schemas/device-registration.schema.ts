@@ -16,7 +16,7 @@ export class DeviceRegistration {
 	channelSeed: string;
 
 	@Prop({ required: true })
-	channelId: string;
+	channelAddress: string;
 
 	@Prop({ required: true })
 	subscriptionLink: string;

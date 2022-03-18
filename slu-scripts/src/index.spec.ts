@@ -93,7 +93,7 @@ describe('Bootstrap tests', () => {
 		const response = {
 			data: {
 				nonce: 'nonce',
-				channelId: 'channelId',
+				channelAddress: 'channelAddress',
 				channelSeed: 'channelSeed',
 				identityKeys: 'identityKeys'
 			},

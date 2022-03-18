@@ -39,7 +39,7 @@ describe('transform', () => {
 		});
 
 		it('should throw error because of false status', async () => {
-			let body = {
+			const body = {
 				id: 'did:iota:2xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd',
 				status: 'destroyed',
 				channelAddress: '186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e'
@@ -49,7 +49,7 @@ describe('transform', () => {
 		});
 
 		it('should throw error because of false DID', async () => {
-			let body = {
+			const body = {
 				id: 'iota:2xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd',
 				status: 'created',
 				channelAddress: '186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e'

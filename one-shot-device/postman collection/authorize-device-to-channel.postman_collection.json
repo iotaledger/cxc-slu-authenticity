@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8cbe2860-c240-4fd4-a68b-262a1f87b524",
+		"_postman_id": "6fa0e630-3088-427b-a49b-5e8706ef418b",
 		"name": "is-one-shot-device-registration",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -45,7 +45,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"signedNonce\":\"8a7c73113028abbc6dc385c0bdc66d477c18b0a47b28a0d9f6c62b1e019e501788d54fa34ba177ebae1ced723465e318f247cef1e09585aa9ca194b9cfec1d0a\"\n}"
+							"raw": "{\n    \"signedNonce\":\"c590301c1c3996783dd5bc9f97f6b0558d5330c834a053d95d5a6700a66852b2f3dd33eedfbb34e23feecf0c1998b069358ca00ca6908ef01862e14a5451d00e\"\n}"
 						},
 						"url": {
 							"raw": "{{is_url}}/authentication/prove-ownership/{{manager_id}}?api-key={{api-key}}",
@@ -161,12 +161,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{one_shot_device_url}}/create/4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:cc6dfcd17a9b3035b95478ae",
+							"raw": "{{one_shot_device_url}}/create/e83d047377{{authorized_channel}}",
 							"host": ["{{one_shot_device_url}}"],
-							"path": [
-								"create",
-								"4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:cc6dfcd17a9b3035b95478ae"
-							]
+							"path": ["create", "e83d047377{{authorized_channel}}"]
 						}
 					},
 					"response": []
@@ -206,7 +203,7 @@
 	"variable": [
 		{
 			"key": "manager_jwt",
-			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6MjE2TnVBQ1g2Tmh6MkJZdUNzdnRWdGVVWU1lcXlQWE5NQ3R1RDJvNktxekMiLCJwdWJsaWNLZXkiOiI4b3o1N3g5MTVubWZXemFleXBIaU0xcXhIdFZHaVVQNHg5WDRHRFJwTWNVZyIsInJlZ2lzdHJhdGlvbkRhdGUiOiIyMDIyLTAzLTAzVDE1OjM2OjUwKzAxOjAwIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjQ2MzE4ODQyLCJleHAiOjE2NDY0MDUyNDJ9.RzkNuK9rTJeI0sl2rXuYNvqYK9b4iUdLqq0Ix6oF2bM",
+			"value": "",
 			"type": "string"
 		},
 		{
@@ -221,7 +218,7 @@
 		},
 		{
 			"key": "signed_nonce",
-			"value": "8a7c73113028abbc6dc385c0bdc66d477c18b0a47b28a0d9f6c62b1e019e501788d54fa34ba177ebae1ced723465e318f247cef1e09585aa9ca194b9cfec1d0a",
+			"value": "c590301c1c3996783dd5bc9f97f6b0558d5330c834a053d95d5a6700a66852b2f3dd33eedfbb34e23feecf0c1998b069358ca00ca6908ef01862e14a5451d00e",
 			"type": "string"
 		},
 		{
@@ -231,13 +228,23 @@
 		},
 		{
 			"key": "authorized_channel",
-			"value": "",
+			"value": "e83d047377e2177bdeaeb6a18c0fb4beaea846a3c8c291ca4d3ada3654852e3c0000000000000000:f79e85622429f4b8dd0f3806",
 			"type": "string"
 		},
 		{
 			"key": "manager_id",
-			"value": "did:iota:216NuACX6Nhz2BYuCsvtVteUYMeqyPXNMCtuD2o6KqzC",
+			"value": "did:iota:BSENY1v3sMsEPmmbx8jEy5hDm4s6nyiEk9AaphA518Es",
 			"type": "string"
+		},
+		{
+			"key": "nonce",
+			"value": "329b9200-0b55-4062-aef4-38836619fc13",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string",
+			"disabled": true
 		}
 	]
 }

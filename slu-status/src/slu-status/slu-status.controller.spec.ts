@@ -52,7 +52,7 @@ describe('StatusController', () => {
 
 	it('should create SluStatus', async () => {
 		jest.spyOn(service, 'saveSluStatus').mockResolvedValue(response);
-		const result = await controller.createSluStatus(body);
+		const result = await controller.createSluStatus(body.status, body.id, body.channelAddress);
 		expect(result).toBe(response);
 	});
 

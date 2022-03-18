@@ -2,9 +2,19 @@ import { CreateDeviceRegistrationDto as dto } from './dto/create-device-registra
 import { CreateChannelResponse } from '../../node_modules/iota-is-sdk/lib/models/types/request-response-bodies';
 import { IdentityJson } from '../../node_modules/iota-is-sdk/lib/models/types/identity';
 
+const generateDid = () => {
+	let result = '';
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+	for (let i = 0; i < 44; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+};
+
 export const mockDeviceRegistration: dto | any = {
 	identityKeys: {
-		id: 'did:iota:5qmWjFWcqE3BNTB9KNCBH6reXEgig4gFUXiPENywB3wo',
+		id: `did:iota:${generateDid()}`,
 		key: {
 			type: 'ed25519',
 			public: 'BKU1cLqakKrN9g4ridQ6z5NyHqA7vZLLqmAygwDrSeex',
@@ -13,7 +23,7 @@ export const mockDeviceRegistration: dto | any = {
 		}
 	},
 	channelSeed: 'jldirikybrxczxlhhswzikqhsafjdzejjacoqaymzmoffdrwrzmytolrwuyhwoweybnzofew',
-	channelId: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
+	channelAddress: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
 	nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02',
 	subscriptionLink: 'somesubscriptionlink'
 };
@@ -29,13 +39,13 @@ export const mockFaultyDeviceRegistrationObject: dto | any = {
 		}
 	},
 	channelSeed: 'jldirikybrxczxlhhswzikqhsafjdzejjacoqaymzmoffdrwrzmytolrwuyhwoweybnzofew',
-	channelId: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b'
+	channelAddress: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b'
 };
 
 export const nullIdentityDeviceRegistrationObject: dto | any = {
 	identityKeys: null,
 	channelSeed: 'jldirikybrxczxlhhswzikqhsafjdzejjacoqaymzmoffdrwrzmytolrwuyhwoweybnzofew',
-	channelId: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
+	channelAddress: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
 	nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02'
 };
 export const nonceMock = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
@@ -43,7 +53,7 @@ export const badNonceMock = '1b0e4a49-BaDD-Baddy-99f4-97fda845ff02';
 
 export const identityMock: IdentityJson | any = {
 	doc: {
-		id: 'did:iota:7ph3tSwDL1GYvyaUCij2WseFUbme9Y3WMvAcMX2HCpbt',
+		id: `did:iota:${generateDid()}`,
 		authentication: [[Object]],
 		created: '2022-02-16T22:12:10Z',
 		updated: '2022-02-16T22:12:10Z',
@@ -66,8 +76,8 @@ export const channelMock: CreateChannelResponse = {
 	seed: 'ewlvmojzfcopwliaufpfhjcidzrlmqhzhdmfxxulctunidgznyhxepzshyjxqpagkhxwrypq'
 };
 
-export const channelAddressMock =
-	'4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:cc6dfcd17a9b3035b95478ae';
+export const authorizedChannelMock =
+	'2e7c282c139005009b07676a0ad19f3ae504324002429116615723f4b1e990e10000000000000000:c748edb3fc0c987b407bc617';
 
 export const subscriptionLinkMock =
 	'4d56da7f5cbfd2d6dc6770fea092ce83a536000134a2f6ac0f9f93c999ca628b0000000000000000:bfd017e56cc902e843b5aaa9';
