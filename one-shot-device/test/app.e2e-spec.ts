@@ -97,8 +97,6 @@ describe('AppController (e2e)', () => {
 			subscriptionLink: savedDeviceExample.subscriptionLink
 		};
 
-		console.log('bootstrapNonceResult: ', bootstrapNonceResult);
-
 		expect(response.status).toBe(200);
 		expect(response.body).toMatchObject(JSON.parse(JSON.stringify(bootstrapNonceResult)));
 
