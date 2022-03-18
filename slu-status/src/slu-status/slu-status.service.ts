@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SluStatusDto } from './model/SluStatusDto';
 import { SluStatus, SluStatusDocument } from './schema/slu-status.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,15 +7,13 @@ import { Status } from './model/Status';
 
 @Injectable()
 export class SluStatusService {
-	private readonly logger = new Logger(SluStatusService.name);
-
 	constructor(@InjectModel(SluStatus.name) private sluStatusModel: Model<SluStatus>) {}
 
-	async saveSluStatus(status: Status, id: string, channel: string): Promise<SluStatusDocument> {
+	async saveSluStatus(status: Status, id: string, channelAddress: string): Promise<SluStatusDocument> {
 		const sluStatusDto: SluStatusDto = {
 			id,
 			status,
-			channelAddress: channel
+			channelAddress
 		};
 		return await new this.sluStatusModel(sluStatusDto).save();
 	}
