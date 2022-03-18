@@ -31,7 +31,7 @@ describe('AppController (e2e)', () => {
 		subscriptionLink: deviceStubData().subscriptionLink,
 		channelSeed: deviceStubData().channelSeed,
 		identityKeys: deviceStubData().identityKeys,
-		channelId: deviceStubData().channelId
+		channelAddress: deviceStubData().channelAddress
 	};
 
 	const nonce = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
@@ -90,7 +90,7 @@ describe('AppController (e2e)', () => {
 		console.log('response.body: ', response.body);
 		const bootstrapNonceResult = {
 			success: true,
-			channelId: savedDeviceExample.channelId,
+			channelAddress: savedDeviceExample.channelAddress,
 			channelSeed: savedDeviceExample.channelSeed,
 			identityKeys: savedDeviceExample.identityKeys,
 			nonce: savedDeviceExample.nonce,

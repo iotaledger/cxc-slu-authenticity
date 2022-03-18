@@ -13,7 +13,7 @@ describe('bootstrap on device', () => {
 		const response = {
 			data: {
 				nonce: 'anyNonce',
-				channelId: 'did:iota:121',
+				channelAddress: 'did:iota:121',
 				channelSeed: 'string',
 				identityKeys: 'IdentityKeys'
 			},

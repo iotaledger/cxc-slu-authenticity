@@ -93,7 +93,7 @@ describe('Bootstrap tests', () => {
 		const response = {
 			data: {
 				nonce: 'nonce',
-				channelId: 'channelId',
+				channelAddress: 'channelAddress',
 				channelSeed: 'channelSeed',
 				identityKeys: 'identityKeys'
 			},
@@ -175,7 +175,7 @@ describe('Send sensor data tests', () => {
 		const processSpy = jest.spyOn(process, 'exit');
 		await execScript(argv);
 		expect(consoleSpy).toBeCalledWith('Unexpected token w in JSON at position 0');
-		expect(consoleSpy).toBeCalledWith('Could not parse payload, please provide an object as a string')
+		expect(consoleSpy).toBeCalledWith('Could not parse payload, please provide an object as a string');
 		expect(processSpy).toBeCalledWith(1);
 		process.env.npm_config_payload = oldVal;
 	});
