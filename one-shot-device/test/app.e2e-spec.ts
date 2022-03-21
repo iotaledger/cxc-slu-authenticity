@@ -13,7 +13,7 @@ import {
 } from '../../one-shot-device/src/devices/schemas/device-registration.schema';
 import { CreateDeviceRegistrationDto as dto } from '../src/devices/dto/create-device-registration.dto';
 import { deviceStubData } from './stubs/device.stubs';
-import { channelAddressMock } from './../src/devices/mocks';
+import { authorizedChannelMock } from './../src/devices/mocks';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 jest.setTimeout(40000);
@@ -28,9 +28,10 @@ describe('AppController (e2e)', () => {
 
 	const createDevice: dto | any = {
 		nonce: deviceStubData().nonce,
-		channelId: deviceStubData().channelId,
+		subscriptionLink: deviceStubData().subscriptionLink,
 		channelSeed: deviceStubData().channelSeed,
-		identityKeys: deviceStubData().identityKeys
+		identityKeys: deviceStubData().identityKeys,
+		channelAddress: deviceStubData().channelAddress
 	};
 
 	const nonce = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
@@ -75,9 +76,8 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/create (POST) it should create channel, device identity and nonce', async () => {
-		console.log('createDevice: ', createDevice);
 		jest.spyOn(httpService, 'post').mockReturnValue(createDevice);
-		const response = await request(httpServer).post(`/create/:${channelAddressMock}`).send(createDevice);
+		const response = await request(httpServer).post(`/create/:${authorizedChannelMock}`).send(createDevice);
 		expect(response.status).toBe(201);
 
 		const savedDevice = await deviceRegistrationModel.findOne({ nonce }, { _id: 0 });
@@ -87,13 +87,18 @@ describe('AppController (e2e)', () => {
 	it('/:nonce (GET) it should return device to the creator and remove the document from the collection', async () => {
 		jest.spyOn(httpService, 'get');
 		const response = await request(httpServer).get(`/bootstrap/${nonce}`);
+		console.log('response.body: ', response.body);
 		const bootstrapNonceResult = {
 			success: true,
-			registeredDeviceInfo: savedDeviceExample
+			channelAddress: savedDeviceExample.channelAddress,
+			channelSeed: savedDeviceExample.channelSeed,
+			identityKeys: savedDeviceExample.identityKeys,
+			nonce: savedDeviceExample.nonce,
+			subscriptionLink: savedDeviceExample.subscriptionLink
 		};
 
 		expect(response.status).toBe(200);
-		expect(response.body).toStrictEqual(JSON.parse(JSON.stringify(bootstrapNonceResult)));
+		expect(response.body).toMatchObject(JSON.parse(JSON.stringify(bootstrapNonceResult)));
 
 		const findDevice = await deviceRegistrationModel.findOne({ nonce });
 		expect(findDevice).toBe(null);
