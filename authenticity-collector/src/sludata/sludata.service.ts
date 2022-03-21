@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiVersion, ChannelClient, ChannelData, ChannelInfo, ClientConfig } from 'iota-is-sdk/lib';
 import { firstValueFrom } from 'rxjs';
@@ -11,19 +11,18 @@ import { Identity } from '../identity/schemas/identity.schema';
 
 @Injectable()
 export class SludataService {
-	constructor(private configService: ConfigService, private httpService: HttpService,
-		private identitiyService: IdentityService) {}
+	constructor(private configService: ConfigService, private httpService: HttpService, private identitiyService: IdentityService) {}
 
-	async checkAuthProve(id: string): Promise<boolean>{
+	async checkAuthProve(id: string): Promise<boolean> {
 		const expirationTime = this.configService.get('AUTH_PROVE_EXPIRATION');
 		const from = new Date();
 		from.setMilliseconds(from.getMilliseconds() - expirationTime);
 		const identities: Identity[] = await this.identitiyService.getAuthProves(id, from, new Date());
-		if(identities.length === 0) return false; 
+		if (identities.length === 0) return false;
 		return true;
-	}	
+	}
 
-	async sendDataToConnector(data: SluDataDto): Promise<void>{
+	async sendDataToConnector(data: SluDataDto): Promise<void> {
 		const mpowerUrl = this.configService.get<string>('MPOWER_CONNECTOR_URL');
 		await firstValueFrom(this.httpService.post(mpowerUrl, data));
 	}

@@ -14,7 +14,10 @@ const argv = yargs
 	.command('send-proof', 'Decrypt data and send auth proof of device', (yargs) =>
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
-			.option('interval', { describe: 'The interval in millisecond during requests to the collector microservice are done.', default: '600000' })
+			.option('interval', {
+				describe: 'The interval in millisecond during requests to the collector microservice are done.',
+				default: '600000'
+			})
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 	)
@@ -23,7 +26,7 @@ const argv = yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
 			.option('reqistration_url', { describe: 'The url of device registration microservice.' })
-			.option('nonce', {describe: 'Nonce of the device'});
+			.option('nonce', { describe: 'Nonce of the device' });
 	})
 	.command('send-data', 'Send sensor data to integration service', (yargs) =>
 		yargs
@@ -32,9 +35,9 @@ const argv = yargs
 			.option('config', { describe: 'Location of configuration file for the integration service.' })
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
-			.option('is_auth_url', {describe: "The integration services authentication url for post request to get an auth token"})
-			.option('api_key', {describe: 'Api key for integration services'})
-			.option('jwt', {describe: 'JWT of the device'})
+			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get an auth token' })
+			.option('api_key', { describe: 'Api key for integration services' })
+			.option('jwt', { describe: 'JWT of the device' })
 	)
 	.help().argv;
 
@@ -83,12 +86,15 @@ export async function execScript(argv: any) {
 			if (interval) {
 				let payloadObject: any;
 				try {
-					payloadObject = JSON.parse('{"temperature": "100 degree"}');
+					payloadObject = await JSON.parse('{"temperature": "100 degree"}');
 				} catch (e: any) {
 					console.error(e.message);
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
-				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject, isAuthUrl, apiKey, jwt), Number(interval));
+				setInterval(
+					() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject, isAuthUrl, apiKey, jwt),
+					Number(interval)
+				);
 			} else {
 				throw Error('No --interval in ms.');
 			}

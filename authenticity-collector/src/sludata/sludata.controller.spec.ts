@@ -7,7 +7,7 @@ import { SludataService } from './sludata.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { IdentitySchema } from '../identity/schemas/identity.schema';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
-import { Connection } from 'mongoose'
+import { Connection } from 'mongoose';
 import { IdentityModule } from '../identity/identity.module';
 import { Response } from 'express';
 
@@ -33,7 +33,8 @@ describe('SludataController', () => {
 						};
 					}
 				}),
-				MongooseModule.forFeature([{ name: 'Identity', schema: IdentitySchema }])],
+				MongooseModule.forFeature([{ name: 'Identity', schema: IdentitySchema }])
+			],
 			controllers: [SludataController],
 			providers: [SludataService]
 		}).compile();
@@ -86,11 +87,10 @@ describe('SludataController', () => {
 		await controller.writeData(sluDataBody, mockResponse as Response);
 
 		expect(checkAuthProve).toBeCalled();
-		expect(sendDataToConnector).toBeCalled()
+		expect(sendDataToConnector).toBeCalled();
 		expect(serviceSpy).toBeCalled();
 		expect(resultJson).toBe(body);
 		expect(resultStatus).toBe(201);
-
 	});
 
 	it('should fail to return ChannelData', async () => {
@@ -110,9 +110,9 @@ describe('SludataController', () => {
 		const checkAuthProve = jest.spyOn(sludataService, 'checkAuthProve').mockResolvedValue(false);
 
 		await controller.writeData(sluDataBody, mockResponse as Response);
-	
+
 		expect(checkAuthProve).toBeCalled();
-		expect(resultJson).toEqual({"error": "authentication prove expired"});
+		expect(resultJson).toEqual({ error: 'authentication prove expired' });
 		expect(resultStatus).toBe(409);
 	});
 

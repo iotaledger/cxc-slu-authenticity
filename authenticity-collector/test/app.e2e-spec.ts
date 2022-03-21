@@ -250,9 +250,13 @@ describe('AppController (e2e)', () => {
 				deviceId: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV'
 			};
 
-			const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34'
+			const jwt =
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34';
 
-			const { status, body } = await request(app.getHttpServer()).post('/collector/data').set('Authorization', 'Bearer ' + jwt).send(sluDataBody);
+			const { status, body } = await request(app.getHttpServer())
+				.post('/collector/data')
+				.set('Authorization', 'Bearer ' + jwt)
+				.send(sluDataBody);
 
 			expect(status).toBe(201);
 			expect(body.log.payload.deviceId).toBe(sluDataBody.deviceId);
@@ -275,12 +279,16 @@ describe('AppController (e2e)', () => {
 				deviceId: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV'
 			};
 
-			const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34'
+			const jwt =
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34';
 
-			const { status, body } = await request(app.getHttpServer()).post('/collector/data').set('Authorization', 'Bearer ' + jwt).send(sluDataBody);
+			const { status, body } = await request(app.getHttpServer())
+				.post('/collector/data')
+				.set('Authorization', 'Bearer ' + jwt)
+				.send(sluDataBody);
 
 			expect(status).toBe(409);
-			expect(body).toEqual({error: "authentication prove expired"});
+			expect(body).toEqual({ error: 'authentication prove expired' });
 		});
 
 		it('/data (POST): Validation fails: no payload', async () => {
@@ -288,8 +296,12 @@ describe('AppController (e2e)', () => {
 				payload: '',
 				deviceId: 'dd:iota:123456'
 			};
-			const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34'
-			const { status, body } = await request(app.getHttpServer()).post('/collector/data').set('Authorization', 'Bearer ' + jwt).send(sluDataBody);
+			const jwt =
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34';
+			const { status, body } = await request(app.getHttpServer())
+				.post('/collector/data')
+				.set('Authorization', 'Bearer ' + jwt)
+				.send(sluDataBody);
 			expect(status).toBe(400);
 			expect(body.message[0]).toEqual('payload should not be empty');
 		});

@@ -13,20 +13,20 @@ describe('bootstrap on device', () => {
 	it('should get and encrypt data', async () => {
 		const response = {
 			data: {
-				"success": true,
-				"channelId": "100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:c2fe471fd08bc988b9cb2de8",
-				"channelSeed": "aklfuwikrvquowywyznhlmstimkzimytuvrgstdynrdgcwzcspweuoskslyfgcmkfhhitfig",
-				"identityKeys": {
-					"id": "did:iota:FJKwRVsx3gxTUqryCmsdREZiAuXX4xYYDDyiYa8T35w7",
-					"key": {
-						"type": "ed25519",
-						"public": "C9VKC424LHdLnnvGsjMEBf82Ho4SQAtzjW9iBgwF29Kg",
-						"secret": "AdxMYDJwzSo4Arn21uysKpfjdZGEUFxLwPFpVcn1CRsw",
-						"encoding": "base58"
+				success: true,
+				channelId: '100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:c2fe471fd08bc988b9cb2de8',
+				channelSeed: 'aklfuwikrvquowywyznhlmstimkzimytuvrgstdynrdgcwzcspweuoskslyfgcmkfhhitfig',
+				identityKeys: {
+					id: 'did:iota:FJKwRVsx3gxTUqryCmsdREZiAuXX4xYYDDyiYa8T35w7',
+					key: {
+						type: 'ed25519',
+						public: 'C9VKC424LHdLnnvGsjMEBf82Ho4SQAtzjW9iBgwF29Kg',
+						secret: 'AdxMYDJwzSo4Arn21uysKpfjdZGEUFxLwPFpVcn1CRsw',
+						encoding: 'base58'
 					}
 				},
-				"nonce": "c7b732a4-d9be-449e-bf28-73d31b68b512",
-				"subscriptionLink": "100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:6a1e113d99e13dc967fc32d0"
+				nonce: 'c7b732a4-d9be-449e-bf28-73d31b68b512',
+				subscriptionLink: '100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:6a1e113d99e13dc967fc32d0'
 			},
 			headers: {},
 			config: {},
@@ -51,7 +51,7 @@ describe('bootstrap on device', () => {
 	it('should fail to bootstrap: Failed to get identity', async () => {
 		const response = {
 			data: {
-				"success": false,
+				success: false
 			},
 			headers: {},
 			config: {},
@@ -72,7 +72,7 @@ describe('bootstrap on device', () => {
 		const msg = "ENOENT: no such file or directory, open '../../vpuf/tests/data/unclonable.ts'";
 		const response = {
 			data: {
-				"success": true,
+				success: true
 			},
 			headers: {},
 			config: {},
@@ -96,7 +96,6 @@ describe('bootstrap on device', () => {
 			expect(ex.message).toBe(msg);
 		}
 	});
-
 });
 afterAll(() => {
 	try {

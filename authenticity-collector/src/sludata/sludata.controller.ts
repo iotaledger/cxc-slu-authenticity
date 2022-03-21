@@ -6,7 +6,7 @@ import { SludataService } from './sludata.service';
 
 @Controller('collector')
 export class SludataController {
-	constructor(private sludataService: SludataService) { }
+	constructor(private sludataService: SludataService) {}
 
 	@Post('data')
 	@UsePipes(new ValidationPipe({ transform: true }))
@@ -17,6 +17,6 @@ export class SludataController {
 			const channelData = await this.sludataService.writeDataToChannel(sluData);
 			return response.status(201).json(channelData);
 		}
-		return response.status(409).send({error: "authentication prove expired"});
+		return response.status(409).send({ error: 'authentication prove expired' });
 	}
 }
