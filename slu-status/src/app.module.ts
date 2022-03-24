@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SluStatusModule } from './slu-status/slu-status.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApiKeyMiddleware } from './middleware/api-key.middleware';
@@ -10,7 +10,13 @@ import { ApiKeyMiddleware } from './middleware/api-key.middleware';
 		ConfigModule.forRoot({
 			isGlobal: true
 		}),
-		MongooseModule.forRoot(process.env.DATABASE_URL, { dbName: process.env.DATABASE_NAME })
+		MongooseModule.forRootAsync({
+			useFactory: async (configService: ConfigService) => ({
+				uri: configService.get<string>('DATABASE_URL'),
+				dbName: configService.get<string>('DATABASE_NAME')
+			}),
+			inject: [ConfigService]
+		}),
 	]
 })
 export class AppModule {
