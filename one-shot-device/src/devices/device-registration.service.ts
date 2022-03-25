@@ -64,7 +64,7 @@ export class DeviceRegistrationService {
 
 		const sluStatus = await firstValueFrom(
 			this.httpService.post(
-				`${sluStatusEndpoint}/status/${id}/${channelAddress}`,
+				`${sluStatusEndpoint}/${id}/${channelAddress}`,
 				{
 					status: 'created'
 				},
@@ -84,7 +84,7 @@ export class DeviceRegistrationService {
 		};
 
 		const updateSluStatus = await firstValueFrom(
-			this.httpService.put(`${sluStatusEndpoint}/status/${id}/${body.status}`, body, this.requestConfig)
+			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
 		);
 
 		if (updateSluStatus === null) {

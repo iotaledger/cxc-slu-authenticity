@@ -54,10 +54,9 @@ describe('ChannelSubscriptionService', () => {
 	});
 
 	it('should throw error', async () => {
-		process.env.COLLECTOR_ID_PATH = '';
-
+		process.env.COLLECTOR_DID = '';
+		process.env.COLLECTOR_SECRETE = '';
 		const error = service.channelSubscription();
-
 		await expect(error).rejects.toThrowError();
 	});
 });

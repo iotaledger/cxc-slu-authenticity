@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Logger } from '@nestjs/common';
 import { DeviceRegistrationService } from './device-registration.service';
 
-@Controller()
+@Controller("/api/v1/one-shot-device")
 export class DeviceRegistrationController {
 	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
@@ -15,7 +15,7 @@ export class DeviceRegistrationController {
 				...nonce
 			};
 		} catch (err) {
-			this.logger.error('Failed to create user and identity', err.message);
+			this.logger.error('Failed to create user and identity', { message: err.message });
 			return {
 				success: false
 			};
