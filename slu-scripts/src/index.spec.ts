@@ -5,7 +5,7 @@ import { execScript } from './index';
 import yargs from 'yargs';
 import * as vpuf from './vpuf/vpuf';
 import * as sendData from './sensor-data/sensor-data';
-import { ChannelData } from 'iota-is-sdk';
+import { ChannelData } from '@iota/is-client';
 
 jest.mock('axios');
 

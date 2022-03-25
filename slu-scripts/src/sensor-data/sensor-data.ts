@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ClientConfig, ChannelClient, ChannelData } from 'iota-is-sdk';
+import { ClientConfig, ChannelClient, ChannelData } from '@iota/is-client';
 import { createKey, decrypt } from '../vpuf/vpuf';
 import { Axios } from 'axios';
 
