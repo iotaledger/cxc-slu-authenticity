@@ -32,11 +32,10 @@ const argv = yargs
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
-			.option('config', { describe: 'Location of configuration file for the integration service.' })
+			.option('is_config_file', { describe: 'Location of the json file for the integration service configurations.' })
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get an auth token' })
-			.option('api_key', { describe: 'Api key for integration services' })
 			.option('jwt', { describe: 'JWT of the device' })
 	)
 	.help().argv;
@@ -51,7 +50,6 @@ export async function execScript(argv: any) {
 	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
 	const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
 	const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
-	const apiKey: string | undefined = process.env.npm_config_api_key;
 	const nonce: string | undefined = process.env.npm_config_nonce;
 	const jwt: string | undefined = process.env.npm_config_jwt;
 
@@ -92,7 +90,7 @@ export async function execScript(argv: any) {
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
 				setInterval(
-					() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject, isAuthUrl, apiKey, jwt),
+					() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject, isAuthUrl, jwt),
 					Number(interval)
 				);
 			} else {

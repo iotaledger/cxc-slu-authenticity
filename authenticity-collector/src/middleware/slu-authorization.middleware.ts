@@ -20,10 +20,16 @@ export class SluAuthorizationMiddleware implements NestMiddleware {
 
 		const token = split[1];
 		const jwt_secret = this.configService.get('JWT_SECRET');
-		const decodedToken: any = jwt.verify(token, jwt_secret);
 
+		let decodedToken: any;
+		try{
+			decodedToken  = jwt.verify(token, jwt_secret);
+		}catch(ex: any){
+			return res.status(HttpStatus.UNAUTHORIZED).send({ error: 'jwt expired!' });
+		}
+		
 		if (typeof decodedToken === 'string' || !decodedToken?.user) {
-			return res.status(HttpStatus.UNAUTHORIZED).send({ error: 'not authenticated!' });
+			return res.status(HttpStatus.UNAUTHORIZED).send({ error: 'jwt expired!' });
 		}
 
 		next();

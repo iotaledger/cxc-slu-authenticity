@@ -15,65 +15,73 @@ export async function sendData(
 	collectorBaseUrl: string | undefined,
 	payloadData: any,
 	isAuthUrl: string | undefined,
-	apiKey: string | undefined,
 	jwt: string | undefined
 ): Promise<ChannelData> {
-	if (isConfigPath && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl && apiKey && jwt) {
+	if (isConfigPath && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl && jwt) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
-		const { identityKeys, channelId } = JSON.parse(decryptedData);
+		let { identityKeys, channelAddress } = JSON.parse(decryptedData);
 		let isConfig = fs.readFileSync(isConfigPath, 'utf-8');
 		const clientConfig: ClientConfig = JSON.parse(isConfig);
-		let response;
-		try {
-			//send to collector
-			response = await postData(collectorBaseUrl, payloadData, identityKeys.id, jwt);
+		let isSend = false;
 
-			//Retry to send: authentication prove expired
-			if (response.status === 409) {
-				const body = await decryptData(encryptedDataPath, keyFilePath);
-				await sendAuthProof(body, collectorBaseUrl + '/prove');
-				await postData(collectorBaseUrl, payloadData, identityKeys.id, jwt);
-			}
-			//Retry to send: jwt token expired
-			if (response.status === 401) {
-				const res = await axios.get(isAuthUrl + `/${identityKeys.id}${apiKey}`);
-				const signedNonce = await signNonce(identityKeys.key.secret, res?.data?.nonce);
-				const isResponse = await axios.post(isAuthUrl + `/${identityKeys.id}${apiKey}`, signedNonce);
-				jwt = isResponse.data.jwt;
-				if (jwt) {
-					await postData(collectorBaseUrl, payloadData, identityKeys.id, jwt);
+		while (!isSend) {
+			try {
+				//send to collector
+				await postData(collectorBaseUrl, payloadData, identityKeys.id, jwt!);
+				isSend = true;
+			} catch (ex: any) {
+				//Retry to send: authentication prove expired
+				if (ex.response.status === 409) {
+					console.log('sending new authentication prove');
+					const body = await decryptData(encryptedDataPath, keyFilePath);
+					await sendAuthProof(body, collectorBaseUrl);
+				}
+				//Retry to send: jwt token expired
+				else if (ex.response.status === 401) {
+					const res = await axios.get(isAuthUrl + `/${identityKeys.id}?api-key=${clientConfig.apiKey}`);
+					const signedNonce = await signNonce(identityKeys.key.secret, res?.data?.nonce);
+					const isResponse = await axios.post(
+						isAuthUrl + `/${identityKeys.id}?api-key=${clientConfig.apiKey}`,
+						JSON.stringify({ signedNonce }),
+						{
+							method: 'post',
+							headers: { 'Content-Type': 'application/json' }
+						}
+					);
+					jwt = isResponse.data.jwt;
 				} else {
-					throw Error('No jwt token received');
+					throw Error(ex);
 				}
 			}
-			//write data into channel
-			const client = new ChannelClient(clientConfig);
-			await client.authenticate(identityKeys.id, identityKeys.key.secret);
-			const channelData = await client.write(channelId, {
-				payload: payloadData
-			});
-
-			return channelData;
-		} catch (ex: any) {
-			throw ex;
 		}
+		return await writeToChannel(clientConfig, identityKeys, channelAddress, payloadData);
 	} else {
 		throw Error(
 			'One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url, --collector_url, --is_url, --api_key, --jwt'
 		);
 	}
 }
-
 async function postData(collectorBaseUrl: string, payloadData: any, deviceId: string, jwt: string): Promise<AxiosResponse<any, any>> {
 	return axios.post(
 		collectorBaseUrl + '/data',
 		{ payload: payloadData, deviceId: deviceId },
-		{ headers: { authorisation: 'Bearer ' + jwt } }
+		{ headers: { authorization: 'Bearer ' + jwt } }
 	);
 }
-
+async function writeToChannel(
+	clientConfig: ClientConfig,
+	identityKeys: any,
+	channelAddress: string,
+	payloadData: any
+): Promise<ChannelData> {
+	const client = new ChannelClient(clientConfig);
+	await client.authenticate(identityKeys.id, identityKeys.key.secret);
+	return await client.write(channelAddress, {
+		payload: payloadData
+	});
+}
 async function signNonce(privateKey: string, nonce: string) {
 	if (nonce.length !== 40) {
 		throw new Error('nonce does not match length of 40 characters!');

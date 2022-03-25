@@ -1,5 +1,5 @@
 {
-    "apiKey": "somestring",
-    "baseUrl": "http://ensuresec.solutions.iota.org",
+    "apiKey": "1cfa3bce-654d-41f6-a82a-94308dc4adf8",
+    "baseUrl": "http://localhost:3030",
     "apiVersion": "v0.1"
 }

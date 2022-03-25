@@ -8,7 +8,7 @@ export async function bootstrap(
 	nonce: string | undefined
 ) {
 	if (registrationUrl && keyPath && dest && nonce) {
-		const response = await axios.get(registrationUrl, { params: { nonce: nonce } });
+		const response = await axios.get(`${registrationUrl}/${nonce}`);
 		if (response.data.success) {
 			const key = vpuf.createKey(keyPath);
 			vpuf.encryptBodyData(response.data, key, dest);
