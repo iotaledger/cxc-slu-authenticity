@@ -14,7 +14,6 @@ const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 const isConfigPath: string | undefined = process.env.npm_config_is_config_file;
 const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
 const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
-const apiKey: string | undefined = process.env.npm_config_api_key;
 const jwt: string | undefined = process.env.npm_config_jwt;
 
 describe('Send sensor data tests', () => {
@@ -44,7 +43,6 @@ describe('Send sensor data tests', () => {
 				payload: ''
 			}
 		};
-
 		const resp = {
 			data: {},
 			headers: {},
@@ -59,9 +57,8 @@ describe('Send sensor data tests', () => {
 
 		const response = await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 
-		expect(axios.defaults.headers.post['authorization']).toBe( 'Bearer ' + jwt )
 		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
-		expect(writeSpy).toHaveBeenCalledWith(data.channelId, { payload: payloadData });
+		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
 		expect(response).toBe(channelData);
 	});
 
@@ -84,16 +81,16 @@ describe('Send sensor data tests', () => {
 			status: 409,
 			statusText: 'Conflict'
 		};
-		axios.post = jest.fn().mockResolvedValue(resp);
-		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
+		axios.post = jest.fn().mockRejectedValueOnce({ response: resp });
+		const authenticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 		const sendAuthProveSpy = jest.spyOn(AuthProof, 'sendAuthProof');
 
 		const response = await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 
 		expect(sendAuthProveSpy).toBeCalled();
-		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
-		expect(writeSpy).toHaveBeenCalledWith(data.channelId, { payload: payloadData });
+		expect(authenticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
+		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
 		expect(response).toBe(channelData);
 	});
 
@@ -117,7 +114,7 @@ describe('Send sensor data tests', () => {
 		};
 
 		axios.get = jest.fn().mockResolvedValue(getResp);
-		axios.post = jest.fn().mockResolvedValue(postResp);
+		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
 			await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
@@ -163,7 +160,7 @@ describe('Send sensor data tests', () => {
 		};
 
 		axios.get = jest.fn().mockResolvedValue(getResp);
-		axios.post = jest.fn().mockResolvedValue(postResp);
+		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp }).mockResolvedValue(postResp);
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
@@ -172,37 +169,28 @@ describe('Send sensor data tests', () => {
 		expect(axios.post).toHaveBeenCalledTimes(3);
 		expect(axios.get).toHaveBeenCalled();
 		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
-		expect(writeSpy).toHaveBeenCalledWith(data.channelId, { payload: payloadData });
+		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
 		expect(response).toBe(channelData);
 	});
 
-	it('should fail to send data with retry: jwt not received', async () => {
+	it('should fail to send data: internal server error', async () => {
 		const payloadData = JSON.parse('{"temperature": "100 degree"}');
 
 		const postResp = {
 			data: {},
 			headers: {},
 			config: {},
-			status: 401,
-			statusText: 'Unauthorized'
-		};
-		const getResp = {
-			data: { nonce: '2ca14d78e862872422973014c1c651626ecd5e0a' },
-			headers: {},
-			config: {},
-			status: 200,
-			statusText: 'OK'
+			status: 500,
+			statusText: 'Internal Server Error'
 		};
 
-		axios.get = jest.fn().mockResolvedValue(getResp);
-		axios.post = jest.fn().mockResolvedValue(postResp);
+		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
 			await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 		} catch (ex: any) {
-			expect(axios.post).toHaveBeenCalledTimes(2);
-			expect(axios.get).toBeCalled();
-			expect(ex.message).toBe('No jwt token received');
+			expect(axios.post).toHaveBeenCalled();
+			expect(ex.response).toBe(postResp);
 		}
 	});
 

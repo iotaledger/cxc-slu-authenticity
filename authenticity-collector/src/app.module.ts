@@ -19,12 +19,12 @@ import { SluAuthorizationMiddleware } from './middleware/slu-authorization.middl
 				dbName: configService.get<string>('DATABASE_NAME')
 			}),
 			inject: [ConfigService]
-		}),
+		})
 	],
 	providers: [ChannelSubscriptionService]
 })
 export class AppModule {
 	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(SluAuthorizationMiddleware).forRoutes('collector/data');
+		consumer.apply(SluAuthorizationMiddleware).forRoutes('/api/v1/authenticity/data');
 	}
 }

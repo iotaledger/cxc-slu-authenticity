@@ -34,7 +34,6 @@ export async function sendData(
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
 				if (ex.response.status === 409) {
-					console.log('sending new authentication prove');
 					const body = await decryptData(encryptedDataPath, keyFilePath);
 					await sendAuthProof(body, collectorBaseUrl);
 				}
@@ -52,14 +51,15 @@ export async function sendData(
 					);
 					jwt = isResponse.data.jwt;
 				} else {
-					throw Error(ex);
+					throw ex;
 				}
 			}
 		}
+		console.log('write data channel');
 		return await writeToChannel(clientConfig, identityKeys, channelAddress, payloadData);
 	} else {
-		throw Error(
-			'One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url, --collector_url, --is_url, --api_key, --jwt'
+		throw new Error(
+			'One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url, --collector_url, --is_url, --jwt'
 		);
 	}
 }
@@ -82,7 +82,7 @@ async function writeToChannel(
 		payload: payloadData
 	});
 }
-async function signNonce(privateKey: string, nonce: string) {
+async function signNonce(privateKey: string, nonce: string): Promise<String> {
 	if (nonce.length !== 40) {
 		throw new Error('nonce does not match length of 40 characters!');
 	}

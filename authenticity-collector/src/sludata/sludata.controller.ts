@@ -1,6 +1,5 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { ChannelData } from 'iota-is-sdk/lib';
 import { SluDataDto } from './model/SluDataDto';
 import { SludataService } from './sludata.service';
 

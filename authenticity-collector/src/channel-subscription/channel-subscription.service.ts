@@ -13,7 +13,7 @@ export class ChannelSubscriptionService {
 	async channelSubscription() {
 		const collectorDid = this.configService.get<string>('COLLECTOR_DID');
 		const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
-		console.log(collectorDid, collectorSecret, this.configService.get('IS_API_KEY'), this.configService.get('IS_API_URL'))
+		console.log(collectorDid, collectorSecret, this.configService.get('IS_API_KEY'), this.configService.get('IS_API_URL'));
 		const clientConfig: ClientConfig = {
 			apiKey: this.configService.get('IS_API_KEY'),
 			baseUrl: this.configService.get('IS_API_URL'),

@@ -15,7 +15,6 @@ const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
 const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
 const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
-const apiKey: string | undefined = process.env.npm_config_api_key;
 const jwt: string | undefined = process.env.npm_config_jwt;
 
 describe('Encrypt-file tests', () => {
@@ -179,7 +178,6 @@ describe('Send sensor data tests', () => {
 			collectorBaseUrl,
 			payloadObject,
 			isAuthUrl,
-			apiKey,
 			jwt
 		);
 

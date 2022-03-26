@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { ApiVersion, ChannelClient, ChannelData, ChannelInfo, ClientConfig } from 'iota-is-sdk/lib';
 import { firstValueFrom } from 'rxjs';
 import { SluDataDto } from './model/SluDataDto';
-import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { IdentityService } from '../identity/identity.service';
 import { Identity } from '../identity/schemas/identity.schema';
@@ -22,9 +21,12 @@ export class SludataService {
 		return true;
 	}
 
-	async sendDataToConnector(data: SluDataDto): Promise<ChannelData> {
+	async sendDataToConnector(data: SluDataDto): Promise<void> {
 		const mpowerUrl = this.configService.get<string>('MPOWER_CONNECTOR_URL');
 		await firstValueFrom(this.httpService.post(mpowerUrl, data));
+	}
+
+	async writeDataToChannel(data: SluDataDto): Promise<ChannelData> {
 		const collectorDid = this.configService.get<string>('COLLECTOR_DID');
 		const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
 		const clientConfig: ClientConfig = {

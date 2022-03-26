@@ -8,7 +8,6 @@ import { getConnectionToken, getModelToken, MongooseModule } from '@nestjs/mongo
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
-import { string } from 'joi';
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
@@ -70,10 +69,10 @@ describe('AppController (e2e)', () => {
 		await new identityModel(identity3).save();
 	});
 
-	describe('/collector (Authentication)', () => {
+	describe('/api/v1/authenticity (Authentication)', () => {
 		it('/prove (GET)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-28'
+				'/api/v1/authenticity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-28'
 			);
 
 			let device = body[0];
@@ -89,7 +88,7 @@ describe('AppController (e2e)', () => {
 
 		it('/prove (GET - Invalid time value)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=202201-27&to=2022-01-28'
+				'/api/v1/authenticity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=202201-27&to=2022-01-28'
 			);
 
 			expect(status).toBe(500);
@@ -98,7 +97,7 @@ describe('AppController (e2e)', () => {
 
 		it('/prove (GET - Empty list)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-25&to=2022-01-25'
+				'/api/v1/authenticity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-25&to=2022-01-25'
 			);
 
 			expect(status).toBe(200);
@@ -107,7 +106,7 @@ describe('AppController (e2e)', () => {
 
 		it('/prove (GET - should return two entries)', async () => {
 			let { status, body } = await request(app.getHttpServer()).get(
-				'/collector/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-29'
+				'/api/v1/authenticity/prove?did=did:iota:4xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd&from=2022-01-27&to=2022-01-29'
 			);
 
 			let device = body[0];
@@ -148,7 +147,7 @@ describe('AppController (e2e)', () => {
 
 			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
-			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/api/v1/authenticity/prove').send(identity);
 
 			let savedIdentity: Identity = {
 				did: body.did,
@@ -179,7 +178,7 @@ describe('AppController (e2e)', () => {
 
 			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
-			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/api/v1/authenticity/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Prove failed');
@@ -204,7 +203,7 @@ describe('AppController (e2e)', () => {
 
 			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
-			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/api/v1/authenticity/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Verification failed: wrong signature');
@@ -216,7 +215,7 @@ describe('AppController (e2e)', () => {
 				timestamp: '2021-11-27T08:4733Z',
 				signature: '2MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNm'
 			};
-			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/api/v1/authenticity/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Validation failed');
@@ -228,14 +227,14 @@ describe('AppController (e2e)', () => {
 				timestamp: '2022-01-27T13:04:18.559Z',
 				signature: '2MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNm'
 			};
-			let { status, body } = await request(app.getHttpServer()).post('/collector/prove').send(identity);
+			let { status, body } = await request(app.getHttpServer()).post('/api/v1/authenticity/prove').send(identity);
 
 			expect(status).toBe(400);
 			expect(body.message).toEqual('Validation failed');
 		});
 	});
 
-	describe('/collector (Slu data)', () => {
+	describe('/api/v1/authenticity (Slu data)', () => {
 		it('/data (POST)', async () => {
 			const identity = {
 				did: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV',
@@ -251,10 +250,10 @@ describe('AppController (e2e)', () => {
 			};
 
 			const jwt =
-				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34';
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6M3A0RWVWNkVRTFJEZDR3ajh1UXhEZTRhTkRTeWk5TUw0WGtuZjhWS1FLU3oiLCJwdWJsaWNLZXkiOiJFWEZ1QXBobW5MR1gxTVFyRzNBcVZhcmNlelduZGhNRU1Db1p3MVVkN3B1QSIsInVzZXJuYW1lIjoibXktZGV2aWNlNDkiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0yNVQxNTo1MjoxNFoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODMwNjAzOSwiZXhwIjoxNjQ4MzkyNDM5fQ.hdIpqn3LZdzBN9NB5rdXdWk9d3g1uh-sX9LC80DeWRc';
 
 			const { status, body } = await request(app.getHttpServer())
-				.post('/collector/data')
+				.post('/api/v1/authenticity/data')
 				.set('Authorization', 'Bearer ' + jwt)
 				.send(sluDataBody);
 
@@ -280,10 +279,10 @@ describe('AppController (e2e)', () => {
 			};
 
 			const jwt =
-				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34';
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6M3A0RWVWNkVRTFJEZDR3ajh1UXhEZTRhTkRTeWk5TUw0WGtuZjhWS1FLU3oiLCJwdWJsaWNLZXkiOiJFWEZ1QXBobW5MR1gxTVFyRzNBcVZhcmNlelduZGhNRU1Db1p3MVVkN3B1QSIsInVzZXJuYW1lIjoibXktZGV2aWNlNDkiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0yNVQxNTo1MjoxNFoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODMwNjAzOSwiZXhwIjoxNjQ4MzkyNDM5fQ.hdIpqn3LZdzBN9NB5rdXdWk9d3g1uh-sX9LC80DeWRc';
 
 			const { status, body } = await request(app.getHttpServer())
-				.post('/collector/data')
+				.post('/api/v1/authenticity/data')
 				.set('Authorization', 'Bearer ' + jwt)
 				.send(sluDataBody);
 
@@ -297,9 +296,9 @@ describe('AppController (e2e)', () => {
 				deviceId: 'dd:iota:123456'
 			};
 			const jwt =
-				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6R2I2TU1xOVNDbUtiNDhub0VqRW95Vk1jSGpwTnd2dTJNakRUWTZLMlhwViIsInB1YmxpY0tleSI6IjdoNE1OZWtGN1NpelBISHFldGo4Z1c1VDIzY2hDZzVKVGtiN29pVmo3amtKIiwidXNlcm5hbWUiOiJteS1kZXZpY2U4NzYiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0xOFQxNDo1MTo0NVoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0NzYxNTI5NywiZXhwIjoxNjQ3NzAxNjk3fQ.Gq8yyzYP0WMH62Xh3ZxUatHTzqZEQ8I9KEMGf859t34';
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6M3A0RWVWNkVRTFJEZDR3ajh1UXhEZTRhTkRTeWk5TUw0WGtuZjhWS1FLU3oiLCJwdWJsaWNLZXkiOiJFWEZ1QXBobW5MR1gxTVFyRzNBcVZhcmNlelduZGhNRU1Db1p3MVVkN3B1QSIsInVzZXJuYW1lIjoibXktZGV2aWNlNDkiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0yNVQxNTo1MjoxNFoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODMwNjAzOSwiZXhwIjoxNjQ4MzkyNDM5fQ.hdIpqn3LZdzBN9NB5rdXdWk9d3g1uh-sX9LC80DeWRc';
 			const { status, body } = await request(app.getHttpServer())
-				.post('/collector/data')
+				.post('/api/v1/authenticity/data')
 				.set('Authorization', 'Bearer ' + jwt)
 				.send(sluDataBody);
 			expect(status).toBe(400);
@@ -308,12 +307,12 @@ describe('AppController (e2e)', () => {
 
 		it('/data (POST): Validation fails: missing jwt', async () => {
 			const sluDataBody = {
-				payload: '',
-				deviceId: 'dd:iota:123456'
+				payload: { temperature: '60 degrees' },
+				deviceId: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV'
 			};
-			const { status, body } = await request(app.getHttpServer()).post('/collector/data').send(sluDataBody);
+			const { status, body } = await request(app.getHttpServer()).post('/api/v1/authenticity/data').set('authorization', 'Bearer ').send(sluDataBody);
 			expect(status).toBe(401);
-			expect(body).toEqual({ error: 'not authenticated' });
+			expect(body).toEqual({ error: 'not authenticated!' });
 		});
 	});
 
