@@ -11,8 +11,9 @@ const keyFilePath: string | undefined = process.env.npm_config_key_file;
 const inputData: string | undefined = process.env.npm_config_input;
 const destination: string | undefined = process.env.npm_config_dest;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
-const isConfigPath: string | undefined = process.env.npm_config_is_config_file;
 const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
+const isApiKey: string | undefined = process.env.npm_config_is_api_key;
+const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
 const jwt: string | undefined = process.env.npm_config_jwt;
 
@@ -23,10 +24,10 @@ describe('Send sensor data tests', () => {
 
 	it('should fail to send data: env variable not provided', async () => {
 		try {
-			await sendData(encryptedDataPath, keyFilePath, '', collectorBaseUrl, { temperature: '60 degrees' }, isAuthUrl, jwt);
+			await sendData(encryptedDataPath, keyFilePath, '', isApiKey, isBaseUrl, { temperature: '60 degrees' }, isAuthUrl, jwt);
 		} catch (ex: any) {
 			expect(ex.message).toBe(
-				'One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url, --collector_url, --is_url, --jwt'
+				'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url, --jwt'
 			);
 		}
 	});
@@ -55,7 +56,7 @@ describe('Send sensor data tests', () => {
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl,payloadData, isAuthUrl, jwt);
 
 		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
 		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
@@ -86,7 +87,7 @@ describe('Send sensor data tests', () => {
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 		const sendAuthProveSpy = jest.spyOn(AuthProof, 'sendAuthProof');
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 
 		expect(sendAuthProveSpy).toBeCalled();
 		expect(authenticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
@@ -117,7 +118,7 @@ describe('Send sensor data tests', () => {
 		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
-			await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 		} catch (ex: any) {
 			expect(axios.post).toHaveBeenCalledTimes(1);
 			expect(axios.get).toHaveBeenCalled();
@@ -164,7 +165,7 @@ describe('Send sensor data tests', () => {
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 
 		expect(axios.post).toHaveBeenCalledTimes(3);
 		expect(axios.get).toHaveBeenCalled();
@@ -187,7 +188,7 @@ describe('Send sensor data tests', () => {
 		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
-			await sendData(encryptedDataPath, keyFilePath, isConfigPath, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 		} catch (ex: any) {
 			expect(axios.post).toHaveBeenCalled();
 			expect(ex.response).toBe(postResp);

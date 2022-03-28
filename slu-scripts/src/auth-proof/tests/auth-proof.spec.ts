@@ -31,7 +31,7 @@ describe('Encrypt data', () => {
 		const body = await decryptData(encryptedDataPath, keyFilePath);
 		const result = await sendAuthProof(body!, collectorBaseUrl);
 
-		expect(axios.post).toBeCalledWith('http://localhost:3030/collector/prove', body);
+		expect(axios.post).toBeCalledWith('http://localhost:3030/api/v1/authenticity/prove', body);
 		expect(result?.status).toBe(200);
 	});
 
@@ -41,11 +41,11 @@ describe('Encrypt data', () => {
 		const proofRequest = jest.spyOn(axios, 'post');
 		const body = { did: 'did:iota:..', timestamp: new Date(), signature: 'isdnfcd' };
 
-		setInterval(sendAuthProof, 1000, body, 'http://localhost:3030/collector');
+		setInterval(sendAuthProof, 1000, body, 'http://localhost:3030/api/v1/authenticity');
 
 		jest.advanceTimersByTime(2000);
 
-		expect(proofRequest).toBeCalledWith('http://localhost:3030/collector/prove', body);
+		expect(proofRequest).toBeCalledWith('http://localhost:3030/api/v1/authenticity/prove', body);
 		expect(proofRequest).toBeCalled();
 		expect(proofRequest).toHaveBeenCalledTimes(3);
 

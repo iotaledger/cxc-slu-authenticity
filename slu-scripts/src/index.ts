@@ -25,14 +25,15 @@ const argv = yargs
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
-			.option('reqistration_url', { describe: 'The url of device registration microservice.' })
+			.option('registration_url', { describe: 'The url of device registration microservice.' })
 			.option('nonce', { describe: 'Nonce of the device' });
 	})
 	.command('send-data', 'Send sensor data to integration service', (yargs) =>
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
-			.option('is_config_file', { describe: 'Location of the json file for the integration service configurations.' })
+			.option('is_api_key', {describe: 'Api key of the integration services'})
+			.option('is_base_url', {describe: 'The base url of the integration services'})
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get an auth token' })
@@ -48,7 +49,8 @@ export async function execScript(argv: any) {
 	const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
-	const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
+	const isApiKey: string | undefined = process.env.npm_config_is_api_key;
+	const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 	const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
 	const nonce: string | undefined = process.env.npm_config_nonce;
 	const jwt: string | undefined = process.env.npm_config_jwt;
@@ -90,7 +92,7 @@ export async function execScript(argv: any) {
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
 				setInterval(
-					() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject, isAuthUrl, jwt),
+					() => sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadObject, isAuthUrl, jwt),
 					Number(interval)
 				);
 			} else {

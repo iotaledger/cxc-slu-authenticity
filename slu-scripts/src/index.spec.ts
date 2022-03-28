@@ -12,8 +12,9 @@ jest.mock('axios');
 const keyFilePath: string | undefined = process.env.npm_config_key_file;
 const destinationPath: string | undefined = process.env.npm_config_dest;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
-const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
 const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
+const isApiKey: string | undefined = process.env.npm_config_is_api_key;
+const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
 const jwt: string | undefined = process.env.npm_config_jwt;
 
@@ -174,7 +175,8 @@ describe('Send sensor data tests', () => {
 		expect(sendDataSpy).toHaveBeenLastCalledWith(
 			encryptedDataPath,
 			keyFilePath,
-			isConfigFile,
+			isApiKey,
+			isBaseUrl,
 			collectorBaseUrl,
 			payloadObject,
 			isAuthUrl,

@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ClientConfig, ChannelClient, ChannelData } from 'iota-is-sdk';
+import { ClientConfig, ChannelClient, ChannelData, ApiVersion } from 'iota-is-sdk';
 import { createKey, decrypt } from '../vpuf/vpuf';
 import { AxiosResponse } from 'axios';
 import { decryptData, sendAuthProof } from '../auth-proof/auth-proof';
@@ -11,19 +11,23 @@ import axios from 'axios';
 export async function sendData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined,
-	isConfigPath: string | undefined,
+	isApiKey: string | undefined,
+	isBaseUrl: string | undefined,
 	collectorBaseUrl: string | undefined,
 	payloadData: any,
 	isAuthUrl: string | undefined,
 	jwt: string | undefined
 ): Promise<ChannelData> {
-	if (isConfigPath && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl && jwt) {
+	if (isApiKey && isBaseUrl && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl && jwt) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
 		let { identityKeys, channelAddress } = JSON.parse(decryptedData);
-		let isConfig = fs.readFileSync(isConfigPath, 'utf-8');
-		const clientConfig: ClientConfig = JSON.parse(isConfig);
+		const clientConfig: ClientConfig = {
+			apiKey: isApiKey,
+			baseUrl: isBaseUrl,
+			apiVersion: ApiVersion.v01
+		};
 		let isSend = false;
 
 		while (!isSend) {
@@ -55,11 +59,10 @@ export async function sendData(
 				}
 			}
 		}
-		console.log('write data channel');
 		return await writeToChannel(clientConfig, identityKeys, channelAddress, payloadData);
 	} else {
 		throw new Error(
-			'One or all of the env variables are not provided: --input_enc, --key_file, --config, --collector_data_url, --collector_url, --is_url, --jwt'
+			'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url, --jwt'
 		);
 	}
 }
@@ -72,12 +75,12 @@ async function postData(collectorBaseUrl: string, payloadData: any, deviceId: st
 }
 async function writeToChannel(
 	clientConfig: ClientConfig,
-	identityKeys: any,
+	identityKey: any,
 	channelAddress: string,
 	payloadData: any
 ): Promise<ChannelData> {
 	const client = new ChannelClient(clientConfig);
-	await client.authenticate(identityKeys.id, identityKeys.key.secret);
+	await client.authenticate(identityKey.id, identityKey.key.secret);
 	return await client.write(channelAddress, {
 		payload: payloadData
 	});
