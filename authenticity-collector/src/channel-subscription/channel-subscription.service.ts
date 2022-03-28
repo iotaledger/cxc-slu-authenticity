@@ -11,17 +11,17 @@ export class ChannelSubscriptionService {
 	constructor(private configService: ConfigService) {}
 
 	async channelSubscription() {
-		const collectorIdPath = this.configService.get<string>('COLLECTOR_ID_PATH');
-		const collectorJson = fs.readFileSync(collectorIdPath, 'utf-8');
-		const collector = JSON.parse(collectorJson);
+		const collectorDid = this.configService.get<string>('COLLECTOR_DID');
+		const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
+		console.log(collectorDid, collectorSecret, this.configService.get('IS_API_KEY'), this.configService.get('IS_API_URL'))
 		const clientConfig: ClientConfig = {
 			apiKey: this.configService.get('IS_API_KEY'),
 			baseUrl: this.configService.get('IS_API_URL'),
 			apiVersion: ApiVersion.v01
 		};
 		const channelClient = new ChannelClient(clientConfig);
-		await channelClient.authenticate(collector.doc.id, collector.key.secret);
-		const channelInfo: ChannelInfo[] = await channelClient.search({ authorId: collector.doc.id });
+		await channelClient.authenticate(collectorDid, collectorSecret);
+		const channelInfo: ChannelInfo[] = await channelClient.search({ authorId: collectorDid });
 		if (channelInfo.length != 0) {
 			this.logger.log(channelInfo[0].channelAddress);
 		} else {
