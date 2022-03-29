@@ -93,7 +93,17 @@ export class DeviceRegistrationService {
 		}
 	}
 
-	async createIdentityAndSubscribe(channelAddress: string) {
+	private async saveSluNonce(id: string, nonce: string, creator: string): Promise<void> {
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
+		const body = {
+			sluId: id,
+			nonce: nonce,
+			creator: creator 
+		}
+		await firstValueFrom(this.httpService.post(`${sluStatusEndpoint}/slu-nonce`, body));
+	}
+
+	async createIdentityAndSubscribe(channelAddress: string, creator: string) {
 		const nonce = uuidv4();
 		const deviceIdentity = await this.createIdentity();
 		const {
@@ -120,6 +130,8 @@ export class DeviceRegistrationService {
 		await doc.save();
 
 		await this.createSluStatus(id, channelAddress);
+
+		await this.saveSluNonce(id, nonce, creator);
 
 		return { nonce, channelAddress, id };
 	}

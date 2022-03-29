@@ -6,10 +6,10 @@ export class DeviceRegistrationController {
 	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
-	@Post('/create/:channelAddress')
-	async createAndSubscribe(@Param('channelAddress') channelAddress: string) {
+	@Post('/create/:channelAddress/:creator')
+	async createAndSubscribe(@Param('channelAddress') channelAddress: string, @Param('creator') creator: string) {
 		try {
-			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress);
+			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress, creator);
 			return {
 				success: true,
 				...nonce
@@ -22,7 +22,7 @@ export class DeviceRegistrationController {
 		}
 	}
 
-	@Get('bootstrap/:nonce')
+	@Get('/bootstrap/:nonce')
 	async getRegisteredDevice(@Param('nonce') nonce: string) {
 		try {
 			const registeredDeviceInfo = await this.deviceRegistrationService.getRegisteredDevice(nonce);

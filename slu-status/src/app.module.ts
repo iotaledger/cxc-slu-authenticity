@@ -3,9 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SluStatusModule } from './slu-status/slu-status.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApiKeyMiddleware } from './middleware/api-key.middleware';
+import { SluNonceModule } from './slu-nonce/slu-nonce.module';
 
 @Module({
 	imports: [
+		SluNonceModule,
 		SluStatusModule,
 		ConfigModule.forRoot({
 			isGlobal: true
@@ -16,7 +18,7 @@ import { ApiKeyMiddleware } from './middleware/api-key.middleware';
 				dbName: configService.get<string>('DATABASE_NAME')
 			}),
 			inject: [ConfigService]
-		}),
+		})
 	]
 })
 export class AppModule {
