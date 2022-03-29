@@ -102,7 +102,7 @@ To access your **Raspberry Pi** from another computer without being asked for pr
     ls ~/.ssh
 ```
 
-If it returns files `id_rsa.pub` or `id_dsa.pub` then you have already the SSH keys set up and you can skip to #3
+If it returns files `id_rsa.pub` or `id_dsa.pub` then you have already the SSH keys set up and you can skip to `#3`
 
 2. Generate new SSH keys byt typing the following in the terminal:
 
@@ -139,9 +139,36 @@ If it returns files `id_rsa.pub` or `id_dsa.pub` then you have already the SSH k
     ssh <USER>@<IP-ADDRESS>
 ```
 
-# Setup Node.js
+# Install Node.js
 
-# Install Git
+To install `Node.js` on the **Raspberry Pi** first in the terminal enable the `NodeSource` repository by executing the following command:
+
+```bash
+    curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+```
+
+Then install `Node.js` and `npm` by executing:
+
+```bash
+    sudo apt install nodejs
+```
+
+To verify that installation was successful and you have the latest LTS version on your computer run:
+
+```bash
+    node -v
+```
+
+# Use Git to deploy your project to Raspberry Pi
+
+**Raspberry Pi** comes with Git installed by default and deploying your project to it is as simple as running:
+
+```bash
+    git clone [<options>] [--] <repo> [<dir>]
+```
+
+That is it - you are now ready to use your **Raspberry Pi**, access it remotely from your **Windows/Linux/Mac** via the SSH and deploy code in the `Node.js` environment.
+Happy coding.
 
 ```
 
