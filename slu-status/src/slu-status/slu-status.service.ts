@@ -26,4 +26,18 @@ export class SluStatusService {
 		const slu = await this.sluStatusModel.find({ id }, undefined, { fields: { _id: 0 } }).lean();
 		return slu[0]?.status;
 	}
+
+	async getStatuses(body: []): Promise<any> {
+		// TODO: change the Promise to act type
+		// const devices = body;
+		const devices = ['did:iota:EQsp4DwvBhUXxD8iheUKfjrd5CQw3q85mUh1pA72qPug', 'did:iota:E37pMbfkauJnHtY7fq2QsmGtqgHryrLrQxMh8zWuo7p3'];
+
+		const devicesStatuses = await this.sluStatusModel.find({
+			_id: {
+				$in: devices
+			}
+		});
+
+		return devicesStatuses;
+	}
 }

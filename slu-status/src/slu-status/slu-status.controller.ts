@@ -23,4 +23,9 @@ export class SluStatusController {
 	async getStatusInfo(@Param('id') id: string): Promise<string> {
 		return await this.statusService.getSluStatus(id);
 	}
+
+	@Post('/statuses')
+	async getStatuses(@Body() body): Promise<SluStatus> {
+		return await this.statusService.getStatuses(body);
+	}
 }
