@@ -4,16 +4,16 @@ import { IdentityDto } from './models/IdentityDto';
 import { IdentityValidationPipe } from './pipes/identity-validation.pipe';
 import { Identity } from './schemas/identity.schema';
 
-@Controller('collector')
+@Controller('/api/v1/authenticity')
 export class IdentityController {
 	constructor(private identityService: IdentityService) {}
 
-	@Get('prove')
+	@Get('/prove')
 	async getAuthProves(@Query() query): Promise<Identity[]> {
 		return await this.identityService.getAuthProves(query.did, query.from, query.to);
 	}
 
-	@Post('prove')
+	@Post('/prove')
 	@UsePipes(new IdentityValidationPipe())
 	async saveSlu(@Body() body: IdentityDto): Promise<Identity> {
 		return await this.identityService.proveAndSaveSlu(body);

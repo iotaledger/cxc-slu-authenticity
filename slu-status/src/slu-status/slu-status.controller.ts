@@ -4,7 +4,7 @@ import { SluStatusValidationPipe } from './pipes/slu-status-validation.pipe';
 import { SluStatus } from './schema/slu-status.schema';
 import { SluStatusService } from './slu-status.service';
 
-@Controller('status')
+@Controller('/api/v1/status')
 export class SluStatusController {
 	constructor(private statusService: SluStatusService) {}
 
