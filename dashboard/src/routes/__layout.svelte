@@ -1,16 +1,8 @@
 
 <script>
 	import Header from "$lib/header/Header.svelte";
-  import { onMount } from "svelte/internal";
   import { Container } from 'sveltestrap';
-	import { goto } from '$app/navigation';
-	import { logged } from '$lib/store.js';
-
-  onMount(() => {
-    if (!$logged && window.location.pathname !== "/") {
-      goto("/");
-    }
-  })
+  import { NotificationManager } from '@iota/is-ui-components';
 </script>
 
 <svelte:head>
@@ -18,6 +10,8 @@
 </svelte:head>
 
 <Header />
+
+<NotificationManager></NotificationManager>
 
 <Container>
   <slot></slot>

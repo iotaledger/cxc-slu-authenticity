@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { logged } from '../store.js';
+    import { isAuthenticated } from '@iota/is-ui-components'
+	// import { logout } from '@iota/is-ui-components'
 
 	import {
 		Collapse,
@@ -12,43 +13,36 @@
 		NavLink,
 	} from 'sveltestrap';
 
-
 	let isOpen = false;
 
 	function handleUpdate(event) {
 		isOpen = event.detail.isOpen;
 	}
 
-	function login() {
-		// TODO: show login page and save Token when handshake is good
-		$logged = true
-	}
-
-	function logout() {
-		// Clear also Token information saved in store
-		$logged = false;
+	async function _logout() {
+		// await logout();
 		goto("/")
 	}
 </script>
 
 <Navbar color="light" light expand="md">
-	<NavbarBrand href="/">CxC</NavbarBrand>
+	<NavbarBrand href="/"><img style="height: 2em" src="/imgs/cityxchange.jpg" alt="CityXChange"></NavbarBrand>
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
 	<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
 		<Nav class="ms-auto" navbar>
-			{#if $logged}
+			{#if $isAuthenticated}
 			<NavItem>
-				<NavLink href="/identity">Identity</NavLink>
+				<NavLink href="/secure/identity">Identity</NavLink>
 			</NavItem>
 			<NavItem>
-				<NavLink href="/streams">Streams</NavLink>
+				<NavLink href="/secure/streams">Streams</NavLink>
 			</NavItem>
 			<NavItem>
-				<NavLink on:click={logout}>Logout</NavLink>
+				<NavLink on:click={_logout}>Logout</NavLink>
 			</NavItem>
 			{:else}
 			<NavItem>
-				<NavLink on:click={login}>Login</NavLink>
+				<NavLink href="/">Login</NavLink>
 			</NavItem>
 			{/if}
 		</Nav>
