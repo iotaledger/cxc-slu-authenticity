@@ -64,9 +64,11 @@ export class DeviceRegistrationService {
 
 		const sluStatus = await firstValueFrom(
 			this.httpService.post(
-				`${sluStatusEndpoint}/${id}/${channelAddress}`,
+				`${sluStatusEndpoint}`,
 				{
-					status: 'created'
+					id: id,
+					status: 'created',
+					channelAddress: channelAddress
 				},
 				this.requestConfig
 			)

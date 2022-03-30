@@ -8,10 +8,9 @@ import { SluStatusService } from './slu-status.service';
 export class SluStatusController {
 	constructor(private statusService: SluStatusService) {}
 
-	@Post('/:id/:channel')
-	@UsePipes(new SluStatusValidationPipe())
-	async createSluStatus(@Body() body, @Param('id') id: string, @Param('channel') channel: string): Promise<SluStatus> {
-		return await this.statusService.saveSluStatus(body.status, id, channel);
+	@Post()
+	async createSluStatus(@Body(new SluStatusValidationPipe()) body): Promise<SluStatus> {
+		return await this.statusService.saveSluStatus(body);
 	}
 
 	@Put('/:id/:status')

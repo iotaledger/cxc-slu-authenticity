@@ -7,13 +7,14 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { SluStatus, SluStatusSchema } from '../src/slu-status/schema/slu-status.schema';
 import { Model, Connection } from 'mongoose';
 import { Status } from '../src/slu-status/model/Status';
+import { SluStatusDto } from 'src/slu-status/model/SluStatusDto';
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
 	let mongod: MongoMemoryServer;
 	let sluStatusModel: Model<SluStatus>;
 	let connection: Connection;
-	let sluStatus: SluStatus;
+	let sluStatus: SluStatusDto;
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -71,7 +72,6 @@ describe('AppController (e2e)', () => {
 		const { status, body } = await request(app.getHttpServer())
 			.get('/api/v1/status/did:iota:12345')
 			.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435');
-
 		expect(status).toBe(400);
 		expect(body).toBe('No valid api-key provided');
 	});
@@ -115,6 +115,7 @@ describe('AppController (e2e)', () => {
 			.post('/api/v1/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(wrongSluStatus);
+
 		expect(body.statusCode).toBe(400);
 		expect(body.message).toBe('Validation fails for status: destroyed');
 		expect(body.error).toBe('Bad Request');
@@ -123,15 +124,16 @@ describe('AppController (e2e)', () => {
 	it('/status/ (POST): wrong id', async () => {
 		const wrongSluStatus = {
 			id: 'dd:iota:12345',
-			status: 'destroyed',
+			status: 'installed',
 			channelAddress: 'anyKindOfAddress'
 		};
 		const { body } = await request(app.getHttpServer())
 			.post('/api/v1/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(wrongSluStatus);
+
 		expect(body.statusCode).toBe(400);
-		expect(body.message[0].value).toBe('dd:iota:12345');
+		expect(body.message).toBe('Validation fails for status: dd:iota:12345');
 		expect(body.error).toBe('Bad Request');
 	});
 
@@ -151,6 +153,7 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/status (PUT)', async () => {
+		await sluStatusModel.deleteMany();
 		await new sluStatusModel(sluStatus).save();
 		const { status, body } = await request(app.getHttpServer())
 			.put('/api/v1/status/did:iota:12345/' + Status.INSTALLED)

@@ -9,13 +9,8 @@ import { Status } from './model/Status';
 export class SluStatusService {
 	constructor(@InjectModel(SluStatus.name) private sluStatusModel: Model<SluStatus>) {}
 
-	async saveSluStatus(status: Status, id: string, channelAddress: string): Promise<SluStatusDocument> {
-		const sluStatusDto: SluStatusDto = {
-			id,
-			status,
-			channelAddress
-		};
-		return await new this.sluStatusModel(sluStatusDto).save();
+	async saveSluStatus(sluStatus: SluStatusDto): Promise<SluStatusDocument> {
+		return await new this.sluStatusModel(sluStatus).save();
 	}
 
 	async updateSluStatus(id: string, status: Status): Promise<SluStatusDocument> {
