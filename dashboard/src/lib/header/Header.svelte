@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-    import { isAuthenticated } from '@iota/is-ui-components'
-	// import { logout } from '@iota/is-ui-components'
+    import { authenticatedUserDID, isAuthenticated } from '@iota/is-ui-components'
+	import { logout } from '@iota/is-ui-components'
 
 	import {
 		Collapse,
@@ -20,13 +20,16 @@
 	}
 
 	async function _logout() {
-		// await logout();
+		logout();
 		goto("/")
 	}
 </script>
 
 <Navbar color="light" light expand="md">
 	<NavbarBrand href="/"><img style="height: 2em" src="/imgs/cityxchange.jpg" alt="CityXChange"></NavbarBrand>
+	{#if $authenticatedUserDID}
+		{$authenticatedUserDID}
+	{/if}
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
 	<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
 		<Nav class="ms-auto" navbar>
