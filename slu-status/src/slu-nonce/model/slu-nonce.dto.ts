@@ -1,8 +1,9 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Contains, IsNotEmpty, IsString } from 'class-validator';
 
 export class SluNonceDto {
 	@IsNotEmpty()
 	@IsString()
+	@Contains('did:iota:', { message: 'wrong DID format' })
 	readonly sluId: string;
 
 	@IsNotEmpty()
@@ -11,5 +12,6 @@ export class SluNonceDto {
 
 	@IsNotEmpty()
 	@IsString()
+	@Contains('did:iota:', { message: 'wrong DID format' })
 	readonly creator: string;
 }

@@ -93,7 +93,7 @@ export class DeviceRegistrationService {
 		}
 	}
 
-	private async saveSluNonce(id: string, nonce: string, creator: string): Promise<void> {
+	async saveSluNonce(id: string, nonce: string, creator: string): Promise<void> {
 		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
 		const body = {
 			sluId: id,

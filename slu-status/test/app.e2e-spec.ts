@@ -53,7 +53,7 @@ describe('AppController (e2e)', () => {
 	it('/status/:id (GET)', async () => {
 		await new sluStatusModel(sluStatus).save();
 		const { status, text } = await request(app.getHttpServer())
-			.get('/status/did:iota:12345')
+			.get('/api/v1/status/did:iota:12345')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(200);
 		expect(text).toBe('created');
@@ -61,7 +61,7 @@ describe('AppController (e2e)', () => {
 
 	it('/status/:id (GET): no slu-status found ', async () => {
 		const { status, body } = await request(app.getHttpServer())
-			.get('/status/did:iota:1234')
+			.get('/api/v1/status/did:iota:1234')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(200);
 		expect(body).toEqual({});
@@ -69,22 +69,23 @@ describe('AppController (e2e)', () => {
 
 	it('/status/:id (GET): wrong api-key', async () => {
 		const { status, body } = await request(app.getHttpServer())
-			.get('/status/did:iota:12345')
+			.get('/api/v1/status/did:iota:12345')
 			.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435');
+
 		expect(status).toBe(400);
-		expect(body[0]).toBe('No valid api-key provided');
+		expect(body).toBe('No valid api-key provided');
 	});
 
 	it('/status/:id (GET):no api-key', async () => {
-		const { status, body } = await request(app.getHttpServer()).get('/status/did:iota:12345');
+		const { status, body } = await request(app.getHttpServer()).get('/api/v1/status/did:iota:12345');
 		expect(status).toBe(400);
-		expect(body[0]).toBe('No valid api-key provided');
+		expect(body).toBe('No valid api-key provided');
 	});
 
 	it('/status/ (POST)', async () => {
 		await sluStatusModel.deleteMany();
 		const { status, body } = await request(app.getHttpServer())
-			.post('/status')
+			.post('/api/v1/status')
 			.send(sluStatus)
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		delete body._id;
@@ -96,7 +97,7 @@ describe('AppController (e2e)', () => {
 		await sluStatusModel.deleteMany();
 		await new sluStatusModel(sluStatus).save();
 		const { status, body } = await request(app.getHttpServer())
-			.post('/status')
+			.post('/api/v1/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(sluStatus);
 		expect(status).toBe(500);
@@ -111,7 +112,7 @@ describe('AppController (e2e)', () => {
 			channelAddress: 'anyKindOfAddress'
 		};
 		const { body } = await request(app.getHttpServer())
-			.post('/status')
+			.post('/api/v1/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(wrongSluStatus);
 		expect(body.statusCode).toBe(400);
@@ -126,7 +127,7 @@ describe('AppController (e2e)', () => {
 			channelAddress: 'anyKindOfAddress'
 		};
 		const { body } = await request(app.getHttpServer())
-			.post('/status')
+			.post('/api/v1/status')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(wrongSluStatus);
 		expect(body.statusCode).toBe(400);
@@ -136,23 +137,23 @@ describe('AppController (e2e)', () => {
 
 	it('/status (POST): wrong api-key', async () => {
 		const { status, body } = await request(app.getHttpServer())
-			.post('/status')
+			.post('/api/v1/status')
 			.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435')
 			.send(sluStatus);
 		expect(status).toBe(400);
-		expect(body[0]).toBe('No valid api-key provided');
+		expect(body).toBe('No valid api-key provided');
 	});
 
 	it('/status (POST):no api-key', async () => {
-		const { status, body } = await request(app.getHttpServer()).post('/status').send(sluStatus);
+		const { status, body } = await request(app.getHttpServer()).post('/api/v1/status').send(sluStatus);
 		expect(status).toBe(400);
-		expect(body[0]).toBe('No valid api-key provided');
+		expect(body).toBe('No valid api-key provided');
 	});
 
 	it('/status (PUT)', async () => {
 		await new sluStatusModel(sluStatus).save();
 		const { status, body } = await request(app.getHttpServer())
-			.put('/status/did:iota:12345/' + Status.INSTALLED)
+			.put('/api/v1/status/did:iota:12345/' + Status.INSTALLED)
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(200);
 		expect(body.status).toBe(Status.INSTALLED);
@@ -160,7 +161,7 @@ describe('AppController (e2e)', () => {
 	});
 	it('/status (PUT): validation of status fails', async () => {
 		const { status, body } = await request(app.getHttpServer())
-			.put('/status/did:iota:12345/destroyed')
+			.put('/api/v1/status/did:iota:12345/destroyed')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(400);
 		expect(body.message).toBe('Validation failed (enum string is expected)');
@@ -169,7 +170,7 @@ describe('AppController (e2e)', () => {
 
 	it('/status (PUT): no entry for the provided id', async () => {
 		const { status, body } = await request(app.getHttpServer())
-			.put('/status/did:iota:1345/installed')
+			.put('/api/v1/status/did:iota:1345/installed')
 			.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(200);
 		expect(body).toEqual({});
@@ -177,16 +178,16 @@ describe('AppController (e2e)', () => {
 
 	it('/status (PUT): wrong api-key', async () => {
 		const { status, body } = await request(app.getHttpServer())
-			.put('/status/did:iota:1345/installed')
+			.put('/api/v1/status/did:iota:1345/installed')
 			.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435');
 		expect(status).toBe(400);
-		expect(body[0]).toBe('No valid api-key provided');
+		expect(body).toBe('No valid api-key provided');
 	});
 
 	it('/status (PUT):no api-key', async () => {
-		const { status, body } = await request(app.getHttpServer()).put('/status/did:iota:1345/installed');
+		const { status, body } = await request(app.getHttpServer()).put('/api/v1/status/did:iota:1345/installed');
 		expect(status).toBe(400);
-		expect(body[0]).toBe('No valid api-key provided');
+		expect(body).toBe('No valid api-key provided');
 	});
 
 	afterAll(async () => {

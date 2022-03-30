@@ -23,7 +23,7 @@ export class SluStatusService {
 	}
 
 	async getSluStatus(id: string): Promise<string> {
-		const slu = await this.sluStatusModel.find({ id }, undefined, { fields: { _id: 0 } }).lean();
-		return slu[0]?.status;
+		const slu = await this.sluStatusModel.findOne({ id }).lean();
+		return slu?.status;
 	}
 }

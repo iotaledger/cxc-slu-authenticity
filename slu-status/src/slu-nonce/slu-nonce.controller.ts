@@ -1,14 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SluNonceDto } from './model/slu-nonce.dto';
 import { SluNonce } from './schema/slu-nonce.schema';
 import { SluNonceService } from './slu-nonce.service';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult } from 'mongodb';
 
 @Controller('/api/v1/status')
 export class SluNonceController {
 	constructor(private sluNonceService: SluNonceService) {}
 
 	@Post('/slu-nonce')
+	@UsePipes(new ValidationPipe({ transform: true }))
 	async saveSluNonce(@Body() sluNonceDto: SluNonceDto): Promise<SluNonce> {
 		return await this.sluNonceService.saveSluNonce(sluNonceDto);
 	}
@@ -24,7 +25,7 @@ export class SluNonceController {
 	}
 
 	@Post('/slu-nonces/:creator')
-	async getSluNonces(@Body() sluNonces: string[], @Param('creator') creator: string): Promise<SluNonce[]> {
-		return await this.sluNonceService.getSluNonces(sluNonces['sluIds'], creator);
+	async getSluNonces(@Body() sluNonces: { sluIds: string[] }, @Param('creator') creator: string): Promise<SluNonce[]> {
+		return await this.sluNonceService.getSluNonces(sluNonces.sluIds, creator);
 	}
 }
