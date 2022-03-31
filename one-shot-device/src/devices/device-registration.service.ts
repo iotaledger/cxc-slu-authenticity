@@ -75,7 +75,7 @@ export class DeviceRegistrationService {
 		);
 
 		if (sluStatus === null) {
-			this.logger.error('Failed connecting with SLU-Stat0us Microservice');
+			this.logger.error('Failed connecting with SLU-Status Microservice');
 			throw new HttpException('Could not connect with SLU-Status Microservice.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

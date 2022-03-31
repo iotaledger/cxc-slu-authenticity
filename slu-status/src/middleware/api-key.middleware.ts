@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
 export class ApiKeyMiddleware implements NestMiddleware {
-	constructor(private configService: ConfigService) { }
+	constructor(private configService: ConfigService) {}
 
 	use(req: Request, res: Response, next: NextFunction) {
 		const apiKey = this.configService.get<string>('API_KEY');

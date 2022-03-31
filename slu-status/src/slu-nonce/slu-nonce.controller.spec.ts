@@ -41,7 +41,7 @@ describe('SluNonceController', () => {
 		expect(controller).toBeDefined();
 	});
 
-	it('/slu-nonce - POST', async () => {
+	it('/nonce - POST', async () => {
 		const sluNonce: SluNonceDto = { sluId: 'did:iota:12345', nonce: '12nnc2jfn2hf20hnf20932', creator: 'did:iota:54321' };
 		const serviceSpy = jest.spyOn(service, 'saveSluNonce').mockResolvedValue(sluNonce);
 
@@ -51,7 +51,7 @@ describe('SluNonceController', () => {
 		expect(serviceSpy).toHaveBeenCalledWith(sluNonce);
 	});
 
-	it('/slu-nonce/:id/:creator - GET', async () => {
+	it('/nonce/:id/:creator - GET', async () => {
 		const sluNonce: SluNonce = { sluId: 'did:iota:12345', nonce: '12nnc2jfn2hf20hnf20932', creator: 'did:iota:54321' };
 		const creator = 'did:iota:54321';
 		const sluId = 'did:iota:12345';
@@ -63,7 +63,7 @@ describe('SluNonceController', () => {
 		expect(serviceSpy).toHaveBeenCalledWith(sluId, creator);
 	});
 
-	it('/slu-nonce/:id/:creator - DELETE', async () => {
+	it('/nonce/:id/:creator - DELETE', async () => {
 		const deleteResult: DeleteResult = { acknowledged: true, deletedCount: 1 };
 		const creator = 'did:iota:54321';
 		const sluId = 'did:iota:12345';
@@ -75,7 +75,7 @@ describe('SluNonceController', () => {
 		expect(serviceSpy).toHaveBeenCalledWith(sluId, creator);
 	});
 
-	it('/slu-nonces/:creator - POST', async () => {
+	it('/nonces/:creator - POST', async () => {
 		const sluIds = { sluIds: ['did:iota:123', 'did:iota:1234'] };
 		const result: SluNonce[] = [
 			{
