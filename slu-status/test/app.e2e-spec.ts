@@ -9,6 +9,7 @@ import { Model, Connection } from 'mongoose';
 import { Status } from '../src/slu-status/model/Status';
 import { SluStatusDto } from '../src/slu-status/model/SluStatusDto';
 import { SluNonce, SluNonceSchema } from '../src/slu-nonce/schema/slu-nonce.schema';
+import { EmptyLogger } from './empty-logger';
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
@@ -42,6 +43,7 @@ describe('AppController (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 		await app.init();
+		app.useLogger(new EmptyLogger());
 		sluStatusModel = moduleFixture.get<Model<SluStatus>>(getModelToken(SluStatus.name));
 		sluNonceModel = moduleFixture.get<Model<SluNonce>>(getModelToken(SluNonce.name));
 		connection = moduleFixture.get<Connection>(getConnectionToken());
