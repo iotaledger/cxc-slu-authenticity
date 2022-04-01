@@ -17,7 +17,8 @@ export class DeviceRegistrationController {
 		} catch (err) {
 			this.logger.error('Failed to create user and identity', { message: err.message });
 			return {
-				success: false
+				success: false,
+				message: err.message
 			};
 		}
 	}
