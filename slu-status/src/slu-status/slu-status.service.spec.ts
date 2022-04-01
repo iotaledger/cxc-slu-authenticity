@@ -47,21 +47,21 @@ describe('StatusService', () => {
 	});
 
 	it('should save SluStatus', async () => {
-		const savedSluStatus = await service.saveSluStatus(body.status, body.id, body.channelAddress);
+		const savedSluStatus = await service.saveSluStatus(body);
 		const dbResult = await sluStatusModel.find({ id: body.id });
 		expect(dbResult[0].toJSON()).toEqual(savedSluStatus.toJSON());
 	});
 
 	it('should throw error because of duplicate key error', async () => {
-		await service.saveSluStatus(body.status, body.id, body.channelAddress);
-		const duplicateSave = service.saveSluStatus(body.status, body.id, body.channelAddress);
+		await service.saveSluStatus(body);
+		const duplicateSave = service.saveSluStatus(body);
 		// eslint-disable-next-line prettier/prettier
 		const errorMessage = 'E11000 duplicate key error collection: test.slu_status index: id_1 dup key: { id: "did:iota:1223455" }';
 		await expect(duplicateSave).rejects.toThrow(errorMessage);
 	});
 
 	it('should update slu-status', async () => {
-		await service.saveSluStatus(body.status, body.id, body.channelAddress);
+		await service.saveSluStatus(body);
 		const update = {
 			id: 'did:iota:1223455',
 			status: Status.INSTALLED,
@@ -72,7 +72,7 @@ describe('StatusService', () => {
 	});
 
 	it('should be null: no slu under this id', async () => {
-		await service.saveSluStatus(body.status, body.id, body.channelAddress);
+		await service.saveSluStatus(body);
 		const update = {
 			id: 'id:iota:1223455',
 			status: Status.INSTALLED,
@@ -83,7 +83,7 @@ describe('StatusService', () => {
 	});
 
 	it('should return status', async () => {
-		const savedSluStatus = await service.saveSluStatus(body.status, body.id, body.channelAddress);
+		const savedSluStatus = await service.saveSluStatus(body);
 		const getSavedSluStatus = await service.getSluStatus(body.id);
 		expect(getSavedSluStatus).toBe(savedSluStatus.status);
 	});

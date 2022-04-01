@@ -24,7 +24,7 @@ describe('transform', () => {
 
 		it('should return the value: no metadata', async () => {
 			const validation = await sluStatusValidationPipe.transform(body, {} as any);
-			expect(validation).toBe(body);
+			expect(validation).toEqual(body);
 		});
 
 		it('should return the value', async () => {
@@ -44,17 +44,17 @@ describe('transform', () => {
 				status: 'destroyed',
 				channelAddress: '186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e'
 			};
-			const validation = sluStatusValidationPipe.transform(body, metadata);
+			const validation = sluStatusValidationPipe.transform(body as SluStatusDto, metadata);
 			await expect(validation).rejects.toThrow(BadRequestException);
 		});
 
 		it('should throw error because of false DID', async () => {
 			const body = {
-				id: 'iota:2xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd',
+				id: 'dd:iota:2xCZnoUYakpLYzSWXjwiebYp6RpiUi8DvD9DwoU3qe335sdd',
 				status: 'created',
 				channelAddress: '186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e'
 			};
-			const validation = sluStatusValidationPipe.transform(body, metadata as any);
+			const validation = sluStatusValidationPipe.transform(body as SluStatusDto, metadata as any);
 			await expect(validation).rejects.toThrow(BadRequestException);
 		});
 	});

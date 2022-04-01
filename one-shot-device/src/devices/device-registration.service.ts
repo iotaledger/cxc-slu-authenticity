@@ -60,31 +60,33 @@ export class DeviceRegistrationService {
 	}
 
 	public async createSluStatus(id: string, channelAddress: string) {
-		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_BASE_URL');
 
 		const sluStatus = await firstValueFrom(
 			this.httpService.post(
-				`${sluStatusEndpoint}/${id}/${channelAddress}`,
+				`${sluStatusEndpoint}/status`,
 				{
-					status: 'created'
+					id: id,
+					status: 'created',
+					channelAddress: channelAddress
 				},
 				this.requestConfig
 			)
 		);
 
 		if (sluStatus === null) {
-			this.logger.error('Failed connecting with SLU-Stat0us Microservice');
+			this.logger.error('Failed connecting with SLU-Status Microservice');
 			throw new HttpException('Could not connect with SLU-Status Microservice.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	public async updateSluStatus(id: string) {
-		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_BASE_URL');
 		const body = {
 			status: 'installed'
 		};
 
 		const updateSluStatus = await firstValueFrom(
-			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
+			this.httpService.put(`${sluStatusEndpoint}/status/${id}/${body.status}`, body, this.requestConfig)
 		);
 
 		if (updateSluStatus === null) {
@@ -93,7 +95,17 @@ export class DeviceRegistrationService {
 		}
 	}
 
-	async createIdentityAndSubscribe(channelAddress: string) {
+	async saveSluNonce(id: string, nonce: string, creator: string): Promise<void> {
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_BASE_URL');
+		const body = {
+			sluId: id,
+			nonce: nonce,
+			creator: creator 
+		}
+		await firstValueFrom(this.httpService.post(`${sluStatusEndpoint}/slu-nonce`, body, this.requestConfig));
+	}
+
+	async createIdentityAndSubscribe(channelAddress: string, creator: string) {
 		const nonce = uuidv4();
 		const deviceIdentity = await this.createIdentity();
 		const {
@@ -120,6 +132,8 @@ export class DeviceRegistrationService {
 		await doc.save();
 
 		await this.createSluStatus(id, channelAddress);
+
+		await this.saveSluNonce(id, nonce, creator);
 
 		return { nonce, channelAddress, id };
 	}
