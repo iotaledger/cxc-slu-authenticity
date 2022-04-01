@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "DATABASE_URL=mongodb://127.0.0.1:6000/ jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit"
+    "test:e2e": "DATABASE_URL=mongodb://127.0.0.1:6000/ API_KEY=2b3fe07d-b7db-49cb-8300-d32139e3d435 jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "@nestjs/axios": "^0.0.6",
