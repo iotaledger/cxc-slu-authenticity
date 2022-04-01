@@ -58,7 +58,7 @@ describe('Send sensor data tests', () => {
 
 		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl,payloadData, isAuthUrl, jwt);
 
-		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
+		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
 		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
 		expect(response).toBe(channelData);
 	});
@@ -90,7 +90,7 @@ describe('Send sensor data tests', () => {
 		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
 
 		expect(sendAuthProveSpy).toBeCalled();
-		expect(authenticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
+		expect(authenticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
 		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
 		expect(response).toBe(channelData);
 	});
@@ -140,7 +140,7 @@ describe('Send sensor data tests', () => {
 		};
 		/**response for two different post requests:
 		 * 1.request just the status is relevant for failing the if statement
-		 * 2.request ist jwt relevant as the response of the other post request.
+		 * 2.request ist the jwt relevant.
 		 * **/
 		const postResp = {
 			data: {
@@ -169,7 +169,7 @@ describe('Send sensor data tests', () => {
 
 		expect(axios.post).toHaveBeenCalledTimes(3);
 		expect(axios.get).toHaveBeenCalled();
-		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKeys.id, data.identityKeys.key.secret);
+		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
 		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
 		expect(response).toBe(channelData);
 	});

@@ -1,7 +1,7 @@
 import { CreateDeviceRegistrationDto as dto } from '../../src/devices/dto/create-device-registration.dto';
 export const deviceStubData = (): dto | any => {
 	return {
-		identityKeys: {
+		identityKey: {
 			id: 'did:iota:5qmWjFWcqE3BNTB9KNCBH6reXEgig4gFUXiPENywB3wo',
 			key: {
 				type: 'ed25519',

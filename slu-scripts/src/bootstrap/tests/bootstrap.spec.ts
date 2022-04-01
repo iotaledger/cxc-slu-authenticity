@@ -6,7 +6,7 @@ import * as vpuf from '../../vpuf/vpuf';
 jest.mock('axios');
 const keyFilePath: string | undefined = process.env.npm_config_key_file;
 const destinationPath: string | undefined = process.env.npm_config_dest;
-const registrationUrl: string | undefined = process.env.npm_config_registration_url;
+const oneShotDeviceUrl: string | undefined = process.env.npm_config_one_shot_device_url;
 const nonce: string | undefined = process.env.npm_config_nonce;
 
 describe('bootstrap on device', () => {
@@ -36,7 +36,7 @@ describe('bootstrap on device', () => {
 
 		axios.get = jest.fn().mockResolvedValue(response);
 
-		await bootstrap(registrationUrl, keyFilePath, destinationPath, nonce);
+		await bootstrap(oneShotDeviceUrl, keyFilePath, destinationPath, nonce);
 
 		const encryptedData = fs.readFileSync(destinationPath + '/data.json.enc', 'utf-8');
 		expect(encryptedData).not.toBeUndefined();
@@ -61,7 +61,7 @@ describe('bootstrap on device', () => {
 		axios.get = jest.fn().mockResolvedValue(response);
 
 		try {
-			await bootstrap(registrationUrl, keyFilePath, destinationPath, nonce);
+			await bootstrap(oneShotDeviceUrl, keyFilePath, destinationPath, nonce);
 		} catch (ex: any) {
 			expect(ex.message).toBe('Failed to get identity');
 		}
@@ -81,7 +81,7 @@ describe('bootstrap on device', () => {
 		};
 		axios.get = jest.fn().mockResolvedValue(response);
 		try {
-			await bootstrap(registrationUrl, wrongKey, destinationPath, nonce);
+			await bootstrap(oneShotDeviceUrl, wrongKey, destinationPath, nonce);
 		} catch (ex: any) {
 			expect(ex.message).toBe(msg);
 		}
@@ -89,9 +89,9 @@ describe('bootstrap on device', () => {
 
 	it('should fail to bootstrap: no env var provided', async () => {
 		const noKey = '';
-		const msg = 'One or all of the env variables are not provided: --key_file, --registration_url, --dest, --nonce';
+		const msg = 'One or all of the env variables are not provided: --key_file, --one_shot_device_url, --dest, --nonce';
 		try {
-			await bootstrap(registrationUrl, noKey, destinationPath, nonce);
+			await bootstrap(oneShotDeviceUrl, noKey, destinationPath, nonce);
 		} catch (ex: any) {
 			expect(ex.message).toBe(msg);
 		}

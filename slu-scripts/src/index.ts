@@ -25,7 +25,7 @@ const argv = yargs
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
-			.option('registration_url', { describe: 'The url of device registration microservice.' })
+			.option('one_shot_device_url', { describe: 'The url endpoint of .../api/v1/one-shot-device/bootstrap' })
 			.option('nonce', { describe: 'Nonce of the device' });
 	})
 	.command('send-data', 'Send sensor data to integration service', (yargs) =>
@@ -48,7 +48,7 @@ export async function execScript(argv: any) {
 	const interval: string | undefined = process.env.npm_config_interval;
 	const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
-	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
+	const oneShotDeviceUrl: string | undefined = process.env.npm_config_one_shot_device_url;
 	const isApiKey: string | undefined = process.env.npm_config_is_api_key;
 	const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 	const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
@@ -76,7 +76,7 @@ export async function execScript(argv: any) {
 		}
 	} else if (argv._.includes('bootstrap')) {
 		try {
-			await bootstrap(registrationUrl, keyFilePath, destination, nonce);
+			await bootstrap(oneShotDeviceUrl, keyFilePath, destination, nonce);
 		} catch (ex: any) {
 			console.error(ex.message);
 			process.exit(1);

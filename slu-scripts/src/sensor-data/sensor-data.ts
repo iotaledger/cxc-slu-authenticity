@@ -22,7 +22,7 @@ export async function sendData(
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
-		let { identityKeys, channelAddress } = JSON.parse(decryptedData);
+		let { identityKey, channelAddress } = JSON.parse(decryptedData);
 		const clientConfig: ClientConfig = {
 			apiKey: isApiKey,
 			baseUrl: isBaseUrl,
@@ -33,7 +33,7 @@ export async function sendData(
 		while (!isSend) {
 			try {
 				//send to collector
-				await postData(collectorBaseUrl, payloadData, identityKeys.id, jwt!);
+				await postData(collectorBaseUrl, payloadData, identityKey.id, jwt!);
 				isSend = true;
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
@@ -43,10 +43,10 @@ export async function sendData(
 				}
 				//Retry to send: jwt token expired
 				else if (ex.response.status === 401) {
-					const res = await axios.get(isAuthUrl + `/${identityKeys.id}?api-key=${clientConfig.apiKey}`);
-					const signedNonce = await signNonce(identityKeys.key.secret, res?.data?.nonce);
+					const res = await axios.get(isAuthUrl + `/${identityKey.id}?api-key=${clientConfig.apiKey}`);
+					const signedNonce = await signNonce(identityKey.key.secret, res?.data?.nonce);
 					const isResponse = await axios.post(
-						isAuthUrl + `/${identityKeys.id}?api-key=${clientConfig.apiKey}`,
+						isAuthUrl + `/${identityKey.id}?api-key=${clientConfig.apiKey}`,
 						JSON.stringify({ signedNonce }),
 						{
 							method: 'post',
@@ -59,7 +59,7 @@ export async function sendData(
 				}
 			}
 		}
-		return await writeToChannel(clientConfig, identityKeys, channelAddress, payloadData);
+		return await writeToChannel(clientConfig, identityKey, channelAddress, payloadData);
 	} else {
 		throw new Error(
 			'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url, --jwt'

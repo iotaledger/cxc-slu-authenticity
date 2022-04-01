@@ -131,8 +131,8 @@ describe('Bootstrap tests', () => {
 	});
 
 	it('bootstrap should fail', async () => {
-		const oldVal = process.env.npm_config_registration_url;
-		process.env.npm_config_registration_url = '';
+		const oldVal = process.env.npm_config_one_shot_device_url;
+		process.env.npm_config_one_shot_device_url = '';
 		process.argv[2] = 'bootstrap';
 		const argv = yargs.parse(process.argv[2]);
 		const mockExit = jest.spyOn(process, 'exit').mockImplementation();
@@ -141,7 +141,7 @@ describe('Bootstrap tests', () => {
 		await execScript(argv);
 
 		expect(mockExit).toHaveBeenCalledWith(1);
-		expect(errorLog).toBeCalledWith('One or all of the env variables are not provided: --key_file, --registration_url, --dest, --nonce');
+		expect(errorLog).toBeCalledWith('One or all of the env variables are not provided: --key_file, --one_shot_device_url, --dest, --nonce');
 
 		process.env.npm_config_registration_url = oldVal;
 	});
