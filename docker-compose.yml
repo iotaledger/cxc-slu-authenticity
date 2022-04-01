@@ -70,7 +70,7 @@ services:
       - DB_NAME=one-shot-device
       - IS_API_KEY=${API_KEY}
       - IS_API_URL=${INTEGRATION_SERVICE}
-      - SLU_STATUS_URL=http://slu-status:3000/api/v1/status
+      - SLU_STATUS_BASE_URL=http://slu-status:3000/api/v1
       - SLU_STATUS_API_KEY=${SLU_STATUS_API_KEY}
     depends_on:
       - mongo

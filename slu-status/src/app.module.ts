@@ -23,6 +23,6 @@ import { SluNonceModule } from './slu-nonce/slu-nonce.module';
 })
 export class AppModule {
 	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(ApiKeyMiddleware).forRoutes('/api/v1/status').apply(ApiKeyMiddleware).forRoutes('api/v1/slu-nonce');
+		consumer.apply(ApiKeyMiddleware).forRoutes('/api/v1/status').apply(ApiKeyMiddleware).forRoutes('/api/v1/slu-nonce');
 	}
 }
