@@ -6,10 +6,10 @@ export class DeviceRegistrationController {
 	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
-	@Post('/create/:channelAddress')
-	async createAndSubscribe(@Param('channelAddress') channelAddress: string) {
+	@Post('/create/:channelAddress/:creator')
+	async createAndSubscribe(@Param('channelAddress') channelAddress: string, @Param('creator') creator: string) {
 		try {
-			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress);
+			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress, creator);
 			return {
 				success: true,
 				...nonce
@@ -17,12 +17,13 @@ export class DeviceRegistrationController {
 		} catch (err) {
 			this.logger.error('Failed to create user and identity', { message: err.message });
 			return {
-				success: false
+				success: false,
+				message: err.message
 			};
 		}
 	}
 
-	@Get('bootstrap/:nonce')
+	@Get('/bootstrap/:nonce')
 	async getRegisteredDevice(@Param('nonce') nonce: string) {
 		try {
 			const registeredDeviceInfo = await this.deviceRegistrationService.getRegisteredDevice(nonce);

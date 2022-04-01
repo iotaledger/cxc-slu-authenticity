@@ -6,23 +6,18 @@ import { Status } from '../model/Status';
 
 @Injectable()
 export class SluStatusValidationPipe implements PipeTransform<SluStatusDto> {
-	async transform(value: any, { metatype }: ArgumentMetadata) {
-		if (!metatype || !this.toValidate(metatype)) {
-			return value;
-		}
+	async transform(value: SluStatusDto, { metatype }: ArgumentMetadata) {
 		const object = plainToInstance(metatype, value);
 		const errors = await validate(object);
 		if (errors.length > 0) {
 			throw new BadRequestException(errors);
 		}
+		if (!object.id.includes('did:iota')) {
+			throw new BadRequestException('Validation fails for status: ' + object.id);
+		}
 		if (!Object.values(Status).includes(object.status)) {
 			throw new BadRequestException('Validation fails for status: ' + object.status);
 		}
 		return object;
-	}
-
-	private toValidate(metatype): boolean {
-		const types = [String, Boolean, Number, Array, Object];
-		return !types.includes(metatype);
 	}
 }

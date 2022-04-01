@@ -9,13 +9,8 @@ import { Status } from './model/Status';
 export class SluStatusService {
 	constructor(@InjectModel(SluStatus.name) private sluStatusModel: Model<SluStatus>) {}
 
-	async saveSluStatus(status: Status, id: string, channelAddress: string): Promise<SluStatusDocument> {
-		const sluStatusDto: SluStatusDto = {
-			id,
-			status,
-			channelAddress
-		};
-		return await new this.sluStatusModel(sluStatusDto).save();
+	async saveSluStatus(sluStatus: SluStatusDto): Promise<SluStatusDocument> {
+		return await new this.sluStatusModel(sluStatus).save();
 	}
 
 	async updateSluStatus(id: string, status: Status): Promise<SluStatusDocument> {
@@ -23,7 +18,7 @@ export class SluStatusService {
 	}
 
 	async getSluStatus(id: string): Promise<string> {
-		const slu = await this.sluStatusModel.find({ id }, undefined, { fields: { _id: 0 } }).lean();
-		return slu[0]?.status;
+		const slu = await this.sluStatusModel.findOne({ id }).lean();
+		return slu?.status;
 	}
 }
