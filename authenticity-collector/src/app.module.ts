@@ -4,6 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { IdentityModule } from './identity/identity.module';
 import { ChannelSubscriptionService } from './channel-subscription/channel-subscription.service';
 import { SludataModule } from './sludata/sludata.module';
+import { ChannelClient, IdentityClient } from 'iota-is-sdk/lib';
+import { defaultConfig } from './configuration';
 
 @Module({
 	imports: [
@@ -20,6 +22,9 @@ import { SludataModule } from './sludata/sludata.module';
 			inject: [ConfigService]
 		}),
 	],
-	providers: [ChannelSubscriptionService]
+	providers: [ChannelSubscriptionService,
+		{ provide: 'IdentityClient', useValue: new IdentityClient(defaultConfig) },
+		{ provide: 'ChannelClient', useValue: new ChannelClient(defaultConfig)}
+	]
 })
-export class AppModule {}
+export class AppModule { }
