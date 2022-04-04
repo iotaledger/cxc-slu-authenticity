@@ -38,21 +38,18 @@ export class SluStatusService {
 	}
 
 	async getStatuses(devices: string[]): Promise<SluStatus[]> {
-		const devicesStatuses = await this.sluStatusModel.find(
-			{
-				ids: {
-					$in: devices
-				}
-			},
-			{ _id: 0 }
-		);
+		console.log('devices: ', devices);
+		const devicesStatuses = await this.sluStatusModel.find({
+			id: {
+				$in: devices
+			}
+		});
 
 		if (devicesStatuses === null) {
 			this.logger.error('Document(s) do not exist in the collection');
 			throw new HttpException('Could not find document(s) in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		console.log(devicesStatuses);
 		return devicesStatuses;
 	}
 }
