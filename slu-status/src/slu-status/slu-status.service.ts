@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { SluStatusDto } from './model/SluStatusDto';
 import { SluStatus, SluStatusDocument } from './schema/slu-status.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -9,30 +9,50 @@ import { Status } from './model/Status';
 export class SluStatusService {
 	constructor(@InjectModel(SluStatus.name) private sluStatusModel: Model<SluStatus>) {}
 
+	private readonly logger: Logger = new Logger(SluStatusService.name);
+
 	async saveSluStatus(sluStatus: SluStatusDto): Promise<SluStatusDocument> {
 		return await new this.sluStatusModel(sluStatus).save();
 	}
 
 	async updateSluStatus(id: string, status: Status): Promise<SluStatusDocument> {
-		return await this.sluStatusModel.findOneAndUpdate({ id }, { status }, { new: true, fields: { _id: 0 } });
+		const updateStatus = await this.sluStatusModel.findOneAndUpdate({ id }, { status }, { new: true, fields: { _id: 0 } });
+
+		if (updateStatus === null) {
+			this.logger.error('Document does not exist in the collection');
+			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return updateStatus;
 	}
 
 	async getSluStatus(id: string): Promise<string> {
 		const slu = await this.sluStatusModel.findOne({ id }).lean();
+
+		if (slu === null) {
+			this.logger.error('Document do not exist in the collection');
+			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		return slu?.status;
 	}
 
-	async getStatuses(body: []): Promise<any> {
-		// TODO: change the Promise to act type
-		// const devices = body;
-		const devices = ['did:iota:EQsp4DwvBhUXxD8iheUKfjrd5CQw3q85mUh1pA72qPug', 'did:iota:E37pMbfkauJnHtY7fq2QsmGtqgHryrLrQxMh8zWuo7p3'];
+	async getStatuses(devices: string[]): Promise<SluStatus[]> {
+		const devicesStatuses = await this.sluStatusModel.find(
+			{
+				ids: {
+					$in: devices
+				}
+			},
+			{ _id: 0 }
+		);
 
-		const devicesStatuses = await this.sluStatusModel.find({
-			_id: {
-				$in: devices
-			}
-		});
+		if (devicesStatuses === null) {
+			this.logger.error('Document(s) do not exist in the collection');
+			throw new HttpException('Could not find document(s) in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
+		console.log(devicesStatuses);
 		return devicesStatuses;
 	}
 }
