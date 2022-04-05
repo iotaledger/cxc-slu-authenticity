@@ -37,10 +37,10 @@ export class SluStatusService {
 		return slu?.status;
 	}
 
-	async getStatuses(devices: string[]): Promise<any[]> {
+	async getStatuses(ids: string[]): Promise<any[]> {
 		const devicesStatuses = await this.sluStatusModel.find({
 			id: {
-				$in: devices
+				$in: ids
 			}
 		});
 
@@ -49,6 +49,6 @@ export class SluStatusService {
 			throw new HttpException('Could not find document(s) in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return devicesStatuses.map((elem) => ({ id: elem.id, status: elem.status }));
+		return devicesStatuses.map((device) => ({ id: device.id, status: device.status }));
 	}
 }
