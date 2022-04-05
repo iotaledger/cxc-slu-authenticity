@@ -56,7 +56,7 @@ describe('ChannelSubscriptionService', () => {
 
 	it('should throw error', async () => {
 		process.env.COLLECTOR_DID = '';
-		process.env.COLLECTOR_SECRETE = '';
+		process.env.COLLECTOR_SECRET = '';
 		const error = service.channelSubscription();
 		await expect(error).rejects.toThrowError();
 	});

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { IdentityKeysData } from '../dto/create-device-registration.dto';
+import { IdentityKeyData } from '../dto/create-device-registration.dto';
 
 export type DeviceRegistrationDocument = DeviceRegistration & Document;
 
@@ -10,7 +10,7 @@ export class DeviceRegistration {
 	nonce: string;
 
 	@Prop({ required: true })
-	identityKeys: IdentityKeysData;
+	identityKey: IdentityKeyData;
 
 	@Prop({ required: true })
 	channelSeed: string;

@@ -17,7 +17,7 @@ export class AppService {
     let rootEndpoint = this.configService.get("INTEGRATION_SERVICE", "https://ensuresec.solutions.iota.org");
     let response = await firstValueFrom(this.httpService.request({
       method: "get",
-      url: `${rootEndpoint}/api/v1/verification/latest-document/${did}`,
+      url: `${rootEndpoint}/api/v0.1/verification/latest-document/${did}`,
       params: {
         "api-key": this.configService.get("API_KEY")
       }

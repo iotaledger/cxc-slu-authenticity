@@ -14,7 +14,10 @@ const argv = yargs
 	.command('send-proof', 'Decrypt data and send auth proof of device', (yargs) =>
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
-			.option('interval', { describe: 'The interval in millisecond during requests to the collector microservice are done.', default: '600000' })
+			.option('interval', {
+				describe: 'The interval in millisecond during requests to the collector microservice are done.',
+				default: '600000'
+			})
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 	)
@@ -22,15 +25,19 @@ const argv = yargs
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
-			.option('reqistration_url', { describe: 'The url of device registration microservice.' });
+			.option('one_shot_device_url', { describe: 'The url endpoint of .../api/v1/one-shot-device/bootstrap' })
+			.option('nonce', { describe: 'Nonce of the device' });
 	})
 	.command('send-data', 'Send sensor data to integration service', (yargs) =>
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('input_enc', { describe: 'The location of the encrypted data.' })
-			.option('config', { describe: 'Location of configuration file for the integration service.' })
+			.option('is_api_key', {describe: 'Api key of the integration services'})
+			.option('is_base_url', {describe: 'The base url of the integration services'})
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
+			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get an auth token' })
+			.option('jwt', { describe: 'JWT of the device' })
 	)
 	.help().argv;
 
@@ -41,8 +48,12 @@ export async function execScript(argv: any) {
 	const interval: string | undefined = process.env.npm_config_interval;
 	const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
 	const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
-	const registrationUrl: string | undefined = process.env.npm_config_registration_url;
-	const isConfigFile: string | undefined = process.env.npm_config_is_config_file;
+	const oneShotDeviceUrl: string | undefined = process.env.npm_config_one_shot_device_url;
+	const isApiKey: string | undefined = process.env.npm_config_is_api_key;
+	const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
+	const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
+	const nonce: string | undefined = process.env.npm_config_nonce;
+	const jwt: string | undefined = process.env.npm_config_jwt;
 
 	if (argv._.includes('encrypt')) {
 		try {
@@ -65,7 +76,7 @@ export async function execScript(argv: any) {
 		}
 	} else if (argv._.includes('bootstrap')) {
 		try {
-			await bootstrap(registrationUrl, keyFilePath, destination);
+			await bootstrap(oneShotDeviceUrl, keyFilePath, destination, nonce);
 		} catch (ex: any) {
 			console.error(ex.message);
 			process.exit(1);
@@ -75,12 +86,15 @@ export async function execScript(argv: any) {
 			if (interval) {
 				let payloadObject: any;
 				try {
-					payloadObject = JSON.parse('{"temperature": "100 degree"}');
+					payloadObject = await JSON.parse('{"temperature": "100 degree"}');
 				} catch (e: any) {
 					console.error(e.message);
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
-				setInterval(() => sendData(encryptedDataPath, keyFilePath, isConfigFile, collectorBaseUrl, payloadObject), Number(interval));
+				setInterval(
+					() => sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadObject, isAuthUrl, jwt),
+					Number(interval)
+				);
 			} else {
 				throw Error('No --interval in ms.');
 			}
