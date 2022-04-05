@@ -17,7 +17,7 @@ export class IdentityKeyObject {
 	readonly encoding: encoding;
 }
 
-export class IdentityKeysData {
+export class IdentityKeyData {
 	@IsNotEmpty()
 	@IsString()
 	readonly id: string;
@@ -35,7 +35,7 @@ export class CreateDeviceRegistrationDto {
 	@IsNotEmpty()
 	@IsString()
 	readonly seed: string;
-	@Type(() => IdentityKeysData)
+	@Type(() => IdentityKeyData)
 	@ValidateNested({ each: true })
-	readonly identityKeys: IdentityKeysData;
+	readonly identityKey: IdentityKeyData;
 }

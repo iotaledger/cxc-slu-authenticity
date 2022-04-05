@@ -31,7 +31,7 @@ describe('AppController (e2e)', () => {
 		nonce: deviceStubData().nonce,
 		subscriptionLink: deviceStubData().subscriptionLink,
 		channelSeed: deviceStubData().channelSeed,
-		identityKeys: deviceStubData().identityKeys,
+		identityKey: deviceStubData().identityKey,
 		channelAddress: deviceStubData().channelAddress
 	};
 

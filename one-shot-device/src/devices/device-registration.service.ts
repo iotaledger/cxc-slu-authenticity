@@ -122,7 +122,7 @@ export class DeviceRegistrationService {
 			subscriptionLink: subscriptionLink,
 			channelSeed: seed,
 			channelAddress,
-			identityKeys: {
+			identityKey: {
 				id,
 				key
 			}
@@ -145,14 +145,14 @@ export class DeviceRegistrationService {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		const id = device.identityKeys.id;
+		const id = device.identityKey.id;
 
 		await this.updateSluStatus(id);
 
 		return {
 			channelAddress: device.channelAddress,
 			channelSeed: device.channelSeed,
-			identityKeys: device.identityKeys,
+			identityKey: device.identityKey,
 			nonce: device.nonce,
 			subscriptionLink: device.subscriptionLink
 		};
