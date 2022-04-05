@@ -8,7 +8,6 @@ import { getConnectionToken, getModelToken, MongooseModule } from '@nestjs/mongo
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
-import { string } from 'joi';
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;

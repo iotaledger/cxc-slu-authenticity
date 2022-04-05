@@ -6,7 +6,7 @@ import { ChannelClient, ChannelInfo } from 'iota-is-sdk';
 export class ChannelSubscriptionService {
 	private readonly logger: Logger = new Logger(ChannelSubscriptionService.name);
 
-	constructor(private configService: ConfigService, @Inject('ChannelClient') private channelClient: ChannelClient) { }
+	constructor(private configService: ConfigService, @Inject('ChannelClient') private channelClient: ChannelClient) {}
 
 	async channelSubscription() {
 		const collectorDid = this.configService.get<string>('COLLECTOR_DID');
