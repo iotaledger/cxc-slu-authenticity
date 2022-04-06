@@ -1,9 +1,9 @@
 <script>
 	import Header from '$lib/header/Header.svelte';
-	import { Container } from 'sveltestrap';
 	import { NotificationManager } from '@iota/is-ui-components';
 	import { isAuthenticated } from '@iota/is-ui-components';
 	import { goto } from '$app/navigation';
+	import { Container } from 'sveltestrap';
 
 	$: {
 		if (!$isAuthenticated) {
@@ -20,9 +20,9 @@
 </svelte:head>
 
 <Header />
-
 <NotificationManager />
-
-<Container>
-	<slot />
-</Container>
+<main>
+	<Container>
+		<slot />
+	</Container>
+</main>
