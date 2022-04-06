@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { CreatorDevicesService } from 'src/creator-devices/creator-devices.service';
 
 @Injectable()
 export class DeviceRegistrationService {
@@ -23,8 +24,10 @@ export class DeviceRegistrationService {
 		private readonly userClient: ChannelClient,
 
 		@Inject('IdentityClient')
-		private readonly identityClient: IdentityClient
-	) {}
+		private readonly identityClient: IdentityClient,
+
+		private creatorDevicesService: CreatorDevicesService
+	) { }
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 	private readonly requestConfig: AxiosRequestConfig<any> = {
 		headers: {
@@ -100,7 +103,7 @@ export class DeviceRegistrationService {
 		const body = {
 			sluId: id,
 			nonce: nonce,
-			creator: creator 
+			creator: creator
 		}
 		await firstValueFrom(this.httpService.post(`${sluStatusEndpoint}/slu-nonce`, body, this.requestConfig));
 	}
@@ -134,6 +137,8 @@ export class DeviceRegistrationService {
 		await this.createSluStatus(id, channelAddress);
 
 		await this.saveSluNonce(id, nonce, creator);
+
+		await this.creatorDevicesService.saveCreatorDevice({ id: id, channelAddress: channelAddress, creator: creator })
 
 		return { nonce, channelAddress, id };
 	}
