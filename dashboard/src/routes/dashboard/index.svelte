@@ -3,6 +3,7 @@
 	import { showNotification, NotificationType } from '@iota/is-ui-components';
 	import { goto } from '$app/navigation';
 	import { Button } from 'sveltestrap';
+	import { browser } from '$app/env';
 
 	function push() {
 		showNotification({
@@ -12,7 +13,7 @@
 		});
 	}
 	$: {
-		if (!$isAuthenticated) {
+		if (browser && !$isAuthenticated) {
 			goto('/');
 		}
 	}

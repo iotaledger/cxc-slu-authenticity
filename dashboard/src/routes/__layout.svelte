@@ -4,9 +4,10 @@
 	import { isAuthenticated } from '@iota/is-ui-components';
 	import { goto } from '$app/navigation';
 	import { Container } from 'sveltestrap';
+	import { browser } from '$app/env';
 
 	$: {
-		if (!$isAuthenticated) {
+		if (browser && !$isAuthenticated) {
 			goto('/');
 		}
 	}
