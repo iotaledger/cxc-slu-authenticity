@@ -2,12 +2,18 @@
 	import { authenticatedUserDID, isAuthenticated } from '@iota/is-ui-components';
 	import { showNotification, NotificationType } from '@iota/is-ui-components';
 	import { Button } from 'sveltestrap';
+	import { goto } from '$app/navigation';
 
 	function push() {
 		showNotification({
 			type: NotificationType.Info,
 			message: 'Example of info from Dashboard'
 		});
+	}
+	$: {
+		if (!$isAuthenticated) {
+			goto('/');
+		}
 	}
 </script>
 
