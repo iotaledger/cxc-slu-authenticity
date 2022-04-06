@@ -1,17 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-    import { authenticatedUserDID, isAuthenticated } from '@iota/is-ui-components'
-	import { logout } from '@iota/is-ui-components'
+	import { authenticatedUserDID, isAuthenticated } from '@iota/is-ui-components';
+	import { logout } from '@iota/is-ui-components';
 
-	import {
-		Collapse,
-		Navbar,
-		NavbarToggler,
-		NavbarBrand,
-		Nav,
-		NavItem,
-		NavLink,
-	} from 'sveltestrap';
+	import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'sveltestrap';
 
 	let isOpen = false;
 
@@ -21,12 +13,14 @@
 
 	async function _logout() {
 		logout();
-		goto("/")
+		goto('/');
 	}
 </script>
 
 <Navbar color="light" light expand="md">
-	<NavbarBrand href="/"><img style="height: 2em" src="/imgs/cityxchange.jpg" alt="CityXChange"></NavbarBrand>
+	<NavbarBrand href="/"
+		><img style="height: 2em" src="/imgs/cityxchange.jpg" alt="CityXChange" /></NavbarBrand
+	>
 	{#if $authenticatedUserDID}
 		{$authenticatedUserDID}
 	{/if}
@@ -34,19 +28,22 @@
 	<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
 		<Nav class="ms-auto" navbar>
 			{#if $isAuthenticated}
-			<NavItem>
-				<NavLink href="/secure/identity">Identity</NavLink>
-			</NavItem>
-			<NavItem>
-				<NavLink href="/secure/streams">Streams</NavLink>
-			</NavItem>
-			<NavItem>
-				<NavLink on:click={_logout}>Logout</NavLink>
-			</NavItem>
+				<NavItem>
+					<NavLink href="/secure/identity">Identity</NavLink>
+				</NavItem>
+				<NavItem>
+					<NavLink href="/secure/streams">Streams</NavLink>
+				</NavItem>
+				<NavItem>
+					<NavLink href="/dashboard">Dashboard</NavLink>
+				</NavItem>
+				<NavItem>
+					<NavLink on:click={_logout}>Logout</NavLink>
+				</NavItem>
 			{:else}
-			<NavItem>
-				<NavLink href="/">Login</NavLink>
-			</NavItem>
+				<NavItem>
+					<NavLink href="/">Login</NavLink>
+				</NavItem>
 			{/if}
 		</Nav>
 	</Collapse>
