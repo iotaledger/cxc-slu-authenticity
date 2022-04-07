@@ -33,9 +33,6 @@
 		}
 	];
 
-	const TARGET_CHANNEL_ADDRESS =
-		'db9660525ebf0970884da7d515f3337acd1eab48d7e1d37c1fe304bd192343c00000000000000000:bd1cb41465914401880f28e4';
-
 	enum State {
 		ListDevices = 'listDevices',
 		DeviceDetail = 'deviceDetail'
@@ -71,8 +68,6 @@
 	async function updateState(): Promise<void> {
 		if ($selectedIdentity) {
 			state = State.DeviceDetail;
-			// custom: start reading channel data
-			startReadingChannel(TARGET_CHANNEL_ADDRESS);
 		} else {
 			state = State.ListDevices;
 			stopReadingChannel();
@@ -113,10 +108,7 @@
 				<span class="ms-2">Back</span>
 			</button>
 		</div>
-		<IdentityDetails {loading} identity={$selectedIdentity} />
-		<div class="mb-4">
-			<ChannelMessages channelData={$selectedChannelData} />
-		</div>
+		<div>DEVICE DETAILS</div>
 	{/if}
 </Container>
 
