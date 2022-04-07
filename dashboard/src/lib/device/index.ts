@@ -27,7 +27,7 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
         return devices;
     }
     catch (e) {
-        console.error("Failed to fetch nonce device info.", e)
+        console.error("Failed to fetch list of devices.", e)
         return []
     }
 }
@@ -39,8 +39,7 @@ export async function createDevice(channelAddress: string, creatorId: string): P
         return device;
     }
     catch (e) {
-        console.error("Failed to fetch nonce device info.", e)
+        console.error("Failed to create device.", e)
         return {}
     }
 }
-
