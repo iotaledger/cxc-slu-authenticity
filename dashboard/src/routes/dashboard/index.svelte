@@ -1,10 +1,27 @@
 <script lang="ts">
+	import { createDevice, getDeviceNonce, getDevices } from '$lib/device';
+
 	import DeviceDetails from '$lib/device-details/device-details.svelte';
 	import type { Device } from '$lib/device/types';
-	import type { ActionButton, TableData } from '@iota/is-ui-components';
+	import {
+		acceptSubscription,
+		authenticationData,
+		createChannel,
+		selectedChannel,
+		type ActionButton,
+		type TableData
+	} from '@iota/is-ui-components';
 	import { Icon, ListManager, NotificationManager } from '@iota/is-ui-components';
+	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
 
+	onMount(async () => {
+		await loadDevices();
+	});
+
+	async function loadDevices() {
+		devices = await getDevices($authenticationData?.did);
+	}
 	enum State {
 		ListDevices = 'listDevices',
 		DeviceDetails = 'deviceDetails'
@@ -13,31 +30,25 @@
 	const DEVICE_LIST_BUTTONS: ActionButton[] = [
 		{
 			label: 'Create device',
-			onClick: createDevice,
+			onClick: handleCreateDevice,
 			icon: 'plus',
 			color: 'dark'
 		}
 	];
 
-	let devices = [
-		{
-			id: 'device 1',
-			status: 'Active',
-			nonce: 'nonce',
-			authenticity: 'authenticity',
-			messages: 'messages'
-		}
-	];
+	let devices = [];
 
 	let state: State = State.ListDevices;
 	let message: string;
 	let selectedDevice: Device;
 
+	let loading = false;
+
 	$: selectedDevice, updateState();
 	$: message = devices?.length ? 'No devices found' : undefined;
 
 	$: tableData = {
-		headings: ['Device Id', 'Nonce'],
+		headings: ['Device Id', 'Channel Address'],
 		rows: devices.map((device) => ({
 			onClick: () => handleSelectDevice(device),
 			content: [
@@ -47,7 +58,7 @@
 					value: device.id ?? '-'
 				},
 				{
-					value: device.nonce ?? '-'
+					value: device.channelAddress ?? '-'
 				}
 			]
 		}))
@@ -66,18 +77,16 @@
 		selectedDevice = device;
 	}
 
-	function createDevice() {
-		// TODO: Add correct logic here
-		devices = [
-			...devices,
-			{
-				id: `device ${++devices.length}`,
-				status: 'Active',
-				nonce: 'nonce',
-				authenticity: 'authenticity',
-				messages: 'messages'
+	let channel;
+	async function handleCreateDevice() {
+		channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
+		if (channel) {
+			const device = await createDevice(channel?.channelAddress, $authenticationData?.did);
+			if (device) {
+				await acceptSubscription(channel?.channelAddress, device?.id);
 			}
-		];
+		}
+		await loadDevices();
 	}
 
 	function handleBackClick(): void {
