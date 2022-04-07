@@ -1,4 +1,4 @@
-name: Publish Authenticity Collector API on DockerHub
+name: Publish One Shot Device API on DockerHub
 
 on:
   push:
