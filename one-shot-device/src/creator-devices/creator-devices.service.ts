@@ -9,7 +9,7 @@ export class CreatorDevicesService {
     constructor(@InjectModel(CreatorDevice.name) private creatorDeviceModel: Model<CreatorDeviceDocument>) { }
 
     async saveCreatorDevice(creatorDevice: CreatorDevice): Promise<CreatorDevice> {
-        return await new this.creatorDeviceModel(creatorDevice).save();
+        return (await new this.creatorDeviceModel(creatorDevice).save()).toObject();
     }
 
     async getAllDevices(creator: string): Promise<CreatorDevice[]> {

@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
 import { ConfigService } from '@nestjs/config';
-import { CreatorDevicesService } from 'src/creator-devices/creator-devices.service';
+import { CreatorDevicesService } from '../creator-devices/creator-devices.service';
 
 @Injectable()
 export class DeviceRegistrationService {

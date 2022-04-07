@@ -10,6 +10,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { badNonceMock, identityMock, channelMock, authorizedChannelMock, requestSubscription } from './mocks';
 import { RequestSubscriptionResponse } from 'iota-is-sdk/lib/models/types/request-response-bodies';
 import { IdentityJson } from 'iota-is-sdk/lib/models/types/identity';
+import { CreatorDevicesService } from '../creator-devices/creator-devices.service';
+import { CreatorDevicesModule } from '../creator-devices/creator-devices.module';
 
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationService: DeviceRegistrationService;
@@ -22,6 +24,7 @@ describe('DeviceRegistrationController', () => {
 	const moduleCreator = async (identityClientMock: IdentityJson | any, subscriptionResponseMock: RequestSubscriptionResponse | any) => {
 		module = await Test.createTestingModule({
 			imports: [
+				CreatorDevicesModule,
 				HttpModule,
 				ConfigModule,
 				MongooseModule.forRootAsync({
