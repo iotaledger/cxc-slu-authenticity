@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IdentityClient } from 'iota-is-sdk/lib';
 import { defaultConfig } from '../../configuration';
 import { CollectorIdentityService } from './collector-identity.service';
-import * as fs from 'fs';
 
 describe('CollectorIdentityService', () => {
 	let service: CollectorIdentityService;
