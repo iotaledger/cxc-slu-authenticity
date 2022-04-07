@@ -4,6 +4,7 @@ import { ChannelSubscriptionService } from './channel-subscription/channel-subsc
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+	app.enableCors();
 	await app.listen(process.env.PORT || 3000);
 	const channelSubscription = app.get(ChannelSubscriptionService);
 	channelSubscription.channelSubscription();
