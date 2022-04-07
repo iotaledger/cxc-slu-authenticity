@@ -4,19 +4,16 @@
 	import { browser } from '$app/env';
 	import type { ActionButton, TableData } from '@iota/is-ui-components';
 	import {
-		ChannelMessages,
 		Icon,
-		IdentityDetails,
 		isAsyncLoadingIdentities,
 		ListManager,
 		NotificationManager,
 		searchIdentitiesResults,
-		selectedChannelData,
 		selectedIdentity,
-		startReadingChannel,
 		stopReadingChannel
 	} from '@iota/is-ui-components';
 	import { Container, Row } from 'sveltestrap';
+	import DeviceDetails from '$lib/device-details/device-details.svelte';
 
 	$: {
 		if (browser && !$isAuthenticated) {
@@ -38,7 +35,15 @@
 		DeviceDetail = 'deviceDetail'
 	}
 
-	let devices = ['one device'];
+	let devices = [
+		{
+			id: 'device 1',
+			status: 'Active',
+			nonce: 'nonce',
+			authenticity: 'authenticity',
+			messages: 'messages'
+		}
+	];
 	let state: State = State.ListDevices;
 	let loading: boolean = false;
 	let query: string = '';
@@ -59,7 +64,7 @@
 				{
 					icon: 'nut',
 					boxColor: 'green',
-					value: device
+					value: device.id
 				}
 			]
 		}))
@@ -79,7 +84,16 @@
 	}
 
 	function addNewDevice() {
-		let newDevices = [...devices, 'new device'];
+		let newDevices = [
+			...devices,
+			{
+				id: `device ${++devices.length}`,
+				status: 'Active',
+				nonce: 'nonce',
+				authenticity: 'authenticity',
+				messages: 'messages'
+			}
+		];
 		devices = newDevices;
 	}
 
@@ -108,7 +122,9 @@
 				<span class="ms-2">Back</span>
 			</button>
 		</div>
-		<div>DEVICE DETAILS</div>
+		{#each devices as device}
+			<DeviceDetails {device} />
+		{/each}
 	{/if}
 </Container>
 
