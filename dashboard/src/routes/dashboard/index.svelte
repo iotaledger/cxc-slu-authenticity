@@ -17,15 +17,12 @@
 		await loadDevices();
 	});
 
-	async function loadDevices() {
-		devices = await getDevices($authenticationData?.did);
-	}
 	enum State {
 		ListDevices = 'listDevices',
 		DeviceDetails = 'deviceDetails'
 	}
 
-	const DEVICE_LIST_BUTTONS: ActionButton[] = [
+	let DEVICE_LIST_BUTTONS: ActionButton[] = [
 		{
 			label: 'Create device',
 			onClick: handleCreateDevice,
@@ -35,15 +32,24 @@
 	];
 
 	let devices = [];
-
+	let loading: boolean = false;
 	let state: State = State.ListDevices;
 	let message: string;
 	let selectedDevice: Device;
 
-	let loading = false;
+	async function loadDevices() {
+		loading = true;
+		devices = await getDevices($authenticationData?.did);
+		loading = false;
+	}
+
+	function updateLoading() {
+		DEVICE_LIST_BUTTONS = { ...DEVICE_LIST_BUTTONS, loading, disabled: loading };
+	}
 
 	$: selectedDevice, updateState();
 	$: message = devices?.length ? 'No devices found' : undefined;
+	$: loading, updateLoading();
 
 	$: tableData = {
 		headings: ['Device Id', 'Channel Address'],
