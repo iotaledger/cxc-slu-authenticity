@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { isAuthenticated, LoginRegisterManager } from '@iota/is-ui-components';
+	import { isAuthenticated, LoginRegisterManager } from 'boxfish-studio--is-ui-components';
 </script>
 
 <h3>This it the main page for CxC</h3>

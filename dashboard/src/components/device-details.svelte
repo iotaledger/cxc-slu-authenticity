@@ -12,7 +12,7 @@
 		getSubscriptions,
 		ChannelSubscriptions,
 		Subscription
-	} from '@iota/is-ui-components';
+	} from 'boxfish-studio--is-ui-components';
 	import { onDestroy, onMount } from 'svelte';
 
 	export let device: Device = {};

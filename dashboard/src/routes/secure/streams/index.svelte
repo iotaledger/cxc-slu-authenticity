@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { authenticatedUserDID, isAuthenticated } from '@iota/is-ui-components'
-	import { showNotification, NotificationType } from '@iota/is-ui-components';
-    import { Button } from 'sveltestrap';
+	import { authenticatedUserDID, isAuthenticated } from 'boxfish-studio--is-ui-components';
+	import { showNotification, NotificationType } from 'boxfish-studio--is-ui-components';
+	import { Button } from 'sveltestrap';
 
 	function push() {
 		showNotification({
 			type: NotificationType.Info,
-			message: 'Example of info from Stream Manager',
+			message: 'Example of info from Stream Manager'
 		});
 	}
 </script>
@@ -15,10 +15,10 @@
 
 User DID: {$authenticatedUserDID}
 
-<br/>
+<br />
 
 Is Authenticated: {$isAuthenticated}
 
-<br/>
+<br />
 
 <Button on:click={push}>Notification Example</Button>

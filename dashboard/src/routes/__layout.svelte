@@ -1,7 +1,7 @@
 <script>
 	import { Header } from '../components';
-	import { NotificationManager } from '@iota/is-ui-components';
-	import { isAuthenticated } from '@iota/is-ui-components';
+	import { NotificationManager } from 'boxfish-studio--is-ui-components';
+	import { isAuthenticated } from 'boxfish-studio--is-ui-components';
 	import { goto } from '$app/navigation';
 	import { Container } from 'sveltestrap';
 	import { browser } from '$app/env';

@@ -9,7 +9,7 @@
 		NotificationManager,
 		type ActionButton,
 		type TableData
-	} from '@iota/is-ui-components';
+	} from 'boxfish-studio--is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
 
@@ -22,15 +22,12 @@
 		DeviceDetails = 'deviceDetails'
 	}
 
-	let DEVICE_LIST_BUTTONS: ActionButton[] = [
-		{
-			label: 'Create device',
-			onClick: handleCreateDevice,
-			icon: 'plus',
-			color: 'dark'
-		}
-	];
-
+	let DEVICE_LIST_BUTTON: ActionButton = {
+		label: 'Create device',
+		onClick: handleCreateDevice,
+		icon: 'plus',
+		color: 'dark'
+	};
 	let devices = [];
 	let loading: boolean = false;
 	let state: State = State.ListDevices;
@@ -38,13 +35,17 @@
 	let selectedDevice: Device;
 
 	async function loadDevices() {
-		loading = true;
 		devices = await getDevices($authenticationData?.did);
-		loading = false;
 	}
 
 	function updateLoading() {
-		DEVICE_LIST_BUTTONS = { ...DEVICE_LIST_BUTTONS, loading, disabled: loading };
+		DEVICE_LIST_BUTTON = {
+			icon: loading ? undefined : 'plus',
+			onClick: handleCreateDevice,
+			label: loading ? 'Creating device...' : 'Create device',
+			loading,
+			disabled: loading
+		};
 	}
 
 	$: selectedDevice, updateState();
@@ -82,8 +83,10 @@
 	}
 
 	async function handleCreateDevice() {
+		loading = true;
 		await createDevice();
 		loadDevices();
+		loading = false;
 	}
 
 	function handleBackClick(): void {
@@ -96,7 +99,7 @@
 		<h1>Device Manager</h1>
 	</Row>
 	{#if state === State.ListDevices}
-		<ListManager {tableData} {message} actionButtons={DEVICE_LIST_BUTTONS} />
+		<ListManager {tableData} {message} actionButtons={[DEVICE_LIST_BUTTON]} />
 	{:else if state === State.DeviceDetails}
 		<div class="mb-4 align-self-start">
 			<button on:click={handleBackClick} class="btn d-flex align-items-center">

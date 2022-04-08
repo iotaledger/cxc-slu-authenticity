@@ -6,7 +6,7 @@ import {
     getSubscriptions,
     showNotification,
     NotificationType
-} from '@iota/is-ui-components';
+} from 'boxfish-studio--is-ui-components';
 import { get } from "svelte/store";
 
 export async function getDeviceNonce(deviceId: string, creatorId: string): Promise<string> {
