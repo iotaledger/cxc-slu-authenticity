@@ -1,17 +1,15 @@
 <script lang="ts">
-	import { createDevice, getDeviceNonce, getDevices } from '$lib/device';
-
-	import DeviceDetails from '$lib/device-details/device-details.svelte';
+	import { createDevice, getDevices } from '$lib/device';
+	import { DeviceDetails } from '../../components';
 	import type { Device } from '$lib/device/types';
 	import {
-		acceptSubscription,
 		authenticationData,
-		createChannel,
-		selectedChannel,
+		Icon,
+		ListManager,
+		NotificationManager,
 		type ActionButton,
 		type TableData
 	} from '@iota/is-ui-components';
-	import { Icon, ListManager, NotificationManager } from '@iota/is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
 
@@ -77,16 +75,9 @@
 		selectedDevice = device;
 	}
 
-	let channel;
 	async function handleCreateDevice() {
-		channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
-		if (channel) {
-			const device = await createDevice(channel?.channelAddress, $authenticationData?.did);
-			if (device) {
-				await acceptSubscription(channel?.channelAddress, device?.id);
-			}
-		}
-		await loadDevices();
+		await createDevice();
+		loadDevices();
 	}
 
 	function handleBackClick(): void {

@@ -1,4 +1,11 @@
 import type { Device } from "./types";
+import {
+    acceptSubscription,
+    createChannel,
+    authenticationData,
+    getSubscriptions
+} from '@iota/is-ui-components';
+import { get } from "svelte/store";
 
 export async function getDeviceNonce(deviceId: string, creatorId: string): Promise<string> {
     try {
@@ -32,17 +39,24 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
     }
 }
 
-export async function createDevice(channelAddress: string, creatorId: string): Promise<Device> {
+export async function createDevice(): Promise<void> {
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/one-shot-device/create/${channelAddress}/${creatorId}`, {
-            method: 'POST',
-        })
-        const device = await response.json()
-        return device;
+        // Create a channel
+        const channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
+        // Create a device
+        if (channel) {
+            const deviceResponse = await fetch(`http://localhost:3000/api/v1/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
+                method: 'POST',
+            })
+            const device = await deviceResponse.json()
+            // Authorize device to created channel
+            if (device) {
+                await acceptSubscription(channel?.channelAddress, device?.id);
+            }
+        }
     }
     catch (e) {
         console.error("Failed to create device.", e)
-        return {}
     }
 }
 
@@ -62,18 +76,15 @@ export async function getStatus(deviceId: string): Promise<string> {
     }
 }
 
-export async function getDeviceChannelAddress(deviceId: string): Promise<string> {
+export async function getDeviceDetails(deviceId: string, channelAddress: string): Promise<any> {
     try {
-        const channelAddressResponse = await fetch(`http://localhost:3000/api/v1/status/${deviceId}`, {
-            headers: {
-                'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
-            },
-        })
-
-        return await channelAddressResponse.text();
+        const status = await getStatus(deviceId)
+        const nonce = await getDeviceNonce(deviceId, get(authenticationData)?.did)
+        const subscriptions = await getSubscriptions(channelAddress)
+        return { status, nonce, subscriptions }
     }
     catch (e) {
         console.error("Failed to get status.", e)
-        return "-"
+        return {}
     }
 }

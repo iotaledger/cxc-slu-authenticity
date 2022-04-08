@@ -1,5 +1,5 @@
 <script>
-	import Header from '$lib/header/Header.svelte';
+	import { Header } from '../components';
 	import { NotificationManager } from '@iota/is-ui-components';
 	import { isAuthenticated } from '@iota/is-ui-components';
 	import { goto } from '$app/navigation';
