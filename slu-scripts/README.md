@@ -26,10 +26,13 @@ npm run bootstrap
  --dest: Location where the encrypted data should be saved
  --one-shot-device-url: The url endpoint of the one-shot-device to get the device identity by providing the nonce as the paramter of the url
  --nonce: Nonce of the device
-  ![alt text](../diagrams/sequence.png)
 ```
- ![alt text](https://github.com/iotaledger/cxc-slu-authenticity/blob/69-description-of-slu-scripts/slu-scripts/diagrams/sequence.png)
 
+<p align="center">
+  <img src="https://github.com/iotaledger/cxc-slu-authenticity/blob/69-description-of-slu-scripts/slu-scripts/diagrams/sequence1.png" alt="bootstrap-script sequence diagram"/>
+</p>
+
+ 
 3. sending authentication proof:
 
 ```
