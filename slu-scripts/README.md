@@ -8,48 +8,51 @@ The options for each command are mostly not optional and are required but some h
 
 For more information about the available commands and options you can run:
 
-````
+```bash
 npm run -- --help
-````
+```
 
 1. encrypting a file:
 
-`````
+```bash
 npm run encrypt-file
  --key_file: The key file used to encrypt the data 
  --input: Location of the data that should be encrypted
  --dest: Location where the encrypted data should be saved
-
-````
+```
 
 2. bootstraping a device:
  
- `````
+ ```bash
 npm run bootstrap
  --key_file: The key file used to encrypt the data 
  --dest: Location where the encrypted data should be saved
  --one-shot-device-url: The url endpoint of the one-shot-device to get the device identity by providing the nonce as the paramter of the url
  --nonce: Nonce of the device
-````    
+```
 
 3. sending authentication proof:
 
-`````
+```
 npm run send-proof
  --key_file: The key file used to encrypt the data 
  --interval: Interval in milliseconds during the proof is send to the authenticity-collecotr microservice. HERE ist the default value 600000ms which are 10 minutes. 
  --input_enc: The location of the encrypted device identity.
  --collector_base_url: The base url of the authenticity-collector microservice
+ ```
 
- `````
 4. sending sensor data:
 
+```bash
 npm run send-data
  --key_file: The key file used to encrypt the data.
  --input_enc: The location of the encrypted device identity.
- --interval: Interval in milliseconds during the data is written into the channel and send to the slu-status microservice.
- --collector_base_url: The base url of the authenticity-collector microservice
-
+ --interval: Interval in milliseconds during the data is written into the channel and send to the slu-status microservice. HERE ist the default value 300000ms which are 5 minutes. 
+ --collector_base_url: The base url of the authenticity-collector microservice.
+ --is_api_key: The api key of the integration services
+ --is_base_url: The base url of the integration services
+ --jwt: The jwt token of the device to verify itslef by the authenticity-collector microservice.
+```
 
 
 
