@@ -12,6 +12,8 @@ describe('StatusController', () => {
 	let controller: SluStatusController;
 	let service: SluStatusService;
 	let body: SluStatusDto;
+	let devices: { id: string; status: string }[];
+	let ids: { id: string[] };
 	let response: SluStatusDocument;
 	let mongod: MongoMemoryServer;
 	let connection: Connection;
@@ -44,6 +46,21 @@ describe('StatusController', () => {
 			channelAddress: '186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e'
 		};
 		(response as SluStatus) = body;
+
+		devices = [
+			{
+				id: 'did:iota:2cGnC3bZ66btQA5unbSQuyhKeQ7Z8nzQxGR8F5DKfKgo',
+				status: 'created'
+			},
+			{
+				id: 'did:iota:J1TmQdzCGy1VVHBNatSq152cbxy6tP8UVu8GdkD7DoUW',
+				status: 'created'
+			}
+		];
+
+		ids = {
+			id: ['did:iota:J1TmQdzCGy1VVHBNatSq152cbxy6tP8UVu8GdkD7DoUW', 'did:iota:2cGnC3bZ66btQA5unbSQuyhKeQ7Z8nzQxGR8F5DKfKgo']
+		};
 	});
 
 	it('should be defined', () => {
@@ -71,6 +88,13 @@ describe('StatusController', () => {
 		jest.spyOn(service, 'getSluStatus').mockResolvedValue(response.status);
 		const result = await controller.getStatusInfo(body.id);
 		expect(result).toBe(response.status);
+	});
+
+	it('should return SluStatuses', async () => {
+		jest.spyOn(service, 'getStatuses').mockResolvedValue(devices);
+		const result = await controller.getStatuses(ids);
+		console.log(result);
+		expect(result).toBe(devices);
 	});
 
 	afterEach(async () => {
