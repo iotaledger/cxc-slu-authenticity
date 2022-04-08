@@ -22,7 +22,7 @@ export async function getDeviceNonce(deviceId: string, creatorId: string): Promi
     catch (e) {
         showNotification({
             type: NotificationType.Error,
-            message: 'The request for nonce device information failed.',
+            message: 'The request for device nonce information failed',
         })
         console.error(Error, e);
         return ""
@@ -42,7 +42,7 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
     catch (e) {
         showNotification({
             type: NotificationType.Error,
-            message: "The request for list devices failed.",
+            message: "The request to list devices failed.",
         })
         console.error(Error, e);
         return []
@@ -71,7 +71,6 @@ export async function createDevice(): Promise<void> {
             message: "The request to create a device failed.",
         })
         console.error(Error, e);
-        console.error("Failed to create device.", e)
     }
 }
 
@@ -86,7 +85,11 @@ export async function getStatus(deviceId: string): Promise<string> {
         return await statusResponse.text();
     }
     catch (e) {
-        console.error("Failed to get status.", e)
+        showNotification({
+            type: NotificationType.Error,
+            message: "The request for device status failed",
+        })
+        console.error(Error, e);
         return "-"
     }
 }
@@ -99,7 +102,11 @@ export async function getDeviceDetails(deviceId: string, channelAddress: string)
         return { status, nonce, subscriptions }
     }
     catch (e) {
-        console.error("Failed to get status.", e)
+        showNotification({
+            type: NotificationType.Error,
+            message: "The request for device details failed.",
+        })
+        console.error(Error, e);
         return {}
     }
 }
