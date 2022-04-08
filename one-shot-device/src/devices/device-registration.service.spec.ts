@@ -271,7 +271,7 @@ describe('DeviceRegistrationController', () => {
 		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
 
 		expect(deleteDeviceResult.channelAddress).toEqual(registeredDevice.channelAddress);
-		expect(deleteDeviceResult.identityKeys.id).toEqual(registeredDevice.id);
+		expect(deleteDeviceResult.identityKey.id).toEqual(registeredDevice.id);
 		expect(deleteDeviceResult.nonce).toEqual(registeredDevice.nonce);
 		const checkForDeleteResult = await deviceRegistrationModel.find({ nonce: registeredDevice.nonce });
 		expect(checkForDeleteResult).toStrictEqual([]);

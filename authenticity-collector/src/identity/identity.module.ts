@@ -8,6 +8,7 @@ import { HttpModule } from '@nestjs/axios';
 @Module({
 	providers: [IdentityService],
 	controllers: [IdentityController],
-	imports: [HttpModule, MongooseModule.forFeature([{ name: Identity.name, schema: IdentitySchema }])]
+	imports: [HttpModule, MongooseModule.forFeature([{ name: Identity.name, schema: IdentitySchema }])],
+	exports: [IdentityService]
 })
 export class IdentityModule {}

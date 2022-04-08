@@ -13,7 +13,7 @@ const generateDid = () => {
 };
 
 export const mockDeviceRegistration: dto | any = {
-	identityKeys: {
+	identityKey: {
 		id: `did:iota:${generateDid()}`,
 		key: {
 			type: 'ed25519',
@@ -29,7 +29,7 @@ export const mockDeviceRegistration: dto | any = {
 };
 
 export const mockFaultyDeviceRegistrationObject: dto | any = {
-	identityKeys: {
+	identityKey: {
 		id: 'did:iota:5qmWjFWcqE3BNTB9KNCBH6reXEgig4gFUXiPENywB3wo',
 		key: {
 			type: 'ed25519',
@@ -43,7 +43,7 @@ export const mockFaultyDeviceRegistrationObject: dto | any = {
 };
 
 export const nullIdentityDeviceRegistrationObject: dto | any = {
-	identityKeys: null,
+	identityKey: null,
 	channelSeed: 'jldirikybrxczxlhhswzikqhsafjdzejjacoqaymzmoffdrwrzmytolrwuyhwoweybnzofew',
 	channelAddress: 'f48875646434e9b12019d2290bd74f0f4eae8393ada3b503202dfc713f0323070000000000000000:3cce98eb1742468ff35fde6b',
 	nonce: '1b0e4a49-3a23-4e7e-99f4-97fda845ff02'
