@@ -94,12 +94,36 @@ export async function getStatus(deviceId: string): Promise<string> {
     }
 }
 
+export async function isAuthenticDevice(deviceId: string): Promise<boolean> {
+    try {
+        // TODO: Change from and to parameters when we have this info
+        const isAuthenticResponse = await fetch(`http://localhost:3000/api/v1/authenticity/prove?did=${deviceId}&from=2022-01-27&to=2022-01-28`, {
+            headers: {
+                'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
+            },
+        })
+
+        const isAuthentic = await isAuthenticResponse.json()
+
+        return isAuthentic.length > 0;
+    }
+    catch (e) {
+        showNotification({
+            type: NotificationType.Error,
+            message: "The request for device status failed",
+        })
+        console.error(Error, e);
+        return false
+    }
+}
+
 export async function getDeviceDetails(deviceId: string, channelAddress: string): Promise<any> {
     try {
         const status = await getStatus(deviceId)
         const nonce = await getDeviceNonce(deviceId, get(authenticationData)?.did)
         const subscriptions = await getSubscriptions(channelAddress)
-        return { status, nonce, subscriptions }
+        const isAuthentic = await isAuthenticDevice(deviceId)
+        return { status, nonce, subscriptions, isAuthentic }
     }
     catch (e) {
         showNotification({

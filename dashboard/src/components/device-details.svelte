@@ -20,11 +20,13 @@
 	let status: string;
 	let subscriptions: any;
 	let nonce: string;
+	let isAuthentic: boolean = false;
 	onMount(async () => {
 		let deviceDetails = await getDeviceDetails(device.id, device.channelAddress);
 		status = deviceDetails?.status;
 		subscriptions = deviceDetails?.subscriptions;
 		nonce = deviceDetails?.nonce;
+		isAuthentic = deviceDetails?.isAuthentic;
 	});
 
 	onDestroy(() => {
@@ -40,6 +42,9 @@
 				<div class="fw-bold text-break">{device.id}</div>
 				<div class="text-secondary fst-italic mt-1 text-break">Nonce: {nonce ?? '-'}</div>
 				<div class="text-secondary fst-italic mt-1 text-break">Status: {status ?? '-'}</div>
+				<div class="text-secondary fst-italic mt-1 text-break">
+					Is authentic: {isAuthentic}
+				</div>
 			</div>
 		</div>
 	</div>
