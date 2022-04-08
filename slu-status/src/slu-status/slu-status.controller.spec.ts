@@ -93,7 +93,6 @@ describe('StatusController', () => {
 	it('should return SluStatuses', async () => {
 		jest.spyOn(service, 'getStatuses').mockResolvedValue(devices);
 		const result = await controller.getStatuses(ids);
-		console.log(result);
 		expect(result).toBe(devices);
 	});
 

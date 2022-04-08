@@ -18,7 +18,7 @@ export class SluStatusService {
 	async updateSluStatus(id: string, status: Status): Promise<SluStatusDocument> {
 		const updateStatus = await this.sluStatusModel.findOneAndUpdate({ id }, { status }, { new: true, fields: { _id: 0 } });
 
-		if (updateStatus === null) {
+		if (!updateStatus) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -29,7 +29,7 @@ export class SluStatusService {
 	async getSluStatus(id: string): Promise<string> {
 		const slu = await this.sluStatusModel.findOne({ id }).lean();
 
-		if (slu === null) {
+		if (!slu) {
 			this.logger.error('Document do not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -44,7 +44,7 @@ export class SluStatusService {
 			}
 		});
 
-		if (devicesStatuses === null) {
+		if (!devicesStatuses) {
 			this.logger.error('Document(s) do not exist in the collection');
 			throw new HttpException('Could not find document(s) in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}

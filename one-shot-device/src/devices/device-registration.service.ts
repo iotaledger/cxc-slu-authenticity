@@ -141,7 +141,7 @@ export class DeviceRegistrationService {
 	async getRegisteredDevice(nonce: string): Promise<DeviceRegistration> {
 		const device = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
 
-		if (device === null) {
+		if (!device) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
