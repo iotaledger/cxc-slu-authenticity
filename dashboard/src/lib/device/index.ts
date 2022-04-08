@@ -3,7 +3,9 @@ import {
     acceptSubscription,
     createChannel,
     authenticationData,
-    getSubscriptions
+    getSubscriptions,
+    showNotification,
+    NotificationType
 } from '@iota/is-ui-components';
 import { get } from "svelte/store";
 
@@ -18,7 +20,11 @@ export async function getDeviceNonce(deviceId: string, creatorId: string): Promi
         return slu?.nonce;
     }
     catch (e) {
-        console.error("Failed to fetch nonce device info.", e)
+        showNotification({
+            type: NotificationType.Error,
+            message: 'The request for nonce device information failed.',
+        })
+        console.error(Error, e);
         return ""
     }
 }
@@ -34,7 +40,11 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
         return devices;
     }
     catch (e) {
-        console.error("Failed to fetch list of devices.", e)
+        showNotification({
+            type: NotificationType.Error,
+            message: "The request for list devices failed.",
+        })
+        console.error(Error, e);
         return []
     }
 }
@@ -56,6 +66,11 @@ export async function createDevice(): Promise<void> {
         }
     }
     catch (e) {
+        showNotification({
+            type: NotificationType.Error,
+            message: "The request to create a device failed.",
+        })
+        console.error(Error, e);
         console.error("Failed to create device.", e)
     }
 }
