@@ -127,7 +127,7 @@ describe('DeviceRegistrationController', () => {
 				requestSubscription: () => null
 			}
 		);
-	
+
 		try {
 			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
 		} catch (err) {

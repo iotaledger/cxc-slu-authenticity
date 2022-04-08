@@ -2,8 +2,11 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IdentityModule } from './identity/identity.module';
-import { ChannelSubscriptionService } from './channel-subscription/channel-subscription.service';
+import { ChannelSubscriptionService } from './services/channel-subscription/channel-subscription.service';
 import { SludataModule } from './sludata/sludata.module';
+import { ChannelClient, IdentityClient } from 'iota-is-sdk/lib';
+import { defaultConfig } from './configuration';
+import { CollectorIdentityService } from './services/collector-identity/collector-identity.service';
 import { SluAuthorizationMiddleware } from './middleware/slu-authorization.middleware';
 
 @Module({
@@ -21,7 +24,12 @@ import { SluAuthorizationMiddleware } from './middleware/slu-authorization.middl
 			inject: [ConfigService]
 		})
 	],
-	providers: [ChannelSubscriptionService]
+	providers: [
+		ChannelSubscriptionService,
+		CollectorIdentityService,
+		{ provide: 'IdentityClient', useValue: new IdentityClient(defaultConfig) },
+		{ provide: 'ChannelClient', useValue: new ChannelClient(defaultConfig) }
+	]
 })
 export class AppModule {
 	configure(consumer: MiddlewareConsumer) {

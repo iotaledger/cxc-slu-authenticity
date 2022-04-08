@@ -18,6 +18,9 @@ describe('AppController (e2e)', () => {
 	let sluNonceModel: Model<SluNonce>;
 	let connection: Connection;
 	let sluStatus: SluStatusDto;
+	let sluStatus1: SluStatusDto;
+	let sluStatus2: SluStatusDto;
+	let devices: { id: string[] };
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -55,6 +58,22 @@ describe('AppController (e2e)', () => {
 			status: Status.CREATED,
 			channelAddress: 'anyKindOfAddress'
 		};
+
+		sluStatus1 = {
+			id: 'did:iota:67890',
+			status: Status.INSTALLED,
+			channelAddress: 'anyKindOfAddress'
+		};
+
+		sluStatus2 = {
+			id: 'did:iota:11121',
+			status: Status.CREATED,
+			channelAddress: 'anyKindOfAddress'
+		};
+
+		devices = {
+			id: ['did:iota:67890', 'did:iota:11121']
+		};
 	});
 
 	describe('/api/v1/status', () => {
@@ -71,8 +90,8 @@ describe('AppController (e2e)', () => {
 			const { status, body } = await request(app.getHttpServer())
 				.get('/api/v1/status/did:iota:1234')
 				.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
-			expect(status).toBe(200);
-			expect(body).toEqual({});
+			expect(status).toBe(500);
+			expect(body.message).toBe('Could not find document in the collection.');
 		});
 
 		it('/:id (GET): wrong api-key', async () => {
@@ -85,6 +104,47 @@ describe('AppController (e2e)', () => {
 
 		it('/:id (GET):no api-key', async () => {
 			const { status, body } = await request(app.getHttpServer()).get('/api/v1/status/did:iota:12345');
+			expect(status).toBe(400);
+			expect(body).toBe('No valid api-key provided');
+		});
+
+		it('/statuses (GET)', async () => {
+			await sluNonceModel.deleteMany();
+			await new sluStatusModel(sluStatus1).save();
+			await new sluStatusModel(sluStatus2).save();
+			const { status, text, body } = await request(app.getHttpServer())
+				.post('/api/v1/status/statuses')
+				.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
+				.send(devices);
+
+			console.log('status', status);
+			console.log('text', text);
+			console.log('body', body);
+
+			expect(status).toBe(201);
+			expect(body.length).toBe(2);
+			expect(body[0].status).toBe('created');
+			expect(body[1].status).toBe('installed');
+		});
+
+		it('/statuses (GET): no slu-status found ', async () => {
+			const { status, body } = await request(app.getHttpServer())
+				.get('/api/v1/status/statuses')
+				.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
+			expect(status).toBe(500);
+			expect(body.message).toBe('Could not find document in the collection.');
+		});
+
+		it('/statuses (GET): wrong api-key', async () => {
+			const { status, body } = await request(app.getHttpServer())
+				.get('/api/v1/status/statuses')
+				.set('X-API-KEY', '3b3fe07d-b7db-49cb-8300-d32139e3d435');
+			expect(status).toBe(400);
+			expect(body).toBe('No valid api-key provided');
+		});
+
+		it('/statuses (GET):no api-key', async () => {
+			const { status, body } = await request(app.getHttpServer()).get('/api/v1/status/statuses/');
 			expect(status).toBe(400);
 			expect(body).toBe('No valid api-key provided');
 		});
@@ -182,8 +242,8 @@ describe('AppController (e2e)', () => {
 			const { status, body } = await request(app.getHttpServer())
 				.put('/api/v1/status/did:iota:1345/installed')
 				.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435');
-			expect(status).toBe(200);
-			expect(body).toEqual({});
+			expect(status).toBe(500);
+			expect(body.message).toBe('Could not find document in the collection.');
 		});
 
 		it('/:id/:status (PUT): wrong api-key', async () => {

@@ -1,4 +1,3 @@
-process.env.COLLECTOR_ID_PATH = './test/data/collector-did.json';
 process.env.AUTH_PROVE_EXPIRATION = '36000';
 process.env.MPOWER_CONNECTOR_URL = 'https://en5mzd9ir2abq.x.pipedream.net/';
 process.env.JWT_SECRET = 'PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa';
