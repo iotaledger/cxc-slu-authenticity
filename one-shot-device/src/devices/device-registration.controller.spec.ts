@@ -9,6 +9,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { channelMock, identityMock, mockDeviceRegistration, nonceMock, authorizedChannelMock } from './mocks';
 import { ChannelClient, IdentityClient } from 'iota-is-sdk';
 import { Connection, Model } from 'mongoose';
+import { CreatorDevicesModule } from '../creator-devices/creator-devices.module';
 
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationController: DeviceRegistrationController;
@@ -25,6 +26,7 @@ describe('DeviceRegistrationController', () => {
 	beforeEach(async () => {
 		module = await Test.createTestingModule({
 			imports: [
+				CreatorDevicesModule,
 				HttpModule,
 				ConfigModule,
 				ChannelClient,
