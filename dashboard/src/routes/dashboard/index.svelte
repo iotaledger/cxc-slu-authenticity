@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createDevice, getDevices } from '$lib/device';
-	import { DeviceDetails } from '../../components';
 	import type { Device } from '$lib/device/types';
 	import {
 		authenticationData,
@@ -12,6 +11,7 @@
 	} from 'boxfish-studio--is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
+	import { DeviceDetails } from '../../components';
 
 	onMount(async () => {
 		await loadDevices();
@@ -22,24 +22,24 @@
 		DeviceDetails = 'deviceDetails'
 	}
 
-	let DEVICE_LIST_BUTTON: ActionButton = {
-		label: 'Create device',
-		onClick: handleCreateDevice,
-		icon: 'plus',
-		color: 'dark'
-	};
 	let devices = [];
 	let loading: boolean = false;
 	let state: State = State.ListDevices;
 	let message: string;
 	let selectedDevice: Device;
+	let CREATE_DEVICE_BUTTON: ActionButton = {
+		label: 'Create device',
+		onClick: handleCreateDevice,
+		icon: 'plus',
+		color: 'dark'
+	};
 
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
 	}
 
 	function updateLoading() {
-		DEVICE_LIST_BUTTON = {
+		CREATE_DEVICE_BUTTON = {
 			icon: loading ? undefined : 'plus',
 			onClick: handleCreateDevice,
 			label: loading ? 'Creating device...' : 'Create device',
@@ -53,7 +53,7 @@
 	$: loading, updateLoading();
 
 	$: tableData = {
-		headings: ['Device Id', 'Channel Address'],
+		headings: ['Device Id', 'Related channel'],
 		rows: devices.map((device) => ({
 			onClick: () => handleSelectDevice(device),
 			content: [
@@ -74,7 +74,6 @@
 			state = State.DeviceDetails;
 		} else {
 			state = State.ListDevices;
-			// stopReadingChannel();
 		}
 	}
 
@@ -96,10 +95,10 @@
 
 <Container class="py-5">
 	<Row class="mb-4">
-		<h1>Device Manager</h1>
+		<h1 class="text-center">Dashboard of IoT devices</h1>
 	</Row>
 	{#if state === State.ListDevices}
-		<ListManager {tableData} {message} actionButtons={[DEVICE_LIST_BUTTON]} />
+		<ListManager title="My devices" {tableData} {message} actionButtons={[CREATE_DEVICE_BUTTON]} />
 	{:else if state === State.DeviceDetails}
 		<div class="mb-4 align-self-start">
 			<button on:click={handleBackClick} class="btn d-flex align-items-center">
