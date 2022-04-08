@@ -47,8 +47,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.slu-status.entrypoints=web"
-      - "traefik.http.routers.slu-status.rule=PathPrefix(`/api/v1/status`)"
-      - "traefik.http.routers.slu-status.rule=PathPrefix(`/api/v1/slu-nonce`)"
+      - "traefik.http.routers.slu-status.rule=PathPrefix(`/api/v1/status`) || PathPrefix(`/api/v1/slu-nonce`)"
       - "traefik.http.services.slu-status.loadbalancer.server.port=3000"
     environment:
       - API_KEY=${SLU_STATUS_API_KEY}
@@ -65,7 +64,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.one-shot-device.entrypoints=web"
-      - "traefik.http.routers.one-shot-device.rule=PathPrefix(`/api/v1/one-shot-device`)"
+      - "traefik.http.routers.one-shot-device.rule=PathPrefix(`/api/v1/one-shot-device`) || PathPrefix(`/api/v1/creator-devices`)"
       - "traefik.http.services.one-shot-device.loadbalancer.server.port=3000"
     environment:
       - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
@@ -89,7 +88,7 @@ services:
       - "traefik.http.routers.authenticity-collector.rule=PathPrefix(`/api/v1/authenticity`)"
       - "traefik.http.services.authenticity-collector.loadbalancer.server.port=3000"
     environment:
-      - API_KEY=${API_KEY}
+      - API_KEY=${SLU_STATUS_API_KEY}
       - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
       - PROVE_OF_OWNERSHIP_URL=http://ssi-proof-of-ownership:3000/api/v1/ownership/prove
       - IS_API_KEY=${API_KEY}
