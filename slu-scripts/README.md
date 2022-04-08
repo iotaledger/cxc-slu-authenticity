@@ -28,7 +28,7 @@ npm run bootstrap
  --nonce: Nonce of the device
   ![alt text](../diagrams/sequence.png)
 ```
- ![alt text](../diagrams/sequence.png)
+ ![alt text](https://github.com/iotaledger/cxc-slu-authenticity/blob/69-description-of-slu-scripts/slu-scripts/diagrams/sequence.png)
 
 3. sending authentication proof:
 
