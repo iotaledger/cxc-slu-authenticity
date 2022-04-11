@@ -79,7 +79,7 @@
 	}
 
 	$: selectedDevice, updateState();
-	$: message = devices?.length ? 'No devices' : undefined;
+	$: message = 'No devices found';
 	$: loading, updateLoading();
 	$: query, onSearch();
 
