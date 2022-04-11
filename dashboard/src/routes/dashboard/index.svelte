@@ -11,7 +11,7 @@
 	} from 'boxfish-studio--is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
-	import { DeviceDetails } from '../../components';
+	import { DeviceDetails, ProgressBar } from '../../components';
 
 	onMount(async () => {
 		await loadDevices();
@@ -93,12 +93,17 @@
 	}
 </script>
 
-<Container class="py-5">
+<Container class="relative py-5">
 	<Row class="mb-4">
 		<h1 class="text-center">Dashboard of IoT devices</h1>
 	</Row>
 	{#if state === State.ListDevices}
 		<ListManager title="My devices" {tableData} {message} actionButtons={[CREATE_DEVICE_BUTTON]} />
+		{#if loading}
+			<div class="progressbar-wrapper">
+				<ProgressBar background={'primary'} />
+			</div>
+		{/if}
 	{:else if state === State.DeviceDetails}
 		<div class="mb-4 align-self-start">
 			<button on:click={handleBackClick} class="btn d-flex align-items-center">
@@ -113,3 +118,14 @@
 </Container>
 
 <NotificationManager />
+
+<style>
+	.progressbar-wrapper {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+	}
+</style>
