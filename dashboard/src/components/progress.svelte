@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let progress;
+	export let progress: number;
 </script>
 
 <progress value={progress} class="w-full" />
