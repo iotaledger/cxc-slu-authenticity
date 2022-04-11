@@ -42,10 +42,12 @@
 			<div class="ms-4 me-4">
 				<div>
 					<div class="fw-bold text-break">{device?.id}</div>
-					<Badge pill color="primary">{status ?? '-'}</Badge>
-					<Badge pill color={!isAuthentic ? 'danger' : 'secondary'}
-						>{!isAuthentic ? 'Not authenticated' : 'Authenticated'}</Badge
-					>
+					<div class="pills">
+						<Badge pill color="primary">{status ?? '-'}</Badge>
+						<Badge pill color="secondary">
+							{!isAuthentic ? 'Not authenticated' : 'Authenticated'}
+						</Badge>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -68,4 +70,7 @@
 </div>
 
 <style lang="scss">
+	.pills {
+		text-transform: capitalize;
+	}
 </style>
