@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
 	import { DeviceDetails, ProgressBar } from '../../components';
+	import { progress } from '$lib/store';
 
 	onMount(async () => {
 		await loadDevices();
@@ -101,7 +102,7 @@
 		<ListManager title="My devices" {tableData} {message} actionButtons={[CREATE_DEVICE_BUTTON]} />
 		{#if loading}
 			<div class="progressbar-wrapper">
-				<ProgressBar background={'primary'} />
+				<ProgressBar progress={$progress} />
 			</div>
 		{/if}
 	{:else if state === State.DeviceDetails}
@@ -122,10 +123,9 @@
 <style>
 	.progressbar-wrapper {
 		position: absolute;
-		top: 0;
+		bottom: 0;
 		left: 0;
 		width: 100%;
-		height: 100%;
 		z-index: 1;
 	}
 </style>

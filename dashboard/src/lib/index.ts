@@ -8,6 +8,7 @@ import {
     NotificationType
 } from 'boxfish-studio--is-ui-components';
 import { get } from "svelte/store";
+import { progress } from './store';
 
 export async function getDeviceNonce(deviceId: string, creatorId: string): Promise<string> {
     try {
@@ -53,15 +54,18 @@ export async function createDevice(): Promise<void> {
     try {
         // Create a channel
         const channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
+        progress.set(0.33);
         // Create a device
         if (channel) {
             const deviceResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
                 method: 'POST',
             })
+            progress.set(0.66)
             const device = await deviceResponse.json()
             // Authorize device to created channel
             if (device) {
                 await acceptSubscription(channel?.channelAddress, device?.id);
+                progress.set(1);
             }
         }
     }
