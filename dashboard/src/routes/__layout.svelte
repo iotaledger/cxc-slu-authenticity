@@ -4,7 +4,6 @@
 	import { isAuthenticated, NotificationManager } from 'boxfish-studio--is-ui-components';
 	import { Container } from 'sveltestrap';
 	import { Header } from '../components';
-	import './../scss/main.scss';
 
 	$: {
 		if (browser && !$isAuthenticated) {

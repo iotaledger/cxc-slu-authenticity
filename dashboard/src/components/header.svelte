@@ -21,9 +21,7 @@
 	<NavbarBrand href="/"
 		><img style="height: 2em" src="/imgs/cityxchange.jpg" alt="CityXChange" /></NavbarBrand
 	>
-	{#if $authenticatedUserDID}
-		{$authenticatedUserDID}
-	{/if}
+
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
 	<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
 		<Nav class="ms-auto" navbar>
@@ -48,3 +46,8 @@
 		</Nav>
 	</Collapse>
 </Navbar>
+<div class="bg-primary text-white text-center text-break p-1">
+	{#if $authenticatedUserDID}
+		{$authenticatedUserDID}
+	{/if}
+</div>
