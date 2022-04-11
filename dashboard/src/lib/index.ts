@@ -52,20 +52,21 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
 
 export async function createDevice(): Promise<void> {
     try {
+        progress.set(0.33);
         // Create a channel
         const channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
-        progress.set(0.33);
         // Create a device
         if (channel) {
+            progress.set(0.66)
             const deviceResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
                 method: 'POST',
             })
-            progress.set(0.66)
             const device = await deviceResponse.json()
             // Authorize device to created channel
             if (device) {
-                await acceptSubscription(channel?.channelAddress, device?.id);
                 progress.set(1);
+                await acceptSubscription(channel?.channelAddress, device?.id);
+                progress.set(0)
             }
         }
     }
