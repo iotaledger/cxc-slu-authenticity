@@ -13,10 +13,6 @@
 	import { Container, Row } from 'sveltestrap';
 	import { DeviceDetails } from '../../components';
 
-	onMount(async () => {
-		await loadDevices();
-	});
-
 	enum State {
 		ListDevices = 'listDevices',
 		DeviceDetails = 'deviceDetails'
@@ -34,11 +30,15 @@
 		color: 'dark'
 	};
 
+	onMount(async () => {
+		await loadDevices();
+	});
+
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
 	}
 
-	function updateLoading() {
+	function updateLoading(): void {
 		CREATE_DEVICE_BUTTON = {
 			icon: loading ? undefined : 'plus',
 			onClick: handleCreateDevice,
@@ -48,8 +48,31 @@
 		};
 	}
 
+	async function updateState(): Promise<void> {
+		if (selectedDevice) {
+			state = State.DeviceDetails;
+		} else {
+			state = State.ListDevices;
+		}
+	}
+
+	function handleSelectDevice(device: Device): void {
+		selectedDevice = device;
+	}
+
+	async function handleCreateDevice(): Promise<void> {
+		loading = true;
+		await createDevice();
+		loadDevices();
+		loading = false;
+	}
+
+	function handleBackClick(): void {
+		selectedDevice = null;
+	}
+
 	$: selectedDevice, updateState();
-	$: message = devices?.length ? 'No devices found' : undefined;
+	$: message = devices?.length ? 'No devices' : undefined;
 	$: loading, updateLoading();
 
 	$: tableData = {
@@ -68,29 +91,6 @@
 			]
 		}))
 	} as TableData;
-
-	async function updateState(): Promise<void> {
-		if (selectedDevice) {
-			state = State.DeviceDetails;
-		} else {
-			state = State.ListDevices;
-		}
-	}
-
-	function handleSelectDevice(device): void {
-		selectedDevice = device;
-	}
-
-	async function handleCreateDevice() {
-		loading = true;
-		await createDevice();
-		loadDevices();
-		loading = false;
-	}
-
-	function handleBackClick(): void {
-		selectedDevice = null;
-	}
 </script>
 
 <Container class="py-5">

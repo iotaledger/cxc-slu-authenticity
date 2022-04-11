@@ -20,7 +20,7 @@
 	let isAuthentic: boolean = false;
 
 	onMount(async () => {
-		let deviceDetails = await getDeviceDetails(device.id, device.channelAddress);
+		const deviceDetails = await getDeviceDetails(device.id, device.channelAddress);
 		status = deviceDetails?.status;
 		subscriptions = deviceDetails?.subscriptions;
 		nonce = deviceDetails?.nonce;
