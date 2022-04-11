@@ -1,19 +1,31 @@
 <script lang="ts">
-	export let progress: number;
+	export let progress: number = 0;
+	export let delay: number = 10;
+	export let progressColor: string = '#5caad0';
+	export let backgroundColor: string = '#d541bd';
 </script>
 
-<progress value={progress} class="animated w-full" />
+{#if progress <= 1}
+	<progress
+		value={progress}
+		style="--delay:{delay}s; --bg-color:{backgroundColor}; --progress-color:{progressColor}"
+		class="w-full"
+	/>
+{/if}
 
-<style>
+<style lang="scss">
 	progress {
 		width: 100%;
 		border: 0;
-		height: 12px;
+		height: 5px;
 		overflow: hidden;
 		opacity: 0.7;
-	}
-	.animated::-webkit-progress-value {
-		transition: width 2.5s ease-in-out;
-		background-color: blue;
+		&::-webkit-progress-value {
+			transition: width var(--delay) ease-in-out;
+			background-color: var(--bg-color);
+		}
+		&::-webkit-progress-bar {
+			background-color: var(--progress-color);
+		}
 	}
 </style>

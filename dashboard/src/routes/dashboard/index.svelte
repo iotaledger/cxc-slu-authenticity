@@ -122,8 +122,8 @@
 
 <style>
 	.progressbar-wrapper {
-		position: absolute;
-		bottom: 0;
+		position: fixed;
+		bottom: -6px;
 		left: 0;
 		width: 100%;
 		z-index: 1;

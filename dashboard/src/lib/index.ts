@@ -53,6 +53,7 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
 export async function createDevice(): Promise<void> {
     try {
         // Create a channel
+        // Timeout to see progress bar animation (from 0 to 0.33)
         setTimeout(() => progress.set(0.33), 100)
         const channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
         // Create a device
@@ -64,7 +65,7 @@ export async function createDevice(): Promise<void> {
             const device = await deviceResponse.json()
             // Authorize device to created channel
             if (device) {
-                progress.set(1);
+                progress.set(0.9);
                 await acceptSubscription(channel?.channelAddress, device?.id);
                 progress.set(0)
             }
