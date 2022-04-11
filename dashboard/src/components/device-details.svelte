@@ -8,6 +8,7 @@
 		ChannelSubscriptions,
 		Icon,
 		selectedChannelData,
+		startReadingChannel,
 		stopReadingChannel
 	} from 'boxfish-studio--is-ui-components';
 	import { onDestroy, onMount } from 'svelte';
@@ -25,6 +26,7 @@
 		subscriptions = deviceDetails?.subscriptions;
 		nonce = deviceDetails?.nonce;
 		isAuthentic = deviceDetails?.isAuthentic;
+		startReadingChannel(device.channelAddress);
 	});
 
 	onDestroy(() => {
