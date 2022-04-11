@@ -38,15 +38,22 @@
 <div class="identity-details w-100">
 	<div class="d-xl-flex align-items-center justify-content-between bg-light rounded p-4">
 		<div class="d-flex align-items-center">
-			<Icon size={64} boxed boxColor={BoxColor.Green} type="nut" />
-			<div class="details ms-4 me-4">
+			<Icon size={32} boxed boxColor={BoxColor.Transparent} type="person-badge" />
+			<div class="ms-4 me-4">
 				<div>
 					<div class="fw-bold text-break">{device?.id}</div>
-					<Badge pill color="primary">Nonce: {nonce ?? '-'}</Badge>
-					<Badge pill color="dark">{status ?? '-'}</Badge>
-					<Badge pill color="secondary">Is authentic: {isAuthentic}</Badge>
+					<Badge pill color="primary">{status ?? '-'}</Badge>
+					<Badge pill color={!isAuthentic ? 'danger' : 'secondary'}
+						>{!isAuthentic ? 'Not authenticated' : 'Authenticated'}</Badge
+					>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div class="bg-light rounded px-4 pt-3 pb-4">
+		<div class="text-primary">Nonce</div>
+		<div>
+			{nonce ?? '-'}
 		</div>
 	</div>
 	<!-- TODO: improve channel prop -->
@@ -54,21 +61,11 @@
 		{subscriptions}
 		channel={{ topics: [], name: '', channelAddress: '', authorId: $authenticationData?.did }}
 	/>
-	<div class="p-4 text-break">
-		<div>Messages</div>
+	<div class="pt-4 text-break">
+		<h5>Messages</h5>
 		<ChannelMessages channelData={$selectedChannelData} />
 	</div>
 </div>
 
 <style lang="scss">
-	.details {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		@media (min-width: 1024px) {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-		}
-	}
 </style>

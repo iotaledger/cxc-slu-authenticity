@@ -89,8 +89,8 @@
 			onClick: () => handleSelectDevice(device),
 			content: [
 				{
-					icon: 'nut',
-					boxColor: 'green',
+					icon: 'person-badge',
+					boxColor: 'transparent',
 					value: device.id ?? '-'
 				},
 				{
