@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getDeviceDetails } from '$lib/device';
-	import type { Device } from '$lib/device/types';
+	import { getDeviceDetails } from '$lib';
+	import type { Device } from '$lib/types';
 	import {
 		authenticationData,
 		BoxColor,

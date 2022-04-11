@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createDevice, getDevices } from '$lib/device';
-	import type { Device } from '$lib/device/types';
+	import { createDevice, getDevices } from '$lib';
+	import type { Device } from '$lib/types';
 	import {
 		authenticationData,
 		Icon,
@@ -11,7 +11,8 @@
 	} from 'boxfish-studio--is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
-	import { DeviceDetails } from '../../components';
+	import { DeviceDetails, ProgressBar } from '../../components';
+	import { progress } from '$lib/store';
 
 	enum State {
 		ListDevices = 'listDevices',
@@ -101,7 +102,7 @@
 	} as TableData;
 </script>
 
-<Container class="py-5">
+<Container class="relative py-5">
 	<Row class="mb-4">
 		<h1 class="text-center">Dashboard of IoT devices</h1>
 	</Row>
@@ -114,6 +115,11 @@
 			actionButtons={[CREATE_DEVICE_BUTTON]}
 			bind:searchQuery={query}
 		/>
+		{#if loading}
+			<div class="progressbar-wrapper">
+				<ProgressBar progress={$progress} />
+			</div>
+		{/if}
 	{:else if state === State.DeviceDetails}
 		<div class="mb-4 align-self-start">
 			<button on:click={handleBackClick} class="btn d-flex align-items-center">
@@ -128,3 +134,13 @@
 </Container>
 
 <NotificationManager />
+
+<style>
+	.progressbar-wrapper {
+		position: fixed;
+		bottom: -6px;
+		left: 0;
+		width: 100%;
+		z-index: 1;
+	}
+</style>
