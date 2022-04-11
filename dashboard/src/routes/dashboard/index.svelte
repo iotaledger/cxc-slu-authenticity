@@ -14,10 +14,6 @@
 	import { DeviceDetails, ProgressBar } from '../../components';
 	import { progress } from '$lib/store';
 
-	onMount(async () => {
-		await loadDevices();
-	});
-
 	enum State {
 		ListDevices = 'listDevices',
 		DeviceDetails = 'deviceDetails'
@@ -28,6 +24,8 @@
 	let state: State = State.ListDevices;
 	let message: string;
 	let selectedDevice: Device;
+	let query: string;
+	let searchResults: Device[] = [];
 	let CREATE_DEVICE_BUTTON: ActionButton = {
 		label: 'Create device',
 		onClick: handleCreateDevice,
@@ -35,11 +33,16 @@
 		color: 'dark'
 	};
 
+	onMount(async () => {
+		await loadDevices();
+	});
+
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
+		searchResults = devices;
 	}
 
-	function updateLoading() {
+	function updateLoading(): void {
 		CREATE_DEVICE_BUTTON = {
 			icon: loading ? undefined : 'plus',
 			onClick: handleCreateDevice,
@@ -49,13 +52,41 @@
 		};
 	}
 
+	async function updateState(): Promise<void> {
+		if (selectedDevice) {
+			state = State.DeviceDetails;
+		} else {
+			state = State.ListDevices;
+		}
+	}
+
+	function handleSelectDevice(device: Device): void {
+		selectedDevice = device;
+	}
+
+	async function handleCreateDevice(): Promise<void> {
+		loading = true;
+		await createDevice();
+		loadDevices();
+		loading = false;
+	}
+
+	function handleBackClick(): void {
+		selectedDevice = null;
+	}
+
+	function onSearch() {
+		searchResults = devices.filter((d) => d.id?.includes(query));
+	}
+
 	$: selectedDevice, updateState();
-	$: message = devices?.length ? 'No devices found' : undefined;
+	$: message = 'No devices found';
 	$: loading, updateLoading();
+	$: query, onSearch();
 
 	$: tableData = {
 		headings: ['Device Id', 'Related channel'],
-		rows: devices.map((device) => ({
+		rows: searchResults.map((device) => ({
 			onClick: () => handleSelectDevice(device),
 			content: [
 				{
@@ -69,29 +100,6 @@
 			]
 		}))
 	} as TableData;
-
-	async function updateState(): Promise<void> {
-		if (selectedDevice) {
-			state = State.DeviceDetails;
-		} else {
-			state = State.ListDevices;
-		}
-	}
-
-	function handleSelectDevice(device): void {
-		selectedDevice = device;
-	}
-
-	async function handleCreateDevice() {
-		loading = true;
-		await createDevice();
-		loadDevices();
-		loading = false;
-	}
-
-	function handleBackClick(): void {
-		selectedDevice = null;
-	}
 </script>
 
 <Container class="relative py-5">
@@ -99,7 +107,14 @@
 		<h1 class="text-center">Dashboard of IoT devices</h1>
 	</Row>
 	{#if state === State.ListDevices}
-		<ListManager title="My devices" {tableData} {message} actionButtons={[CREATE_DEVICE_BUTTON]} />
+		<ListManager
+			showSearch
+			title="My devices"
+			{tableData}
+			{message}
+			actionButtons={[CREATE_DEVICE_BUTTON]}
+			bind:searchQuery={query}
+		/>
 		{#if loading}
 			<div class="progressbar-wrapper">
 				<ProgressBar progress={$progress} />

@@ -5,7 +5,8 @@ import {
     authenticationData,
     getSubscriptions,
     showNotification,
-    NotificationType
+    NotificationType,
+    searchIdentityByDID
 } from 'boxfish-studio--is-ui-components';
 import { get } from "svelte/store";
 import { progress } from './store';
@@ -102,16 +103,19 @@ export async function getStatus(deviceId: string): Promise<string> {
 
 export async function isAuthenticDevice(deviceId: string): Promise<boolean> {
     try {
-        // TODO: Change from and to parameters when we have this info
-        const isAuthenticResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/authenticity/prove?did=${deviceId}&from=2022-01-27&to=2022-01-28`, {
+        const identityDetails = await searchIdentityByDID(deviceId)
+        const registrationDateAndTime = identityDetails?.registrationDate
+        // Only get date but no time
+        const registrationDate = registrationDateAndTime?.split('T')?.[0]
+        const today = new Date().toISOString().split('T')[0]
+
+        const isAuthenticResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/authenticity/prove?did=${deviceId}&from=${registrationDate}&to=${today}`, {
             headers: {
                 'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
             },
         })
-
         const isAuthentic = await isAuthenticResponse.json()
-
-        return isAuthentic.length > 0;
+        return isAuthentic?.length > 0;
     }
     catch (e) {
         showNotification({
