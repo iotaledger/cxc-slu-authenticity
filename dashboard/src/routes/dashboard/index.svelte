@@ -23,6 +23,8 @@
 	let state: State = State.ListDevices;
 	let message: string;
 	let selectedDevice: Device;
+	let query: string;
+	let searchResults: Device[] = [];
 	let CREATE_DEVICE_BUTTON: ActionButton = {
 		label: 'Create device',
 		onClick: handleCreateDevice,
@@ -36,6 +38,7 @@
 
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
+		searchResults = devices;
 	}
 
 	function updateLoading(): void {
@@ -71,13 +74,18 @@
 		selectedDevice = null;
 	}
 
+	function onSearch() {
+		searchResults = devices.filter((d) => d.id?.includes(query));
+	}
+
 	$: selectedDevice, updateState();
 	$: message = devices?.length ? 'No devices' : undefined;
 	$: loading, updateLoading();
+	$: query, onSearch();
 
 	$: tableData = {
 		headings: ['Device Id', 'Related channel'],
-		rows: devices.map((device) => ({
+		rows: searchResults.map((device) => ({
 			onClick: () => handleSelectDevice(device),
 			content: [
 				{
@@ -98,7 +106,14 @@
 		<h1 class="text-center">Dashboard of IoT devices</h1>
 	</Row>
 	{#if state === State.ListDevices}
-		<ListManager title="My devices" {tableData} {message} actionButtons={[CREATE_DEVICE_BUTTON]} />
+		<ListManager
+			showSearch
+			title="My devices"
+			{tableData}
+			{message}
+			actionButtons={[CREATE_DEVICE_BUTTON]}
+			bind:searchQuery={query}
+		/>
 	{:else if state === State.DeviceDetails}
 		<div class="mb-4 align-self-start">
 			<button on:click={handleBackClick} class="btn d-flex align-items-center">
