@@ -12,6 +12,7 @@
 		stopReadingChannel
 	} from 'boxfish-studio--is-ui-components';
 	import { onDestroy, onMount } from 'svelte';
+	import { Badge } from 'sveltestrap';
 
 	export let device: Device = {};
 
@@ -38,12 +39,12 @@
 	<div class="d-xl-flex align-items-center justify-content-between bg-light rounded p-4">
 		<div class="d-flex align-items-center">
 			<Icon size={64} boxed boxColor={BoxColor.Green} type="nut" />
-			<div class="ms-4 me-4">
-				<div class="fw-bold text-break">{device?.id}</div>
-				<div class="text-secondary fst-italic mt-1 text-break">Nonce: {nonce ?? '-'}</div>
-				<div class="text-secondary fst-italic mt-1 text-break">Status: {status ?? '-'}</div>
-				<div class="text-secondary fst-italic mt-1 text-break">
-					Is authentic: {isAuthentic}
+			<div class="details ms-4 me-4">
+				<div>
+					<div class="fw-bold text-break">{device?.id}</div>
+					<Badge pill color="primary">Nonce: {nonce ?? '-'}</Badge>
+					<Badge pill color="dark">{status ?? '-'}</Badge>
+					<Badge pill color="secondary">Is authentic: {isAuthentic}</Badge>
 				</div>
 			</div>
 		</div>
@@ -58,3 +59,16 @@
 		<ChannelMessages channelData={$selectedChannelData} />
 	</div>
 </div>
+
+<style lang="scss">
+	.details {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		@media (min-width: 1024px) {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+		}
+	}
+</style>

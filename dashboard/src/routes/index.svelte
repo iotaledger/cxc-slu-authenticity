@@ -4,6 +4,7 @@
 
 <script lang="ts">
 	import { isAuthenticated, LoginRegisterManager } from 'boxfish-studio--is-ui-components';
+	import './../scss/main.scss';
 </script>
 
 <h3>This it the main page for CxC</h3>
