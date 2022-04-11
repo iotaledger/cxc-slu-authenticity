@@ -1,4 +1,4 @@
-import type { Device } from "./types";
+import type { Device } from "./device/typese/types";
 import {
     acceptSubscription,
     createChannel,

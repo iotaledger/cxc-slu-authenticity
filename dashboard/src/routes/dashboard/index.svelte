@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createDevice, getDevices } from '$lib/device';
-	import type { Device } from '$lib/device/types';
+	import { createDevice, getDevices } from '$lib';
+	import type { Device } from '$lib/types';
 	import {
 		authenticationData,
 		Icon,
