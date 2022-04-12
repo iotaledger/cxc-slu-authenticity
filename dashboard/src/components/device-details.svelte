@@ -43,9 +43,11 @@
 				<div>
 					<div class="fw-bold text-break">{device?.id}</div>
 					<div class="pills">
-						<Badge pill color="primary">{status ?? '-'}</Badge>
-						<Badge pill color="secondary">
-							{!isAuthentic ? 'Not authenticated' : 'Authenticated'}
+						{#if status}
+							<Badge pill color="primary">{status}</Badge>
+						{/if}
+						<Badge pill color={`${isAuthentic ? 'success' : 'danger'}`}>
+							{!isAuthentic ? 'Not authentic' : 'Authentic'}
 						</Badge>
 					</div>
 				</div>

@@ -46,8 +46,8 @@
 		</Nav>
 	</Collapse>
 </Navbar>
-<div class="bg-primary text-white text-center text-break p-1">
-	{#if $authenticatedUserDID}
+{#if $authenticatedUserDID}
+	<div class="bg-primary text-white text-center text-break p-1">
 		{$authenticatedUserDID}
-	{/if}
-</div>
+	</div>
+{/if}

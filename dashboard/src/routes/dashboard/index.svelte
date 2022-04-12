@@ -47,7 +47,8 @@
 			onClick: handleCreateDevice,
 			label: loading ? 'Creating device...' : 'Create device',
 			loading,
-			disabled: loading
+			disabled: loading,
+			color: 'dark'
 		};
 	}
 
@@ -128,3 +129,10 @@
 </Container>
 
 <NotificationManager />
+
+<style lang="scss">
+	:global(.btn:hover) {
+		background-color: black;
+		color: white;
+	}
+</style>
