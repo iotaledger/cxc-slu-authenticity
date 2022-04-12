@@ -33,6 +33,7 @@
 	"type": "module",
 	"dependencies": {
 		"boxfish-studio--is-ui-components": "^0.0.35",
+		"sass": "^1.50.0",
 		"sveltestrap": "^5.9.0"
 	}
 }

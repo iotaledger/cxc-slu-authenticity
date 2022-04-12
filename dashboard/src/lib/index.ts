@@ -9,6 +9,7 @@ import {
     searchIdentityByDID
 } from 'boxfish-studio--is-ui-components';
 import { get } from "svelte/store";
+import { progress } from './store';
 
 export async function getDeviceNonce(deviceId: string, creatorId: string): Promise<string> {
     try {
@@ -53,16 +54,21 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
 export async function createDevice(): Promise<void> {
     try {
         // Create a channel
+        // Timeout to see progress bar animation (from 0 to 0.33)
+        setTimeout(() => progress.set(0.33), 100)
         const channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
         // Create a device
         if (channel) {
+            progress.set(0.66)
             const deviceResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
                 method: 'POST',
             })
             const device = await deviceResponse.json()
             // Authorize device to created channel
             if (device) {
+                progress.set(0.9);
                 await acceptSubscription(channel?.channelAddress, device?.id);
+                progress.set(0)
             }
         }
     }
