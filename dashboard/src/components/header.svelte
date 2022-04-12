@@ -19,7 +19,10 @@
 
 <Navbar color="light" light expand="md">
 	<NavbarBrand href="/"
-		><img style="height: 2em" src="/imgs/cityxchange.jpg" alt="CityXChange" /></NavbarBrand
+		><img
+			src="https://cityxchange.eu/wp-content/uploads/2018/02/logo.png"
+			alt="CityXChange"
+		/></NavbarBrand
 	>
 
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
@@ -47,7 +50,22 @@
 	</Collapse>
 </Navbar>
 {#if $authenticatedUserDID}
-	<div class="bg-primary text-white text-center text-break p-1">
+	<div class="user bg-primary text-white text-center text-break p-1">
 		{$authenticatedUserDID}
 	</div>
 {/if}
+
+<style lang="scss">
+	img {
+		height: 1em;
+		@media (min-width: 768px) {
+			height: 2em;
+		}
+	}
+	.user {
+		font-size: 14px;
+		@media (min-width: 768px) {
+			font-size: 16px;
+		}
+	}
+</style>
