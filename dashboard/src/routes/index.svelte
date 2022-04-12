@@ -5,7 +5,6 @@
 
 <script lang="ts">
 	import { isAuthenticated, LoginRegisterManager } from 'boxfish-studio--is-ui-components';
-	import './../scss/main.scss';
 </script>
 
 <div class="container mt-4">
