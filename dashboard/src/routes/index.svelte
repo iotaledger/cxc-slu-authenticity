@@ -8,14 +8,15 @@
 </script>
 
 <div class="container mt-4">
-	<Box>
-		<h3>Welcome to the CityxChange portal for IoT device management.</h3>
+	{#if $isAuthenticated}
+		<Box>
+			<h3>Welcome to the CityxChange portal for IoT device management.</h3>
 
-		<p class="mt-4">
-			To manage IoT devices in the factory visit the <a href="/dashboard"> Dashboard page</a>.
-		</p>
-	</Box>
-	{#if !$isAuthenticated}
+			<p class="mt-4">
+				To manage IoT devices in the factory visit the <a href="/dashboard"> Dashboard page</a>.
+			</p>
+		</Box>
+	{:else}
 		<LoginRegisterManager />
 	{/if}
 </div>
