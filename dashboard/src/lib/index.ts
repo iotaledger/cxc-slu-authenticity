@@ -103,6 +103,7 @@ export async function getStatus(deviceId: string): Promise<string> {
 
 export async function isAuthenticDevice(deviceId: string): Promise<boolean> {
     try {
+        // We need search the identity details cause we need a "from" parameter to get the authenticity that is the created identity date and we don't have this info. TODO: Improve this.
         const identityDetails = await searchIdentityByDID(deviceId)
         const registrationDateAndTime = identityDetails?.registrationDate
         // Only get date but no time
