@@ -54,12 +54,22 @@
 			</div>
 		</div>
 	</div>
-	<div class="bg-light rounded px-4 pt-3 pb-4">
-		<div class="text-primary">Nonce</div>
-		<div>
-			{nonce ?? '-'}
+	{#if nonce}
+		<div class="bg-light rounded px-4 pt-3 pb-4">
+			<div class="text-primary">Nonce</div>
+			<div>
+				{nonce}
+			</div>
 		</div>
-	</div>
+	{/if}
+	{#if device.channelAddress}
+		<div class="bg-light rounded px-4 pt-3 pb-4">
+			<div class="text-primary">Related channel address</div>
+			<div class="text-break">
+				{device.channelAddress}
+			</div>
+		</div>
+	{/if}
 	<!-- TODO: improve channel prop -->
 	<ChannelSubscriptions
 		{subscriptions}
