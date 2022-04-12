@@ -132,7 +132,8 @@
 
 <style lang="scss">
 	:global(.btn:hover) {
-		background-color: black;
+		background-color: #1dc9d3;
+		border-color: #1dc9d3;
 		color: white;
 	}
 </style>
