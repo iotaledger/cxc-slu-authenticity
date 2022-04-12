@@ -48,7 +48,8 @@
 			onClick: handleCreateDevice,
 			label: loading ? 'Creating device...' : 'Create device',
 			loading,
-			disabled: loading
+			disabled: loading,
+			color: 'dark'
 		};
 	}
 
@@ -90,8 +91,8 @@
 			onClick: () => handleSelectDevice(device),
 			content: [
 				{
-					icon: 'nut',
-					boxColor: 'green',
+					icon: 'person-badge',
+					boxColor: 'transparent',
 					value: device.id ?? '-'
 				},
 				{
@@ -135,7 +136,12 @@
 
 <NotificationManager />
 
-<style>
+<style lang="scss">
+	:global(.btn:hover) {
+		background-color: #1dc9d3;
+		border-color: #1dc9d3;
+		color: white;
+	}
 	.progressbar-wrapper {
 		position: fixed;
 		bottom: -6px;

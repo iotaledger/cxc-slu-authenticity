@@ -1,15 +1,22 @@
 <script context="module" lang="ts">
 	export const prerender = true;
+	import { Box } from 'boxfish-studio--is-ui-components';
 </script>
 
 <script lang="ts">
 	import { isAuthenticated, LoginRegisterManager } from 'boxfish-studio--is-ui-components';
 </script>
 
-<h3>This it the main page for CxC</h3>
+<div class="container mt-4">
+	{#if $isAuthenticated}
+		<Box>
+			<h3>Welcome to the CityxChange portal for IoT device management.</h3>
 
-Here some information about the project...
-
-{#if !$isAuthenticated}
-	<LoginRegisterManager />
-{/if}
+			<p class="mt-4">
+				To manage IoT devices in the factory visit the <a href="/dashboard"> Dashboard page</a>.
+			</p>
+		</Box>
+	{:else}
+		<LoginRegisterManager />
+	{/if}
+</div>
