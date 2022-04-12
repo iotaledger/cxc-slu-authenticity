@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChannelSubscriptionService } from './channel-subscription.service';
-import { ChannelInfo, CreateChannelResponse, ChannelClient } from 'iota-is-sdk';
+import { ChannelInfo, CreateChannelResponse, ChannelClient } from '@iota/is-client';
 import { ConfigModule } from '@nestjs/config';
 import { defaultConfig } from '../../configuration';
 

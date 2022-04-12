@@ -1,6 +1,6 @@
 import { CreateDeviceRegistrationDto as dto } from './dto/create-device-registration.dto';
-import { CreateChannelResponse } from '../../node_modules/iota-is-sdk/lib/models/types/request-response-bodies';
-import { IdentityJson } from '../../node_modules/iota-is-sdk/lib/models/types/identity';
+// import { CreateChannelResponse } from '@iota/is-client';
+// import { IdentityJson } from '@iota/is-client';
 
 const generateDid = () => {
 	let result = '';
@@ -51,7 +51,7 @@ export const nullIdentityDeviceRegistrationObject: dto | any = {
 export const nonceMock = '1b0e4a49-3a23-4e7e-99f4-97fda845ff02';
 export const badNonceMock = '1b0e4a49-BaDD-Baddy-99f4-97fda845ff02';
 
-export const identityMock: IdentityJson | any = {
+export const identityMock: any = {
 	doc: {
 		id: `did:iota:${generateDid()}`,
 		authentication: [[Object]],
@@ -71,7 +71,7 @@ export const identityMock: IdentityJson | any = {
 	}
 };
 
-export const channelMock: CreateChannelResponse = {
+export const channelMock: any = {
 	channelAddress: 'ed1ff8060f52f4c49dadf1a499a5ef81e5293eed161a5cb2ca4cee6b33d348ef0000000000000000:ae2c58ed2f980fbb5697be94',
 	seed: 'ewlvmojzfcopwliaufpfhjcidzrlmqhzhdmfxxulctunidgznyhxepzshyjxqpagkhxwrypq'
 };

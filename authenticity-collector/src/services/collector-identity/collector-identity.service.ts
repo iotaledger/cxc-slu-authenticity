@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IdentityClient, IdentityJson } from 'iota-is-sdk/lib';
-import * as fs from 'fs';
+import { IdentityClient } from '@iota/is-client';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

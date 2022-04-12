@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ChannelClient, ChannelInfo } from 'iota-is-sdk';
+import { ApiVersion, ChannelClient, ChannelInfo } from '@iota/is-client';
 
 @Injectable()
 export class ChannelSubscriptionService {
@@ -8,10 +8,26 @@ export class ChannelSubscriptionService {
 
 	constructor(private configService: ConfigService, @Inject('ChannelClient') private channelClient: ChannelClient) {}
 
+	async get(url: string, params: any = {}) {
+		console.log(url)
+	}
+
+	async authenticate(id: string, secretKey: string) {
+		const url = this.channelClient.isGatewayUrl ? this.channelClient.isGatewayUrl : this.channelClient.ssiBridgeUrl;
+		const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
+	}
+
 	async channelSubscription() {
 		const collectorDid = this.configService.get<string>('COLLECTOR_DID');
 		const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
-		await this.channelClient.authenticate(collectorDid, collectorSecret);
+		try {
+			console.log(collectorDid, collectorSecret)
+			await this.channelClient.authenticate(collectorDid, collectorSecret)
+			console.log(this.channelClient.jwtToken)
+		}
+		catch(e) {
+			console.log("Error", e)
+		}
 		const channelInfo: ChannelInfo[] = await this.channelClient.search({ authorId: collectorDid });
 		if (channelInfo.length != 0) {
 			this.logger.log(channelInfo[0].channelAddress);

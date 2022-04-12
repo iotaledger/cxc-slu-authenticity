@@ -1,7 +1,7 @@
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChannelClient, ChannelData } from 'iota-is-sdk/lib';
+import { ChannelClient, ChannelData } from '@iota/is-client';
 import { SludataService } from './sludata.service';
 import * as crypto from 'crypto';
 import { IdentityModule } from '../identity/identity.module';

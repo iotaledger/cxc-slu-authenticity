@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { IdentityModule } from './identity/identity.module';
 import { ChannelSubscriptionService } from './services/channel-subscription/channel-subscription.service';
 import { SludataModule } from './sludata/sludata.module';
-import { ChannelClient, IdentityClient } from 'iota-is-sdk/lib';
+import { ChannelClient, IdentityClient } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { CollectorIdentityService } from './services/collector-identity/collector-identity.service';
 import { SluAuthorizationMiddleware } from './middleware/slu-authorization.middleware';
