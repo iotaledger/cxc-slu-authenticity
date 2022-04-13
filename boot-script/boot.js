@@ -14,7 +14,7 @@ const sendDataInterval = process.env.SEND_DATA_INTERVAL;
 const dataLocation = process.env.DATA_LOCATION;
 
 
-async function runSendProof() {
+function runSendProof() {
     if (keyFile && sendAuthInterval && inputEnc && collectorBaseUrl) {
 
         try {
@@ -28,24 +28,24 @@ async function runSendProof() {
             process.exit(1);
         }
     } else {
-        fs.writeFileSync('log.txt', 'No all env vars are provided for sending authentication proof');
+        fs.writeFileSync('log.txt', 'No all env vars are provided for sending authentication proof \n');
         process.exit(1);
     }
 }
 
-async function sendData(){
+function sendData(){
 
     if(keyFile && inputEnc && isApiKey && isBaseUrl && sendDataInterval && collectorBaseUrl && isAuthUrl && jwt && dataLocation){
             execSync(`npm run --key_file=${key_file} --interval=${sendDataInterval} --input_enc=${inputEnc} --colelctor_base_url=${collectorBaseUrl} --is_api_key=${isApiKey} --is_base_url=${isBaseUrl} --is_auth_url=${isAuthUrl} --jwt=${jwt}`);
     }
     else{
-        fs.writeFileSync('log.txt', 'Not all env vars are provided for sending the data', {flag: 'a'});
+        fs.writeFileSync('log.txt', 'Not all env vars are provided for sending the data \n', {flag: 'a'});
         process.exit(1);
     }
 
 }
 
-await runSendProof();
-await sendData();
+runSendProof();
+sendData();
 
 
