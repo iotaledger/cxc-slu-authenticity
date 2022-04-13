@@ -1,19 +1,15 @@
-import type { Device } from "./types";
+import { SLU_API_BASE_URL } from '$lib/constants';
 import {
-    acceptSubscription,
-    createChannel,
-    authenticationData,
-    getSubscriptions,
-    showNotification,
-    NotificationType,
-    searchIdentityByDID
+    acceptSubscription, authenticationData, createChannel, getSubscriptions, NotificationType,
+    searchIdentityByDID, showNotification
 } from '@iota/is-ui-components';
 import { get } from "svelte/store";
 import { progress } from './store';
+import type { Device } from "./types";
 
 export async function getDeviceNonce(deviceId: string, creatorId: string): Promise<string> {
     try {
-        const response = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/slu-nonce/${deviceId}/${creatorId}`, {
+        const response = await fetch(`${SLU_API_BASE_URL}/slu-nonce/${deviceId}/${creatorId}`, {
             headers: {
                 'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
             },
@@ -33,7 +29,7 @@ export async function getDeviceNonce(deviceId: string, creatorId: string): Promi
 
 export async function getDevices(creatorId: string): Promise<Device[]> {
     try {
-        const response = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/creator-devices/${creatorId}`, {
+        const response = await fetch(`${SLU_API_BASE_URL}/creator-devices/${creatorId}`, {
             headers: {
                 'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
             },
@@ -60,7 +56,7 @@ export async function createDevice(): Promise<void> {
         // Create a device
         if (channel) {
             progress.set(0.66)
-            const deviceResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
+            const deviceResponse = await fetch(`${SLU_API_BASE_URL}/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
                 method: 'POST',
             })
             const device = await deviceResponse.json()
@@ -83,7 +79,7 @@ export async function createDevice(): Promise<void> {
 
 export async function getStatus(deviceId: string): Promise<string> {
     try {
-        const statusResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/status/${deviceId}`, {
+        const statusResponse = await fetch(`${SLU_API_BASE_URL}/status/${deviceId}`, {
             headers: {
                 'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
             },
@@ -110,7 +106,7 @@ export async function isAuthenticDevice(deviceId: string): Promise<boolean> {
         const registrationDate = registrationDateAndTime?.split('T')?.[0]
         const today = new Date().toISOString().split('T')[0]
 
-        const isAuthenticResponse = await fetch(`${import.meta.env.VITE_SLU_GATEWAY_URL}/api/v1/authenticity/prove?did=${deviceId}&from=${registrationDate}&to=${today}`, {
+        const isAuthenticResponse = await fetch(`${SLU_API_BASE_URL}/authenticity/prove?did=${deviceId}&from=${registrationDate}&to=${today}`, {
             headers: {
                 'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
             },
