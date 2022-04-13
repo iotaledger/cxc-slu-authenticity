@@ -62,13 +62,14 @@ export async function createDevice(): Promise<void> {
             const device = await deviceResponse.json()
             // Authorize device to created channel
             if (device) {
-                progress.set(0.9);
+                progress.set(1);
                 await acceptSubscription(channel?.channelAddress, device?.id);
                 progress.set(0)
             }
         }
     }
     catch (e) {
+        progress.set(0)
         showNotification({
             type: NotificationType.Error,
             message: "The request to create a device failed.",
