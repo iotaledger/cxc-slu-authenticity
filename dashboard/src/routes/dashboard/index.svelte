@@ -12,7 +12,7 @@
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
 	import { DeviceDetails, ProgressBar } from '../../components';
-	import { progress } from '$lib/store';
+	import { deviceCreationProgress } from '$lib/store';
 
 	enum State {
 		ListDevices = 'listDevices',
@@ -118,7 +118,7 @@
 		/>
 		{#if loading}
 			<div class="progressbar-wrapper">
-				<ProgressBar progress={$progress} />
+				<ProgressBar progress={$deviceCreationProgress} />
 			</div>
 		{/if}
 	{:else if state === State.DeviceDetails}

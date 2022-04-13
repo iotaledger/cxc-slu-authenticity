@@ -4,7 +4,7 @@ import {
     searchIdentityByDID, showNotification
 } from '@iota/is-ui-components';
 import { get } from "svelte/store";
-import { progress } from './store';
+import { deviceCreationProgress } from './store';
 import type { Device } from "./types";
 
 export async function getDeviceNonce(deviceId: string, creatorId: string): Promise<string> {
@@ -51,25 +51,25 @@ export async function createDevice(): Promise<void> {
     try {
         // Create a channel
         // Timeout to see progress bar animation (from 0 to 0.33)
-        setTimeout(() => progress.set(0.33), 100)
+        setTimeout(() => deviceCreationProgress.set(0.33), 100)
         const channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
         // Create a device
         if (channel) {
-            progress.set(0.66)
+            deviceCreationProgress.set(0.66)
             const deviceResponse = await fetch(`${SLU_API_BASE_URL}/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
                 method: 'POST',
             })
             const device = await deviceResponse.json()
             // Authorize device to created channel
             if (device) {
-                progress.set(1);
+                deviceCreationProgress.set(1);
                 await acceptSubscription(channel?.channelAddress, device?.id);
-                progress.set(0)
+                deviceCreationProgress.set(0)
             }
         }
     }
     catch (e) {
-        progress.set(0)
+        deviceCreationProgress.set(0)
         showNotification({
             type: NotificationType.Error,
             message: "The request to create a device failed.",
