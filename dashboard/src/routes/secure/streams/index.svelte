@@ -1,6 +1,10 @@
 <script lang="ts">
-	import { authenticatedUserDID, isAuthenticated } from 'boxfish-studio--is-ui-components';
-	import { showNotification, NotificationType } from 'boxfish-studio--is-ui-components';
+	import {
+		authenticatedUserDID,
+		isAuthenticated,
+		NotificationType,
+		showNotification
+	} from '@iota/is-ui-components';
 	import { Button } from 'sveltestrap';
 
 	function push() {

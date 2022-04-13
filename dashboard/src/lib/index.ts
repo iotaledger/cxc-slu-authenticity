@@ -7,7 +7,7 @@ import {
     showNotification,
     NotificationType,
     searchIdentityByDID
-} from 'boxfish-studio--is-ui-components';
+} from '@iota/is-ui-components';
 import { get } from "svelte/store";
 import { progress } from './store';
 

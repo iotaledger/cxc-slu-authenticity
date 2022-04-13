@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { authenticatedUserDID, isAuthenticated } from 'boxfish-studio--is-ui-components';
-	import { logout } from 'boxfish-studio--is-ui-components';
+	import { authenticatedUserDID, isAuthenticated } from '@iota/is-ui-components';
+	import { logout } from '@iota/is-ui-components';
 
 	import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'sveltestrap';
 

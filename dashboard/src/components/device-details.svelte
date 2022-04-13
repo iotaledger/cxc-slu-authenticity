@@ -10,7 +10,7 @@
 		selectedChannelData,
 		startReadingChannel,
 		stopReadingChannel
-	} from 'boxfish-studio--is-ui-components';
+	} from '@iota/is-ui-components';
 	import { onDestroy, onMount } from 'svelte';
 	import { Badge } from 'sveltestrap';
 

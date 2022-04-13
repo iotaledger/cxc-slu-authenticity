@@ -8,7 +8,7 @@
 		NotificationManager,
 		type ActionButton,
 		type TableData
-	} from 'boxfish-studio--is-ui-components';
+	} from '@iota/is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
 	import { DeviceDetails, ProgressBar } from '../../components';

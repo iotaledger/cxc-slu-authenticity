@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
 	export const prerender = true;
-	import { Box } from 'boxfish-studio--is-ui-components';
+	import { Box } from '@iota/is-ui-components';
 </script>
 
 <script lang="ts">
-	import { isAuthenticated, LoginRegisterManager } from 'boxfish-studio--is-ui-components';
+	import { isAuthenticated, LoginRegisterManager } from '@iota/is-ui-components';
 </script>
 
 <div class="container mt-4">
