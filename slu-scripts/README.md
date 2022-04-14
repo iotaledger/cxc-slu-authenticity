@@ -8,8 +8,8 @@ The slu-scripts folder provides multiple scripts which can
 
 To use the scripts run first:
 ```
+npm run install
 npm run build
-npm run install -g
 ```
 
 The above listed scripts can then be run via the following commands:
@@ -23,6 +23,13 @@ npm run encrypt-file
  --dest: Location where the encrypted data should be saved
 ```
 
+Try out with the provided data in folder test-data:
+
+```
+npm run encrypt-file --key_file=./test-data/unclonable.txt --input=./test-data/data.json
+--dest=./test-data
+```
+
 2. bootstraping a device:
  
  ```
@@ -31,6 +38,12 @@ npm run bootstrap
  --dest: Location where the encrypted data should be saved
  --one-shot-device-url: The url endpoint of the one-shot-device to get the device identity
  --nonce: Nonce of the device
+```
+
+Example:
+```
+npm run bootstrap --key_file=./test-data/unclonable.txt --dest=./test-data 
+--one-shot-device-url=http://localhost:3000/api/v1/one-shot-device --nonce=46f45a2c-114a-4cea-a570-b379fe3a4a95
 ```
 
 <p align="center">
@@ -47,6 +60,14 @@ npm run send-proof
  --input_enc: The location of the encrypted device identity.
  --collector_base_url: The base url of the authenticity-collector microservice
  ```
+
+ Example:
+```
+
+npm run send-proof --key_file=./test-data/unclonable.txt --interval=240000 --input_enc=./test-data/data.json.enc
+--collector_base_url=http://localhost:3000/api/v1/authenticity 
+
+```
  <p align="center">
   <img src="https://github.com/iotaledger/cxc-slu-authenticity/blob/69-description-of-slu-scripts/slu-scripts/diagrams/send-proof.png" alt="auth-proof-script sequence diagram"/>
 </p>
@@ -64,6 +85,17 @@ npm run send-data
  --is_base_url: The base url of the integration services
  --jwt: The jwt token of the device to verify itslef by the authenticity-collector microservice.
  --is_auth_url: The integration services authentication url for post request to get a jwt token
+```
+
+ Example:
+```
+
+npm run send-proof --key_file=./test-data/unclonable.txt  --input_enc=./test-data/data.json.enc --interval=480000
+--collector_base_url=http://localhost:3000/api/v1/authenticity --is_api_key=b85e51a2-9981-11ec-8770-4b8f01948e9b --is_base_url=https://demo-integration-services.iota.cafe 
+--is_auth_url=https://demo-integration-services.iota.cafe/api/v0.1/authentication/prove-ownership --jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6RDlOamhYTU1kRW1MNER6M3hZdDlrRWttZm5wUHlVa0F1OWRDRVNNaTU3cGEiLCJwdWJsaWNLZXkiO
+iJGQ2NuMnZEZk5YeGdiR1JmWjZ4M0IxZlltZEdIRXFIUnNGYm9iZnc5aGpYRiIsInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODgxMzk2MCwiZXhwIj
+oxNjQ4OTAwMzYwfQ.lR0PMq5_Q0NM_-NTHyoTMUeusGZ8w_y0pncVtwb5wPM
+
 ```
  <p align="center">
   <img src="https://github.com/iotaledger/cxc-slu-authenticity/blob/69-description-of-slu-scripts/slu-scripts/diagrams/send-data%20(3).png" alt="auth-proof-script sequence diagram"/>
