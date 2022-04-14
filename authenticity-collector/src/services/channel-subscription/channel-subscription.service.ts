@@ -18,23 +18,22 @@ export class ChannelSubscriptionService {
 	}
 
 	async channelSubscription() {
-		const collectorDid = this.configService.get<string>('COLLECTOR_DID');
-		const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
 		try {
-			console.log(collectorDid, collectorSecret)
+			const collectorDid = this.configService.get<string>('COLLECTOR_DID');
+			const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
 			await this.channelClient.authenticate(collectorDid, collectorSecret)
-			console.log(this.channelClient.jwtToken)
+			const channelInfo: ChannelInfo[] = await this.channelClient.search({ topicType: 'slu-data', topicSource: "slu", authorId: collectorDid });
+			console.log(channelInfo);
+			if (channelInfo.length != 0) {
+				this.logger.log(channelInfo[0].channelAddress);
+			} else {
+				await this.channelClient.create({
+					topics: [{ type: 'slu-data', source: 'slu' }]
+				});
+			}
 		}
-		catch(e) {
-			console.log("Error", e)
-		}
-		const channelInfo: ChannelInfo[] = await this.channelClient.search({ authorId: collectorDid });
-		if (channelInfo.length != 0) {
-			this.logger.log(channelInfo[0].channelAddress);
-		} else {
-			await this.channelClient.create({
-				topics: [{ type: 'slu-data', source: 'slu' }]
-			});
+		catch (e) {
+			console.log("error", e)
 		}
 	}
 }

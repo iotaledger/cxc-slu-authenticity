@@ -15,6 +15,7 @@ describe('ChannelSubscriptionService', () => {
 		}).compile();
 		channelInfo = {
 			channelAddress: '100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:c2fe471fd08bc988b9cb2de8',
+			name: "channel name",
 			authorId: 'did:iota:12345',
 			topics: [
 				{
