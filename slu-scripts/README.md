@@ -23,7 +23,7 @@ npm run encrypt-file
  --dest: Location where the encrypted data should be saved
 ```
 
-Try out with the provided data in folder test-data:
+Example:
 
 ```
 npm run encrypt-file --key_file=./test-data/unclonable.txt --input=./test-data/data.json
