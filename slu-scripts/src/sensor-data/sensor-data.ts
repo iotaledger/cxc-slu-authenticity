@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ClientConfig, ChannelClient, ChannelData, ApiVersion } from 'iota-is-sdk';
+import { ClientConfig, ChannelClient, ChannelData, ApiVersion } from '@iota/is-client';
 import { createKey, decrypt } from '../vpuf/vpuf';
 import { AxiosResponse } from 'axios';
 import { decryptData, sendAuthProof } from '../auth-proof/auth-proof';
@@ -25,7 +25,7 @@ export async function sendData(
 		let { identityKey, channelAddress } = JSON.parse(decryptedData);
 		const clientConfig: ClientConfig = {
 			apiKey: isApiKey,
-			baseUrl: isBaseUrl,
+			isGatewayUrl: isBaseUrl,
 			apiVersion: ApiVersion.v01
 		};
 		let isSend = false;
