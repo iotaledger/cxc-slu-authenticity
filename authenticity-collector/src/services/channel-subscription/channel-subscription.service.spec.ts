@@ -58,7 +58,11 @@ describe('ChannelSubscriptionService', () => {
 	it('should throw error', async () => {
 		process.env.COLLECTOR_DID = '';
 		process.env.COLLECTOR_SECRET = '';
-		const error = service.channelSubscription();
-		await expect(error).rejects.toThrowError();
+		const authenticationSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockRejectedValue('not authenticated');
+		try{
+			await service.channelSubscription();
+		}catch(ex: any){
+			expect(ex).toBe('erro not authenticated');
+		}	
 	});
 });

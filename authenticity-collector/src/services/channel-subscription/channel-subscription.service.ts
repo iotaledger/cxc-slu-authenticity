@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiVersion, ChannelClient, ChannelInfo } from '@iota/is-client';
+import {  ChannelClient, ChannelInfo } from '@iota/is-client';
 
 @Injectable()
 export class ChannelSubscriptionService {
@@ -21,7 +21,7 @@ export class ChannelSubscriptionService {
 		try {
 			const collectorDid = this.configService.get<string>('COLLECTOR_DID');
 			const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
-			await this.channelClient.authenticate(collectorDid, collectorSecret)
+			await this.channelClient.authenticate(collectorDid, collectorSecret);
 			const channelInfo: ChannelInfo[] = await this.channelClient.search({ topicType: 'slu-data', topicSource: "slu", authorId: collectorDid });
 			console.log(channelInfo);
 			if (channelInfo.length != 0) {
