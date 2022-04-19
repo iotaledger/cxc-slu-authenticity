@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+BLA BLA APP DOES THIS AND THAT
 
 ## Installation
 
@@ -37,37 +37,29 @@ $ npm install
 ```bash
 # development
 $ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
+## Using the One-Shot-Device microservice
 
-```bash
-# unit tests
-$ npm run test
+`Using Postman`
 
-# e2e tests
-$ npm run test:e2e
+First import the Postman collection located in the `one-shot-device/postman collection`. To do that open the `File` menu, then `Import` and navigate to the microservice directory and choose `authorize-device-to-channel.postman_collection.json` and click `Import`. Make sure you provide values for the variables accordingly:
 
-# test coverage
-$ npm run test:cov
-```
+- `one-shot-device-url`: base url to the one-shot device microservice, i.e: `http://localhost:8080/api/v1/one-shot-device`
+- `api-key`: you can use the following the API key: `94F5BA49-12A6-4E45-A487-BF91C442276D`
+- `is-url`: base url for the Integration Services microservice, i.e: `localhost:3099/api/v0.1`
 
-## Support
+Once it is done, follow these steps to create a channel and register the device:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+1. In the `Identities` tab:
+   send the POST request and store the response in as the value for
+
+2. In the `Authentication` tab:
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - [Jacek Roszkowiak](https://github.com/jacekroszkowiakdev) <- NEEDED?
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+One-shot-device is a part for cxc authenticity by `IOTA Foundation` (LICENSE). <- NEEDED?
