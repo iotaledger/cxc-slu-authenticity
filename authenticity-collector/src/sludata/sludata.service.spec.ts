@@ -1,7 +1,7 @@
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChannelClient, ChannelData } from 'iota-is-sdk/lib';
+import { ChannelClient, ChannelData } from '@iota/is-client';
 import { SludataService } from './sludata.service';
 import * as crypto from 'crypto';
 import { IdentityModule } from '../identity/identity.module';
@@ -63,6 +63,7 @@ describe('SludataService', () => {
 		const searchResponse = [
 			{
 				channelAddress: '100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:c2fe471fd08bc988b9cb2de8',
+				name: '',
 				authorId: 'did:iota:1234',
 				subscriberIds: [],
 				topics: [

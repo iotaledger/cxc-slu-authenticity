@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IdentityClient } from 'iota-is-sdk/lib';
+import { IdentityClient } from '@iota/is-client';
 import { defaultConfig } from '../../configuration';
 import { CollectorIdentityService } from './collector-identity.service';
 

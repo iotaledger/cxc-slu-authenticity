@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ChannelClient, ChannelInfo } from 'iota-is-sdk';
+import { ApiVersion, ChannelClient, ChannelInfo } from '@iota/is-client';
 
 @Injectable()
 export class ChannelSubscriptionService {
@@ -8,17 +8,32 @@ export class ChannelSubscriptionService {
 
 	constructor(private configService: ConfigService, @Inject('ChannelClient') private channelClient: ChannelClient) {}
 
+	async get(url: string, params: any = {}) {
+		console.log(url);
+	}
+
 	async channelSubscription() {
-		const collectorDid = this.configService.get<string>('COLLECTOR_DID');
-		const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
-		await this.channelClient.authenticate(collectorDid, collectorSecret);
-		const channelInfo: ChannelInfo[] = await this.channelClient.search({ authorId: collectorDid });
-		if (channelInfo.length != 0) {
-			this.logger.log(channelInfo[0].channelAddress);
-		} else {
-			await this.channelClient.create({
-				topics: [{ type: 'slu-data', source: 'slu' }]
+		try {
+			const collectorDid = this.configService.get<string>('COLLECTOR_DID');
+			const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
+			await this.channelClient.authenticate(collectorDid, collectorSecret);
+
+			const channelInfo: ChannelInfo[] = await this.channelClient.search({
+				topicType: 'slu-data1',
+				topicSource: 'slu',
+				authorId: collectorDid
 			});
+
+			if (channelInfo.length != 0) {
+				this.logger.log(channelInfo[0].channelAddress);
+			} else {
+				console.log('creating a new channel...');
+				await this.channelClient.create({
+					topics: [{ type: 'slu-data1', source: 'slu' }]
+				});
+			}
+		} catch (e) {
+			console.log('error', e);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiVersion, ChannelClient, ChannelData, ChannelInfo, ClientConfig } from 'iota-is-sdk/lib';
+import { ApiVersion, ChannelClient, ChannelData, ChannelInfo, ClientConfig } from '@iota/is-client';
 import { firstValueFrom } from 'rxjs';
 import { SluDataDto } from './model/SluDataDto';
 import * as crypto from 'crypto';
@@ -31,7 +31,7 @@ export class SludataService {
 		const collectorSecret = this.configService.get<string>('COLLECTOR_SECRET');
 		const clientConfig: ClientConfig = {
 			apiKey: this.configService.get('IS_API_KEY'),
-			baseUrl: this.configService.get('IS_API_URL'),
+			isGatewayUrl: this.configService.get('IS_API_URL'),
 			apiVersion: ApiVersion.v01
 		};
 		const channelClient = new ChannelClient(clientConfig);

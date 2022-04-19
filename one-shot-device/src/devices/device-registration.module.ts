@@ -6,7 +6,7 @@ import { DeviceRegistrationService } from './device-registration.service';
 import { DeviceRegistrationSchema, DeviceRegistration } from './schemas/device-registration.schema';
 import { defaultConfig } from '../configuration/configuration';
 import { HttpModule } from '@nestjs/axios';
-import { ChannelClient, IdentityClient } from 'iota-is-sdk';
+import { ChannelClient, IdentityClient } from '@iota/is-client';
 import { CreatorDevicesModule } from 'src/creator-devices/creator-devices.module';
 
 @Module({

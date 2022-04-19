@@ -7,7 +7,7 @@ import { DeviceRegistration, DeviceRegistrationSchema, DeviceRegistrationDocumen
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { channelMock, identityMock, mockDeviceRegistration, nonceMock, authorizedChannelMock } from './mocks';
-import { ChannelClient, IdentityClient } from 'iota-is-sdk';
+import { ChannelClient, IdentityClient } from '@iota/is-client';
 import { Connection, Model } from 'mongoose';
 import { CreatorDevicesModule } from '../creator-devices/creator-devices.module';
 

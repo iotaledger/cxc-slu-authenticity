@@ -2,7 +2,7 @@ import { Injectable, Logger, HttpException, HttpStatus, Inject } from '@nestjs/c
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
-import { IdentityClient, ChannelClient, AccessRights } from 'iota-is-sdk';
+import { IdentityClient, ChannelClient, AccessRights } from '@iota/is-client';
 import { v4 as uuidv4 } from 'uuid';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
