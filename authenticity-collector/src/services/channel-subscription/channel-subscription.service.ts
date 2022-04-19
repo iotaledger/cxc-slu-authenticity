@@ -25,12 +25,13 @@ export class ChannelSubscriptionService {
 			});
 
 			if (channelInfo.length != 0) {
-				this.logger.log(channelInfo[0].channelAddress);
+				this.logger.log("Found existing channel: " + channelInfo[0].channelAddress);
 			} else {
-				console.log('creating a new channel...');
-				await this.channelClient.create({
+				this.logger.log('creating a new channel...');
+				const response = await this.channelClient.create({
 					topics: [{ type: 'slu-data1', source: 'slu' }]
 				});
+				this.logger.log("Created channel: " + response.channelAddress);
 			}
 		} catch (e) {
 			console.log('error', e);
