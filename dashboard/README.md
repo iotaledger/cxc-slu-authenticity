@@ -13,7 +13,7 @@ $ npm run dev
 
 ```
 
-2.  Create a  `.env`  and add the corresponding necessary configuration:
+2.  Rename `.env.example` to `.env`  and add the corresponding necessary configuration:
 
 ```bash
 VITE_IOTA_IS_SDK_API_KEY="XXXXXXXXXX"
@@ -23,6 +23,9 @@ VITE_SLU_STATUS_API_KEY ="XXXXXXXXXX"
 VITE_SLU_GATEWAY_URL = "XXXXXXXXXX"
 
 ```
+
+You may also find other variables in `is-ui-components` library, so please review its [information](https://github.com/iotaledger/is-ui-components)
+
 ## Devices
 
 When the operator (logged user) creates a device, the following steps are also completed:
