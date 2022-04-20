@@ -7,7 +7,7 @@
 ```bash
 
 $ npm install
-$ npm run dev
+$ npm run dev -- -p PORT_NUMER_HERE
 
 ```
 
@@ -23,6 +23,7 @@ VITE_SLU_GATEWAY_URL = "XXXXXXXXXX"
 ```
 
 You may also find other variables in `is-ui-components` library, so please review its [documentation](https://github.com/iotaledger/is-ui-components)
+
 
 ## Devices
 
