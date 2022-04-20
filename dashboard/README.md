@@ -1,7 +1,5 @@
 # CityXChange Dashboard
 
-CityXChange microservice collects information about authentic SLU devices.
-
 ## Installation
 
 1.  You have to install dependencies and run the project:
