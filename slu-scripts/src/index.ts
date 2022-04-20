@@ -18,10 +18,10 @@ const argv = yargs
 				describe: 'The interval in millisecond during requests to the collector microservice are done.',
 				default: '600000'
 			})
-			.option('input_enc', { describe: 'The location of the encrypted data.' })
+			.option('input_enc', { describe: 'The location of the encrypted device identity.' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 	)
-	.command('bootstrap', 'Requests the nonce from device registration microservice and saves it encrypted on the device.', (yargs) => {
+	.command('bootstrap', 'Requests the nonce from one-shot-device microservice and saves it encrypted on the device.', (yargs) => {
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('dest', { describe: 'The destination where the encrypted data has to be stored.' })
@@ -31,12 +31,12 @@ const argv = yargs
 	.command('send-data', 'Send sensor data to integration service', (yargs) =>
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
-			.option('input_enc', { describe: 'The location of the encrypted data.' })
+			.option('input_enc', { describe: 'The location of the encrypted device identity.' })
 			.option('is_api_key', {describe: 'Api key of the integration services'})
 			.option('is_base_url', {describe: 'The base url of the integration services'})
-			.option('interval', { describe: 'The interval in millisecond during data is written to the channel', default: '300000' })
+			.option('interval', { describe: 'The interval in millisecond during data is written to the channel and send to the collector', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
-			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get an auth token' })
+			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get a jwt token' })
 			.option('jwt', { describe: 'JWT of the device' })
 	)
 	.help().argv;
