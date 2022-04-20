@@ -1,40 +1,83 @@
-# create-svelte
+# CityXChange Dashboard
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Installation
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+1.  You have to install dependencies and run the project:
 
 ```bash
-# create a new project in the current directory
-npm init svelte@next
 
-# create a new project in my-app
-npm init svelte@next my-app
+$ npm install
+$ npm run dev -- -p PORT_NUMER_HERE
+
 ```
 
-> Note: the `@next` is temporary
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+2.  Copy `.env.example` and  rename it to `.env`, then add the corresponding necessary configuration:
 
 ```bash
-npm run dev
+VITE_IOTA_IS_SDK_API_KEY="XXXXXXXXXX"
+VITE_IOTA_IS_SDK_GATEWAY_URL="XXXXXXXXXX"
+VITE_DEVICE_MANAGEMENTE_API_REST_URL="XXXXXXXXXX"
+VITE_SLU_STATUS_API_KEY ="XXXXXXXXXX"
+VITE_SLU_GATEWAY_URL = "XXXXXXXXXX"
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+You may also find other variables in `is-ui-components` library, so please review its [documentation](https://github.com/iotaledger/is-ui-components)
 
-To create a production version of your app:
 
-```bash
-npm run build
+## Devices
+
+When the operator (logged user) creates a device, the following steps are also completed:
+
+ - Create a channel for that device.
+ - Create the device.
+ - Authorize the created identity on the channel.
+ 
+ #### Device Manager
+ Display a list of all your devices.
+ 
+ `ListManager` props:
+
+-  `title`: list title
+
+-  `tableData`: table data
+
+-  `actionButtons`: array with button actions, in this case, *Create Device* button
+
+-  `message`: message shown if there is no data in the table (*No devices found*)
+
+-  `showSearch`: the search is available in the list
+
+-  `onSearch`: function that is executed when searching
+
+-  `searchQuery`: query placeholder
+
+ 
+ #### Device details
+ The device details contain all the information about the device, that includes the following features:
+ - Nonce
+ - Status
+ - Authenticity
+ - Subscribers: pending & authorized
+ - Channel messages
+
+`DeviceDetails` props:
+
+- `device`: the selected device object includes:
+ ```js
+ 
+{
+	id: string;
+	nonce: string;
+	name: string;
+	channelAddress: string;
+}
+
 ```
 
-You can preview the production build with `npm run preview`.
+## Authors
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+[Rubén Álvarez Gallego](https://github.com/evavirseda) (ralvarez@boxfish.studio)
+[Begoña Álvarez de la Cruz](https://github.com/begonaalvarezd) (balvarez@boxfish.studio)  
+[Eva Virseda Sanz](https://github.com/evavirseda) (evirseda@boxfish.studio)  
+
