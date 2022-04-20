@@ -11,7 +11,7 @@
 	} from '@iota/is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
-	import { DeviceDetails, ProgressBar } from '../../components';
+	import { DeviceDetails, ProgressBar } from '../components';
 
 	enum State {
 		ListDevices = 'listDevices',
@@ -92,7 +92,7 @@
 	}
 </script>
 
-<Container class="relative py-5">
+<Container class="relative">
 	<Row class="mb-4">
 		<h1 class="text-center">Dashboard of IoT devices</h1>
 	</Row>
