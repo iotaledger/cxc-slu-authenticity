@@ -4,28 +4,101 @@ services:
   mongo:
     image: mongo:latest
     restart: always
-    environment:
-      MONGO_INITDB_DATABASE: ${DATABASE_NAME}
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
+  traefik:
+    image: "traefik:v2.6"
+    container_name: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "3000:80"
+      - "8080:8080"
     volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   ssi-proof-of-ownership:
-    restart: always
     build:
       context: ./ssi-proof-of-ownership
       dockerfile: Dockerfile 
-
-  ssi-authenticity-collector:
     restart: always
-    ports:
-      - 4000:4000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ssi-proof-of-ownership.entrypoints=web"
+      - "traefik.http.routers.ssi-proof-of-ownership.rule=PathPrefix(`/api/v1/ownership`)"
+      - "traefik.http.services.ssi-proof-of-ownership.loadbalancer.server.port=3000"
+    environment:
+      - INTEGRATION_SERVICE=${INTEGRATION_SERVICE}
+      - API_KEY=${API_KEY}
+      - EXPIRATION_TIME_MS=240000
+
+  slu-status:
+    build:
+      context: ./slu-status
+      dockerfile: Dockerfile 
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.slu-status.entrypoints=web"
+      - "traefik.http.routers.slu-status.rule=PathPrefix(`/api/v1/status`) || PathPrefix(`/api/v1/slu-nonce`)"
+      - "traefik.http.services.slu-status.loadbalancer.server.port=3000"
+    environment:
+      - API_KEY=${SLU_STATUS_API_KEY}
+      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
+      - DATABASE_NAME=slu-status
+    depends_on:
+      - mongo      
+
+  one-shot-device:
+    build:
+      context: ./one-shot-device
+      dockerfile: Dockerfile 
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.one-shot-device.entrypoints=web"
+      - "traefik.http.routers.one-shot-device.rule=PathPrefix(`/api/v1/one-shot-device`) || PathPrefix(`/api/v1/creator-devices`)"
+      - "traefik.http.services.one-shot-device.loadbalancer.server.port=3000"
+    environment:
+      - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
+      - DB_NAME=one-shot-device
+      - IS_API_KEY=${API_KEY}
+      - IS_API_URL=${INTEGRATION_SERVICE}
+      - SLU_STATUS_BASE_URL=http://slu-status:3000/api/v1
+      - SLU_STATUS_API_KEY=${SLU_STATUS_API_KEY}
+    depends_on:
+      - mongo
+      - slu-status
+
+  authenticity-collector:
     build:
       context: ./authenticity-collector
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile 
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authenticity-collector.entrypoints=web"
+      - "traefik.http.routers.authenticity-collector.rule=PathPrefix(`/api/v1/authenticity`)"
+      - "traefik.http.services.authenticity-collector.loadbalancer.server.port=3000"
+    environment:
+      - API_KEY=${SLU_STATUS_API_KEY}
+      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
+      - PROVE_OF_OWNERSHIP_URL=http://ssi-proof-of-ownership:3000/api/v1/ownership/prove
+      - IS_API_KEY=${API_KEY}
+      - IS_API_URL=${INTEGRATION_SERVICE}
+      - COLLECTOR_DID=${COLLECTOR_DID}
+      - COLLECTOR_SECRET=${COLLECTOR_SECRET}
+      - AUTH_PROVE_EXPIRATION=120000
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - ssi-proof-of-ownership
-      - mongo
+      - mongo      
+
+

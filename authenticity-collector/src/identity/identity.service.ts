@@ -45,16 +45,11 @@ export class IdentityService {
 	}
 
 	async getAuthProves(did: string, from: any, to: any): Promise<Identity[]> {
-		try {
-			return await this.identityModel
-				.find({
-					did: did,
-					timestamp: { $gte: new Date(from).toISOString(), $lte: new Date(to).toISOString() }
-				})
-				.lean();
-		} catch (ex: any) {
-			this.logger.error(ex);
-			throw new BadRequestException(ex.message);
-		}
+		return await this.identityModel
+			.find({
+				did: did,
+				timestamp: { $gte: new Date(from).toISOString(), $lte: new Date(to).toISOString() }
+			})
+			.lean();
 	}
 }

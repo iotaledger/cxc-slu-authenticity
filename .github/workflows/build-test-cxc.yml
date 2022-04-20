@@ -4,8 +4,12 @@ name: Build and test cxc-slu-authenticity
 on:
   # Triggers the workflow on pull request events but only for the main branch
   pull_request:
-    branches: [main]
-    paths: 
+    branches:
+    - main
+
+  push:
+    branches:
+    - main
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -37,6 +41,12 @@ jobs:
       - name: Build and test slu-scripts
         run: |
           cd slu-scripts/
+          npm install
+          npm run build
+          npm run test
+      - name: Build and test slu-status
+        run: |
+          cd slu-status/
           npm install
           npm run build
           npm run test

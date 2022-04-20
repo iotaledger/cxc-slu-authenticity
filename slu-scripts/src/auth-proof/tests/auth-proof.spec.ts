@@ -7,7 +7,7 @@ jest.mock('axios');
 const keyFilePath: string | undefined = process.env.npm_config_key_file;
 const inputDataPath: string | undefined = process.env.npm_config_input;
 const destinationPath: string | undefined = process.env.npm_config_dest;
-const collectorUrl: string | undefined = process.env.npm_config_collector_url;
+const collectorBaseUrl: string | undefined = process.env.npm_config_collector_base_url;
 const encryptedDataPath: string | undefined = process.env.npm_config_input_enc;
 describe('Encrypt data', () => {
 	it('should encrypt data', () => {
@@ -29,9 +29,9 @@ describe('Encrypt data', () => {
 
 		encryptData(keyFilePath, inputDataPath, destinationPath);
 		const body = await decryptData(encryptedDataPath, keyFilePath);
-		const result = await sendAuthProof(body!, collectorUrl);
+		const result = await sendAuthProof(body!, collectorBaseUrl);
 
-		expect(axios.post).toBeCalledWith('http://localhost:4000/identity/', body);
+		expect(axios.post).toBeCalledWith('http://localhost:3030/api/v1/authenticity/prove', body);
 		expect(result?.status).toBe(200);
 	});
 
@@ -41,11 +41,11 @@ describe('Encrypt data', () => {
 		const proofRequest = jest.spyOn(axios, 'post');
 		const body = { did: 'did:iota:..', timestamp: new Date(), signature: 'isdnfcd' };
 
-		setInterval(sendAuthProof, 1000, body, '/');
+		setInterval(sendAuthProof, 1000, body, 'http://localhost:3030/api/v1/authenticity');
 
 		jest.advanceTimersByTime(2000);
 
-		expect(proofRequest).toBeCalledWith('/', body);
+		expect(proofRequest).toBeCalledWith('http://localhost:3030/api/v1/authenticity/prove', body);
 		expect(proofRequest).toBeCalled();
 		expect(proofRequest).toHaveBeenCalledTimes(3);
 
@@ -72,7 +72,7 @@ describe('Encrypt data', () => {
 		try {
 			await sendAuthProof({ did: 'did:iota:..', timestamp: new Date(), signature: 'isdnfcd' }, '');
 		} catch (ex: any) {
-			expect(ex.message).toBe('Collector url for post request is not provided');
+			expect(ex.message).toBe('--collector_url for post request is not provided');
 		}
 	});
 });

@@ -1,4 +1,4 @@
-import { Encoding as encoding } from '../../../node_modules/iota-is-sdk/lib/models/schemas/identity';
+import { Encoding } from '@iota/is-shared-modules/lib/models/schemas/identity';
 import { IsEnum, IsNotEmpty, IsObject, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 export class IdentityKeyObject {
@@ -9,15 +9,17 @@ export class IdentityKeyObject {
 	@IsNotEmpty()
 	@IsString()
 	readonly public: string;
+
 	@IsNotEmpty()
 	@IsString()
 	readonly secret: string;
+
 	@IsNotEmpty()
-	@IsEnum(encoding)
-	readonly encoding: encoding;
+	@IsEnum(Encoding)
+	readonly encoding: Encoding;
 }
 
-export class IdentityKeysData {
+export class IdentityKeyData {
 	@IsNotEmpty()
 	@IsString()
 	readonly id: string;
@@ -31,11 +33,11 @@ export class CreateDeviceRegistrationDto {
 	readonly nonce: string;
 	@IsNotEmpty()
 	@IsString()
-	readonly channelId: string;
+	readonly subscriptionLink: string;
 	@IsNotEmpty()
 	@IsString()
-	readonly channelSeed: string;
-	@Type(() => IdentityKeysData)
+	readonly seed: string;
+	@Type(() => IdentityKeyData)
 	@ValidateNested({ each: true })
-	readonly identityKeys: IdentityKeysData;
+	readonly identityKey: IdentityKeyData;
 }

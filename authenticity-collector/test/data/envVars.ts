@@ -1,0 +1,9 @@
+process.env.AUTH_PROVE_EXPIRATION = '36000';
+process.env.MPOWER_CONNECTOR_URL = 'https://en5mzd9ir2abq.x.pipedream.net/';
+process.env.JWT_SECRET = 'PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa';
+process.env.AUTH_PROVE_EXPIRATION = '360000';
+process.env.IS_API_URL = 'https://demo-integration-services.iota.cafe';
+process.env.IS_API_KEY = 'b85e51a2-9981-11ec-8770-4b8f01948e9b';
+process.env.DATABASE_URL = 'mongodb://127.0.0.1:6000/';
+process.env.COLLECTOR_DID = 'did:iota:6RnvLnEvMnAEDNj8668D9oJUdJ4MpTnicgiMZX1vck9i';
+process.env.COLLECTOR_SECRET = 'GDGkoGeZxXF9Cer9VezR2L4t5df4jZ4wACCoxXrzdvNZ';

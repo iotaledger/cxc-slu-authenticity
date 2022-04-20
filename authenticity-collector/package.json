@@ -14,13 +14,14 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "jest --testTimeout=15000",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "DATABASE_URL=mongodb://127.0.0.1:6000/ jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit"
+    "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit --runInBand --silent"
   },
   "dependencies": {
+    "@iota/is-client": "^0.1.2",
     "@nestjs/axios": "^0.0.4",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.1.6",
@@ -30,7 +31,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "joi": "^17.5.0",
-    "mongoose": "^6.1.6",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
@@ -39,8 +41,10 @@
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
+    "@types/crypto-js": "^4.1.1",
     "@types/express": "^4.17.13",
     "@types/jest": "27.0.2",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^16.0.0",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -74,6 +78,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFiles": [
+      "../test/data/envVars.ts"
+    ]
   }
 }
