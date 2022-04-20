@@ -1,4 +1,4 @@
-# is-cxc-authenticity-collector
+# CityXChange Dashboard
 
 CityXChange microservice collects information about authentic SLU devices.
 
