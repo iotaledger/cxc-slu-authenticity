@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SluAuthorizationMiddleware implements NestMiddleware {
-	constructor(private configService: ConfigService, @Inject('IdentityClient') private identityClient: IdentityClient) {}
+	constructor(private configService: ConfigService, @Inject('IdentityClient') private identityClient: IdentityClient) { }
 
 	async use(req: any, res: any, next: () => void) {
 		const { authorization } = req.headers;
@@ -20,9 +20,9 @@ export class SluAuthorizationMiddleware implements NestMiddleware {
 
 		const token = split[1];
 
-		const { isValid, error } = await this.identityClient.verifyJwt(token);
+		const { isValid, error } = await this.identityClient.verifyJwt({ jwt: token });
 
-		if(!isValid){
+		if (!isValid) {
 			return res.status(HttpStatus.UNAUTHORIZED).send({ error: error });
 		}
 
