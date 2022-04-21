@@ -25,7 +25,7 @@ export class SluAuthorizationMiddleware implements NestMiddleware {
 		const { data } = await firstValueFrom(this.httpService.post(`${is_url}/authentication/verify-jwt`, {jwt: token}));
 
 		if(!data.isValid){
-			return res.status(HttpStatus.UNAUTHORIZED).send({ error: data.error + ' or jwt expired'});
+			return res.status(HttpStatus.UNAUTHORIZED).send({ error: data.error });
 		}
 
 		next();

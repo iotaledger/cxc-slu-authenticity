@@ -384,7 +384,7 @@ describe('AppController (e2e)', () => {
 				.set('Authorization', 'Bearer ' + jwt)
 				.send(sluDataBody);
 			expect(status).toBe(401);
-			expect(body).toEqual({ error: 'signed by other secret or jwt expired' });
+			expect(body).toEqual({ error: 'signed by other secret' });
 		});
 	});
 
