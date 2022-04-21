@@ -1,16 +1,8 @@
 <script>
-	import { browser } from '$app/env';
-	import { goto } from '$app/navigation';
-	import { isAuthenticated, NotificationManager } from '@iota/is-ui-components';
+	import { NotificationManager } from '@iota/is-ui-components';
 	import { Container } from 'sveltestrap';
 	import { Header } from '../components';
 	import './../scss/main.scss';
-
-	$: {
-		if (browser && !$isAuthenticated) {
-			goto('/');
-		}
-	}
 </script>
 
 <Header />
