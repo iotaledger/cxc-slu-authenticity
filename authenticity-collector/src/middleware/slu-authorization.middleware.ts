@@ -1,11 +1,10 @@
-import { HttpService } from '@nestjs/axios';
-import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
+import { IdentityClient } from '@iota/is-client';
+import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class SluAuthorizationMiddleware implements NestMiddleware {
-	constructor(private configService: ConfigService, private httpService: HttpService) {}
+	constructor(private configService: ConfigService, @Inject('IdentityClient') private identityClient: IdentityClient) {}
 
 	async use(req: any, res: any, next: () => void) {
 		const { authorization } = req.headers;
@@ -20,12 +19,11 @@ export class SluAuthorizationMiddleware implements NestMiddleware {
 		}
 
 		const token = split[1];
-	
-		const is_url = this.configService.get('IS_API_URL');
-		const { data } = await firstValueFrom(this.httpService.post(`${is_url}/authentication/verify-jwt`, {jwt: token}));
 
-		if(!data.isValid){
-			return res.status(HttpStatus.UNAUTHORIZED).send({ error: data.error });
+		const { isValid, error } = await this.identityClient.verifyJwt(token);
+
+		if(!isValid){
+			return res.status(HttpStatus.UNAUTHORIZED).send({ error: error });
 		}
 
 		next();
