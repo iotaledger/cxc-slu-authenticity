@@ -3,24 +3,25 @@ services:
 
   mongo:
     image: mongo:latest
+    container_name: "mongo-cxc"
     restart: always
     ports:
-      - 27017:27017
+      - 27018:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
 
   traefik:
     image: "traefik:v2.6"
-    container_name: "traefik"
+    container_name: "traefik-cxc"
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
     ports:
-      - "3000:80"
-      - "8080:8080"
+      - "3030:80"
+      - "8081:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
@@ -51,7 +52,7 @@ services:
       - "traefik.http.services.slu-status.loadbalancer.server.port=3000"
     environment:
       - API_KEY=${SLU_STATUS_API_KEY}
-      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
+      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27018
       - DATABASE_NAME=slu-status
     depends_on:
       - mongo      
@@ -67,7 +68,7 @@ services:
       - "traefik.http.routers.one-shot-device.rule=PathPrefix(`/api/v1/one-shot-device`) || PathPrefix(`/api/v1/creator-devices`)"
       - "traefik.http.services.one-shot-device.loadbalancer.server.port=3000"
     environment:
-      - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
+      - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27018
       - DB_NAME=one-shot-device
       - IS_API_KEY=${API_KEY}
       - IS_API_URL=${INTEGRATION_SERVICE}
@@ -89,7 +90,7 @@ services:
       - "traefik.http.services.authenticity-collector.loadbalancer.server.port=3000"
     environment:
       - API_KEY=${SLU_STATUS_API_KEY}
-      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
+      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27018
       - PROVE_OF_OWNERSHIP_URL=http://ssi-proof-of-ownership:3000/api/v1/ownership/prove
       - IS_API_KEY=${API_KEY}
       - IS_API_URL=${INTEGRATION_SERVICE}
