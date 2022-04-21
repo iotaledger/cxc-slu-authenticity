@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiVersion, ChannelClient, ChannelInfo } from '@iota/is-client';
+import {  ChannelClient, ChannelInfo } from '@iota/is-client';
 
 @Injectable()
 export class ChannelSubscriptionService {

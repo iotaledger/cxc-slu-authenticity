@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseEnumPipe, Post, Put, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseEnumPipe, Post, Put } from '@nestjs/common';
 import { Status } from './model/Status';
 import { SluStatusValidationPipe } from './pipes/slu-status-validation.pipe';
 import { SluStatus } from './schema/slu-status.schema';

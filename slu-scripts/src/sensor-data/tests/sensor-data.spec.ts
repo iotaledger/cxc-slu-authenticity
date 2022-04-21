@@ -1,6 +1,6 @@
 import { encryptData } from '../../auth-proof/auth-proof';
 import { sendData } from '../sensor-data';
-import { ChannelClient, ChannelData } from 'iota-is-sdk';
+import { ChannelClient, ChannelData } from '@iota/is-client';
 import * as AuthProof from '../../auth-proof/auth-proof';
 import fs from 'fs';
 import axios from 'axios';
