@@ -8,6 +8,7 @@ import { getConnectionToken, getModelToken, MongooseModule } from '@nestjs/mongo
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
+import { EmptyLogger } from './empty-logger';
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
@@ -42,6 +43,8 @@ describe('AppController (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 		await app.init();
+		app.useLogger(new EmptyLogger());
+
 		httpService = moduleFixture.get<HttpService>(HttpService);
 		identityModel = moduleFixture.get<Model<IdentityDocument>>(getModelToken(Identity.name));
 		connection = moduleFixture.get<Connection>(getConnectionToken());
@@ -252,6 +255,19 @@ describe('AppController (e2e)', () => {
 			const jwt =
 				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6M3A0RWVWNkVRTFJEZDR3ajh1UXhEZTRhTkRTeWk5TUw0WGtuZjhWS1FLU3oiLCJwdWJsaWNLZXkiOiJFWEZ1QXBobW5MR1gxTVFyRzNBcVZhcmNlelduZGhNRU1Db1p3MVVkN3B1QSIsInVzZXJuYW1lIjoibXktZGV2aWNlNDkiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0yNVQxNTo1MjoxNFoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODMwNjAzOSwiZXhwIjoxNjQ4MzkyNDM5fQ.hdIpqn3LZdzBN9NB5rdXdWk9d3g1uh-sX9LC80DeWRc';
 
+
+			const response = {
+				data: {
+					isValid: true
+				},
+				headers: {},
+				config: { url: 'http://localhost:3000/mockUrl' },
+				status: 200,
+				statusText: 'OK'
+			};
+
+			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
+
 			const { status, body } = await request(app.getHttpServer())
 				.post('/api/v1/authenticity/data')
 				.set('Authorization', 'Bearer ' + jwt)
@@ -281,6 +297,19 @@ describe('AppController (e2e)', () => {
 			const jwt =
 				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6M3A0RWVWNkVRTFJEZDR3ajh1UXhEZTRhTkRTeWk5TUw0WGtuZjhWS1FLU3oiLCJwdWJsaWNLZXkiOiJFWEZ1QXBobW5MR1gxTVFyRzNBcVZhcmNlelduZGhNRU1Db1p3MVVkN3B1QSIsInVzZXJuYW1lIjoibXktZGV2aWNlNDkiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0yNVQxNTo1MjoxNFoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODMwNjAzOSwiZXhwIjoxNjQ4MzkyNDM5fQ.hdIpqn3LZdzBN9NB5rdXdWk9d3g1uh-sX9LC80DeWRc';
 
+
+			const response = {
+				data: {
+					isValid: true
+				},
+				headers: {},
+				config: { url: 'http://localhost:3000/mockUrl' },
+				status: 200,
+				statusText: 'OK'
+			};
+
+			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
+
 			const { status, body } = await request(app.getHttpServer())
 				.post('/api/v1/authenticity/data')
 				.set('Authorization', 'Bearer ' + jwt)
@@ -297,6 +326,19 @@ describe('AppController (e2e)', () => {
 			};
 			const jwt =
 				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6M3A0RWVWNkVRTFJEZDR3ajh1UXhEZTRhTkRTeWk5TUw0WGtuZjhWS1FLU3oiLCJwdWJsaWNLZXkiOiJFWEZ1QXBobW5MR1gxTVFyRzNBcVZhcmNlelduZGhNRU1Db1p3MVVkN3B1QSIsInVzZXJuYW1lIjoibXktZGV2aWNlNDkiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0yNVQxNTo1MjoxNFoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODMwNjAzOSwiZXhwIjoxNjQ4MzkyNDM5fQ.hdIpqn3LZdzBN9NB5rdXdWk9d3g1uh-sX9LC80DeWRc';
+
+			const response = {
+				data: {
+					isValid: true
+				},
+				headers: {},
+				config: { url: 'http://localhost:3000/mockUrl' },
+				status: 200,
+				statusText: 'OK'
+			};
+
+			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
+
 			const { status, body } = await request(app.getHttpServer())
 				.post('/api/v1/authenticity/data')
 				.set('Authorization', 'Bearer ' + jwt)
@@ -313,6 +355,36 @@ describe('AppController (e2e)', () => {
 			const { status, body } = await request(app.getHttpServer()).post('/api/v1/authenticity/data').set('authorization', 'Bearer ').send(sluDataBody);
 			expect(status).toBe(401);
 			expect(body).toEqual({ error: 'not authenticated!' });
+		});
+
+		it('/data (POST): Validation fails: failed verify of jwt', async () => {
+			const sluDataBody = {
+				payload: { temperature: '60 degrees' },
+				deviceId: 'did:iota:Gb6MMq9SCmKb48noEjEoyVMcHjpNwvu2MjDTY6K2XpV'
+			};
+
+			const jwt =
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6M3A0RWVWNkVRTFJEZDR3ajh1UXhEZTRhTkRTeWk5TUw0WGtuZjhWS1FLU3oiLCJwdWJsaWNLZXkiOiJFWEZ1QXBobW5MR1gxTVFyRzNBcVZhcmNlelduZGhNRU1Db1p3MVVkN3B1QSIsInVzZXJuYW1lIjoibXktZGV2aWNlNDkiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMy0yNVQxNTo1MjoxNFoiLCJjbGFpbSI6eyJ0eXBlIjoiUGVyc29uIn0sInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODMwNjAzOSwiZXhwIjoxNjQ4MzkyNDM5fQ.hdIpqn3LZdzBN9NB5rdXdWk9d3g1uh-sX9LC80DeWRc';
+
+			const response = {
+				data: {
+					isValid: false,
+					error: 'signed by other secret'
+				},
+				headers: {},
+				config: { url: 'http://localhost:3000/mockUrl' },
+				status: 200,
+				statusText: 'OK'
+			};
+
+			jest.spyOn(httpService, 'post').mockReturnValue(of(response));
+
+			const { status, body } = await request(app.getHttpServer())
+				.post('/api/v1/authenticity/data')
+				.set('Authorization', 'Bearer ' + jwt)
+				.send(sluDataBody);
+			expect(status).toBe(401);
+			expect(body).toEqual({ error: 'signed by other secret or jwt expired' });
 		});
 	});
 

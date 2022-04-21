@@ -1,12 +1,13 @@
+import { HttpService } from '@nestjs/axios';
 import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as jwt from 'jsonwebtoken';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class SluAuthorizationMiddleware implements NestMiddleware {
-	constructor(private configService: ConfigService) {}
+	constructor(private configService: ConfigService, private httpService: HttpService) {}
 
-	use(req: any, res: any, next: () => void) {
+	async use(req: any, res: any, next: () => void) {
 		const { authorization } = req.headers;
 
 		if (!authorization || !authorization.startsWith('Bearer')) {
@@ -19,17 +20,12 @@ export class SluAuthorizationMiddleware implements NestMiddleware {
 		}
 
 		const token = split[1];
-		const jwt_secret = this.configService.get('JWT_SECRET');
+	
+		const is_url = this.configService.get('IS_API_URL');
+		const { data } = await firstValueFrom(this.httpService.post(`${is_url}/authentication/verify-jwt`, {jwt: token}));
 
-		let decodedToken: any;
-		try {
-			decodedToken = jwt.verify(token, jwt_secret);
-		} catch (ex: any) {
-			return res.status(HttpStatus.UNAUTHORIZED).send({ error: 'jwt expired!' });
-		}
-
-		if (typeof decodedToken === 'string' || !decodedToken?.user) {
-			return res.status(HttpStatus.UNAUTHORIZED).send({ error: 'jwt expired!' });
+		if(!data.isValid){
+			return res.status(HttpStatus.UNAUTHORIZED).send({ error: data.error + ' or jwt expired'});
 		}
 
 		next();

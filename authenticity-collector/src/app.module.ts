@@ -8,10 +8,12 @@ import { ChannelClient, IdentityClient } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { CollectorIdentityService } from './services/collector-identity/collector-identity.service';
 import { SluAuthorizationMiddleware } from './middleware/slu-authorization.middleware';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
 	imports: [
 		IdentityModule,
+		HttpModule,
 		SludataModule,
 		ConfigModule.forRoot({
 			isGlobal: true
