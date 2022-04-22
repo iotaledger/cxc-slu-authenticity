@@ -1,10 +1,9 @@
 import { IdentityClient } from '@iota/is-client';
 import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SluAuthorizationMiddleware implements NestMiddleware {
-	constructor(private configService: ConfigService, @Inject('IdentityClient') private identityClient: IdentityClient) { }
+	constructor(@Inject('IdentityClient') private identityClient: IdentityClient) { }
 
 	async use(req: any, res: any, next: () => void) {
 		const { authorization } = req.headers;
