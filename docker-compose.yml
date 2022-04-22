@@ -106,11 +106,12 @@ services:
       context: ./dashboard
       dockerfile: Dockerfile 
     restart: always
+    container_name: "dashboard-cxc"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dashboard.entrypoints=web"
       - "traefik.http.routers.dashboard.rule=PathPrefix(`/`)"
-      - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=3333"
     environment:
       - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
       - VITE_IOTA_IS_SDK_GATEWAY_URL=${INTEGRATION_SERVICE}
