@@ -16,12 +16,11 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@iota/is-client": "^0.1.2",
 		"@noble/ed25519": "^1.5.3",
 		"axios": "^0.25.0",
 		"bs58": "^4.0.1",
-		"crypto-js": "^4.1.1",
-		"dotenv": "^16.0.0",
-		"iota-is-sdk": "^0.0.9"
+		"crypto-js": "^4.1.1"
 	},
 	"devDependencies": {
 		"@types/axios": "^0.14.0",

@@ -8,10 +8,10 @@ async function bootstrap() {
 	await app.listen(process.env.port || 3000);
 
 	const collectorIdentityService = app.get(CollectorIdentityService);
-	collectorIdentityService.checkCollectorIdentity();
+	await collectorIdentityService.checkCollectorIdentity();
 
 	const channelSubscription = app.get(ChannelSubscriptionService);
-	channelSubscription.channelSubscription();
+	await channelSubscription.channelSubscription();
 }
 
 bootstrap();
