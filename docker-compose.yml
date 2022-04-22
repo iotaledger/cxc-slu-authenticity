@@ -52,7 +52,7 @@ services:
       - "traefik.http.services.slu-status.loadbalancer.server.port=3000"
     environment:
       - API_KEY=${SLU_STATUS_API_KEY}
-      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-cxc:27018
+      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-cxc:27017
       - DATABASE_NAME=slu-status
     depends_on:
       - mongo      
@@ -68,7 +68,7 @@ services:
       - "traefik.http.routers.one-shot-device.rule=PathPrefix(`/api/v1/one-shot-device`) || PathPrefix(`/api/v1/creator-devices`)"
       - "traefik.http.services.one-shot-device.loadbalancer.server.port=3000"
     environment:
-      - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-cxc:27018
+      - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-cxc:27017
       - DB_NAME=one-shot-device
       - IS_API_KEY=${API_KEY}
       - IS_API_URL=${INTEGRATION_SERVICE}
@@ -90,7 +90,7 @@ services:
       - "traefik.http.services.authenticity-collector.loadbalancer.server.port=3000"
     environment:
       - API_KEY=${SLU_STATUS_API_KEY}
-      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-cxc:27018
+      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-cxc:27017
       - PROVE_OF_OWNERSHIP_URL=http://ssi-proof-of-ownership:3000/api/v1/ownership/prove
       - IS_API_KEY=${API_KEY}
       - IS_API_URL=${INTEGRATION_SERVICE}
