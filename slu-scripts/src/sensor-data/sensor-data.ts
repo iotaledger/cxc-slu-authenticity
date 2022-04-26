@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 import axios from 'axios';
+import {jwt, setJwt} from './configuration';
 
 export async function sendData(
 	encryptedDataPath: string | undefined,
@@ -16,9 +17,9 @@ export async function sendData(
 	collectorBaseUrl: string | undefined,
 	payloadData: any,
 	isAuthUrl: string | undefined,
-	jwt: string | undefined
 ): Promise<ChannelData> {
-	if (isApiKey && isBaseUrl && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl && jwt) {
+	console.log(isApiKey, encryptedDataPath, isBaseUrl, collectorBaseUrl, isAuthUrl)
+	if (isApiKey && isBaseUrl && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
@@ -33,16 +34,20 @@ export async function sendData(
 		while (!isSend) {
 			try {
 				//send to collector
-				await postData(collectorBaseUrl, payloadData, identityKey.id, jwt!);
+				console.log('send data')
+				await postData(collectorBaseUrl, payloadData, identityKey.id, jwt);
 				isSend = true;
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
+				console.log(ex)
 				if (ex.response.status === 409) {
+					console.log('send proof')
 					const body = await decryptData(encryptedDataPath, keyFilePath);
 					await sendAuthProof(body, collectorBaseUrl);
 				}
 				//Retry to send: jwt token expired
 				else if (ex.response.status === 401) {
+					console.log('get jwt')
 					const res = await axios.get(isAuthUrl + `/${identityKey.id}?api-key=${clientConfig.apiKey}`);
 					const signedNonce = await signNonce(identityKey.key.secret, res?.data?.nonce);
 					const isResponse = await axios.post(
@@ -53,7 +58,7 @@ export async function sendData(
 							headers: { 'Content-Type': 'application/json' }
 						}
 					);
-					jwt = isResponse.data.jwt;
+					setJwt(isResponse.data.jwt);
 				} else {
 					throw ex;
 				}
@@ -62,7 +67,7 @@ export async function sendData(
 		return await writeToChannel(clientConfig, identityKey, channelAddress, payloadData);
 	} else {
 		throw new Error(
-			'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url, --jwt'
+			'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url'
 		);
 	}
 }
@@ -70,7 +75,7 @@ async function postData(collectorBaseUrl: string, payloadData: any, deviceId: st
 	return axios.post(
 		collectorBaseUrl + '/data',
 		{ payload: payloadData, deviceId: deviceId },
-		{ headers: { authorization: 'Bearer ' + jwt } }
+		{ headers: { "authorization": 'Bearer ' + jwt } }
 	);
 }
 async function writeToChannel(

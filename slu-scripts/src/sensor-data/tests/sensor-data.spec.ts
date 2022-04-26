@@ -24,7 +24,7 @@ describe('Send sensor data tests', () => {
 
 	it('should fail to send data: env variable not provided', async () => {
 		try {
-			await sendData(encryptedDataPath, keyFilePath, '', isApiKey, isBaseUrl, { temperature: '60 degrees' }, isAuthUrl, jwt);
+			await sendData(encryptedDataPath, keyFilePath, '', isApiKey, isBaseUrl, { temperature: '60 degrees' }, isAuthUrl);
 		} catch (ex: any) {
 			expect(ex.message).toBe(
 				'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url, --jwt'
@@ -56,7 +56,7 @@ describe('Send sensor data tests', () => {
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl,payloadData, isAuthUrl, jwt);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl,payloadData, isAuthUrl);
 
 		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
 		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
@@ -87,7 +87,7 @@ describe('Send sensor data tests', () => {
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 		const sendAuthProveSpy = jest.spyOn(AuthProof, 'sendAuthProof');
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
 
 		expect(sendAuthProveSpy).toBeCalled();
 		expect(authenticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
@@ -118,7 +118,7 @@ describe('Send sensor data tests', () => {
 		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
-			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
 		} catch (ex: any) {
 			expect(axios.post).toHaveBeenCalledTimes(1);
 			expect(axios.get).toHaveBeenCalled();
@@ -165,7 +165,7 @@ describe('Send sensor data tests', () => {
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
 
 		expect(axios.post).toHaveBeenCalledTimes(3);
 		expect(axios.get).toHaveBeenCalled();
@@ -188,7 +188,7 @@ describe('Send sensor data tests', () => {
 		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
-			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl, jwt);
+			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
 		} catch (ex: any) {
 			expect(axios.post).toHaveBeenCalled();
 			expect(ex.response).toBe(postResp);

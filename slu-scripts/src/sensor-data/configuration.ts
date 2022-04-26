@@ -1,0 +1,11 @@
+let jwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6RDlOamhYTU1kRW1MNER6M3hZdDlrRWttZm5wUHlVa0F1OWRDRVNNaTU3cGEiLCJwdWJsaWNLZXkiO
+iJGQ2NuMnZEZk5YeGdiR1JmWjZ4M0IxZlltZEdIRXFIUnNGYm9iZnc5aGpYRiIsInJvbGUiOiJVc2VyIn0sImlhdCI6MTY0ODgxMzk2MCwiZXhwIj
+oxNjQ4OTAwMzYwfQ.lR0PMq5_Q0NM_-NTHyoTMUeusGZ8w_y0pncVtwb5wPM`;
+
+
+function setJwt(value: string){
+    jwt = value;
+}
+
+
+export {jwt, setJwt};
