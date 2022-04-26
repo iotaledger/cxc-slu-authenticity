@@ -55,11 +55,3 @@ Once it is done, follow these steps to create a channel and register the device:
    send the POST request and store the response in as the value for
 
 2. In the `Authentication` tab:
-
-## Stay in touch
-
-- Author - [Jacek Roszkowiak](https://github.com/jacekroszkowiakdev) <- NEEDED?
-
-## License
-
-One-shot-device is a part for cxc authenticity by `IOTA Foundation` (LICENSE). <- NEEDED?
