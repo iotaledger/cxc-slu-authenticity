@@ -24,22 +24,42 @@
 
 ## Description
 
-BLA BLA APP DOES THIS AND THAT
+One-Shot-Device is a microservice that allow the creator to register and authenticate devices to the
 
 ## Installation
+
+CD to the one-shot-device directory and install by running:
 
 ```bash
 $ npm install
 ```
 
+Copy .env.example and change it's name to .env. After that provide values for the variables inside it accordingly.
+
+Here is an example how a correct .evn file should look like:
+
+```bash
+MONGO_URL="mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
+DB_NAME=slu
+
+IS_API_KEY=94F5BA49-12A6-4E45-A487-BF91C442276D
+IS_API_URL=http://localhost:3033
+
+SLU_STATUS_URL=http://localhost:3000
+SLU_STATUS_API_KEY=94F5BA49-12A6-4E45-A487-BF91C442276D
+
+PORT=8088
+```
+
 ## Running the app
 
 ```bash
-# development
 $ npm run start
 ```
 
 ## Using the One-Shot-Device microservice
+
+<br>
 
 `Using Postman`
 
@@ -52,6 +72,15 @@ First import the Postman collection located in the `one-shot-device/postman coll
 Once it is done, follow these steps to create a channel and register the device:
 
 1. In the `Identities` tab:
-   send the POST request and store the response in as the value for
+   click the `Create managers id` and send the POST request, it its response look for the value `id` and copy it into the collection variable called `manager_id`. You need to also securely store the value of `secret` to be used in the next step.
 
 2. In the `Authentication` tab:
+   click on the `Prove manager's id` and sent the GET request. It returns you a nonce that you can store in the collection variables. Next in the terminal navigate to the `nonce-signer` folder:
+   ```bash
+    $ cd nonce-signer
+   ```
+   There run the following commands:
+   ```bash
+   $ npm install
+   $ npm run start
+   ```
