@@ -65,8 +65,8 @@ export async function execScript(argv: any) {
 	} else if (argv._.includes('send-proof')) {
 		try {
 			if (interval) {
-				setInterval(() =>
-					decryptAndSendProof(encryptedDataPath!, keyFilePath!, collectorBaseUrl!), Number(interval)
+				setInterval(async () =>
+					await decryptAndSendProof(encryptedDataPath!, keyFilePath!, collectorBaseUrl!), Number(interval)
 				);
 			} else {
 				throw Error('No --interval in ms provided.');
@@ -93,7 +93,7 @@ export async function execScript(argv: any) {
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
 				setInterval(
-					() => sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadObject, isAuthUrl, jwt),
+					async () => await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadObject, isAuthUrl, jwt),
 					Number(interval)
 				);
 			} else {
