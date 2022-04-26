@@ -21,7 +21,7 @@ function runSendProof() {
             const identity = fs.readFileSync(inputEnc, 'utf-8');
             const vpuf = fs.readFileSync(keyFile, 'utf-8');
 
-            execSync(`cd ~/cxc-slu-authenticity/slu-scripts && npm run --key_file=${keyFile} --interval=${sendAuthInterval} --input_enc=${inputEnc} --colelctor_base_url=${collectorBaseUrl}`);
+            execSync(`cd ~/cxc-slu-authenticity/slu-scripts && npm run send-proof --key_file=${keyFile} --interval=${sendAuthInterval} --input_enc=${inputEnc} --collector_base_url=${collectorBaseUrl}`);
         }
         catch (ex) {
             fs.writeFileSync('log.txt',new Date().toUTCString() + ': ' + 'No identity or vpuf provided \n', { flag: 'a' });
@@ -36,7 +36,7 @@ function runSendProof() {
 function sendData() {
 
     if (keyFile && inputEnc && isApiKey && isBaseUrl && sendDataInterval && collectorBaseUrl && isAuthUrl && jwt && dataLocation) {
-        execSync(`cd ~/cxc-slu-authenticity/slu-scripts && npm run send-data --key_file=${keyFile} --interval=${sendDataInterval} --input_enc=${inputEnc} --colelctor_base_url=${collectorBaseUrl} --is_api_key=${isApiKey} --is_base_url=${isBaseUrl} --is_auth_url=${isAuthUrl} --jwt=${jwt}`);
+        execSync(`cd ~/cxc-slu-authenticity/slu-scripts && npm run send-data --key_file=${keyFile} --interval=${sendDataInterval} --input_enc=${inputEnc} --collector_base_url=${collectorBaseUrl} --is_api_key=${isApiKey} --is_base_url=${isBaseUrl} --is_auth_url=${isAuthUrl} --jwt=${jwt}`);
     }
     else {
         fs.writeFileSync('log.txt', new Date().toUTCString() + ': ' + 'Not all env vars are provided for sending the data \n', { flag: 'a' });
