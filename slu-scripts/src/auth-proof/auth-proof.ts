@@ -47,7 +47,6 @@ export async function sendAuthProof(
 	},
 	collectorBaseUrl: string | undefined
 ): Promise<AxiosResponse<any, any>> {
-	let response;
 	if (collectorBaseUrl) {
 		return await axios.post(collectorBaseUrl + '/prove', body);
 	} else {
