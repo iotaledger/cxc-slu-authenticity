@@ -117,10 +117,6 @@ describe('AppController (e2e)', () => {
 				.set('X-API-KEY', '2b3fe07d-b7db-49cb-8300-d32139e3d435')
 				.send(devices);
 
-			console.log('status', status);
-			console.log('text', text);
-			console.log('body', body);
-
 			expect(status).toBe(201);
 			expect(body.length).toBe(2);
 			expect(body[0].status).toBe('created');

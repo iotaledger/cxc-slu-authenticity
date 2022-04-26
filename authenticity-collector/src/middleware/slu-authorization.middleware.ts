@@ -1,12 +1,11 @@
-import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as jwt from 'jsonwebtoken';
+import { IdentityClient } from '@iota/is-client';
+import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common';
 
 @Injectable()
 export class SluAuthorizationMiddleware implements NestMiddleware {
-	constructor(private configService: ConfigService) {}
+	constructor(@Inject('IdentityClient') private identityClient: IdentityClient) { }
 
-	use(req: any, res: any, next: () => void) {
+	async use(req: any, res: any, next: () => void) {
 		const { authorization } = req.headers;
 
 		if (!authorization || !authorization.startsWith('Bearer')) {
@@ -19,17 +18,11 @@ export class SluAuthorizationMiddleware implements NestMiddleware {
 		}
 
 		const token = split[1];
-		const jwt_secret = this.configService.get('JWT_SECRET');
 
-		let decodedToken: any;
-		try {
-			decodedToken = jwt.verify(token, jwt_secret);
-		} catch (ex: any) {
-			return res.status(HttpStatus.UNAUTHORIZED).send({ error: 'jwt expired!' });
-		}
+		const { isValid, error } = await this.identityClient.verifyJwt({ jwt: token });
 
-		if (typeof decodedToken === 'string' || !decodedToken?.user) {
-			return res.status(HttpStatus.UNAUTHORIZED).send({ error: 'jwt expired!' });
+		if (!isValid) {
+			return res.status(HttpStatus.UNAUTHORIZED).send({ error: error });
 		}
 
 		next();
