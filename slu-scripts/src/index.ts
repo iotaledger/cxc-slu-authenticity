@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import yargs from 'yargs';
-import { encryptData, decryptData, sendAuthProof } from './auth-proof/auth-proof';
+import { encryptData, decryptAndSendProof } from './auth-proof/auth-proof';
 import { bootstrap } from './bootstrap/bootstrap';
 import { sendData } from './sensor-data/sensor-data';
 
@@ -32,8 +32,8 @@ const argv = yargs
 		yargs
 			.option('key_file', { describe: 'The location of the key file.' })
 			.option('input_enc', { describe: 'The location of the encrypted device identity.' })
-			.option('is_api_key', {describe: 'Api key of the integration services'})
-			.option('is_base_url', {describe: 'The base url of the integration services'})
+			.option('is_api_key', { describe: 'Api key of the integration services' })
+			.option('is_base_url', { describe: 'The base url of the integration services' })
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel and send to the collector', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get a jwt token' })
@@ -64,9 +64,10 @@ export async function execScript(argv: any) {
 		}
 	} else if (argv._.includes('send-proof')) {
 		try {
-			const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
 			if (interval) {
-				setInterval(() => sendAuthProof(decryptedData!, collectorBaseUrl), Number(interval));
+				setInterval(() =>
+					decryptAndSendProof(encryptedDataPath!, keyFilePath!, collectorBaseUrl!), Number(interval)
+				);
 			} else {
 				throw Error('No --interval in ms provided.');
 			}

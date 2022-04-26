@@ -62,16 +62,21 @@ describe('Send-proof tests', () => {
 			status: 200,
 			statusText: 'OK'
 		};
+
+		const body = {
+			did: "did:iota:12345",
+			timestamp: new Date(),
+			signature: "signature"
+		};
+
 		axios.post = jest.fn().mockResolvedValue(response);
-		const sendAuthProof = jest.spyOn(authProof, 'sendAuthProof');
-		const decryptData = jest.spyOn(authProof, 'decryptData');
+		const decryptAndSendProof = jest.spyOn(authProof, 'decryptAndSendProof').mockResolvedValue();
 
 		jest.useFakeTimers();
-		await execScript(argv);
+		execScript(argv);
 		jest.advanceTimersByTime(3000);
 
-		expect(sendAuthProof).toHaveBeenCalledTimes(3);
-		expect(decryptData).toHaveBeenCalledWith(encryptedDataPath, keyFilePath);
+		expect(decryptAndSendProof).toHaveBeenCalledTimes(3);
 
 		jest.useRealTimers();
 	});
