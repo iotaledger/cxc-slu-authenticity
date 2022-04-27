@@ -37,7 +37,6 @@ const argv = yargs
 			.option('interval', { describe: 'The interval in millisecond during data is written to the channel and send to the collector', default: '300000' })
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get a jwt token' })
-			.option('jwt', { describe: 'JWT of the device' })
 	)
 	.help().argv;
 
@@ -52,8 +51,7 @@ export async function execScript(argv: any) {
 	const isApiKey: string | undefined = process.env.npm_config_is_api_key;
 	const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 	const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
-	const nonce: string | undefined = process.env.npm_config_nonce;
-	const jwt: string | undefined = process.env.npm_config_jwt;
+	const nonce: string | undefined = process.env.npm_config_nonce; 
 
 	if (argv._.includes('encrypt')) {
 		try {
@@ -93,7 +91,7 @@ export async function execScript(argv: any) {
 					throw new Error('Could not parse payload, please provide an object as a string');
 				}
 				setInterval(
-					async () => await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadObject, isAuthUrl, jwt),
+					async () => await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadObject, isAuthUrl),
 					Number(interval)
 				);
 			} else {

@@ -184,8 +184,7 @@ describe('Send sensor data tests', () => {
 			isBaseUrl,
 			collectorBaseUrl,
 			payloadObject,
-			isAuthUrl,
-			jwt
+			isAuthUrl
 		);
 
 		jest.useRealTimers();
