@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 import axios from 'axios';
-import {jwt, setJwt} from './configuration';
+import {getClientConfiguration, jwt, setJwt} from './configuration';
 
 export async function sendData(
 	encryptedDataPath: string | undefined,
@@ -18,17 +18,12 @@ export async function sendData(
 	payloadData: any,
 	isAuthUrl: string | undefined,
 ): Promise<ChannelData> {
-	console.log(isApiKey, encryptedDataPath, isBaseUrl, collectorBaseUrl, isAuthUrl)
 	if (isApiKey && isBaseUrl && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
 		const decryptedData = decrypt(encryptedData, key);
 		let { identityKey, channelAddress } = JSON.parse(decryptedData);
-		const clientConfig: ClientConfig = {
-			apiKey: isApiKey,
-			isGatewayUrl: isBaseUrl,
-			apiVersion: ApiVersion.v01
-		};
+		const clientConfig: ClientConfig = getClientConfiguration(isApiKey, isBaseUrl);
 		let isSend = false;
 
 		while (!isSend) {
@@ -39,7 +34,6 @@ export async function sendData(
 				isSend = true;
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
-				console.log(ex)
 				if (ex.response.status === 409) {
 					console.log('send proof')
 					const body = await decryptData(encryptedDataPath, keyFilePath);
@@ -64,6 +58,7 @@ export async function sendData(
 				}
 			}
 		}
+		console.log('write into channel')
 		return await writeToChannel(clientConfig, identityKey, channelAddress, payloadData);
 	} else {
 		throw new Error(
@@ -75,7 +70,7 @@ async function postData(collectorBaseUrl: string, payloadData: any, deviceId: st
 	return axios.post(
 		collectorBaseUrl + '/data',
 		{ payload: payloadData, deviceId: deviceId },
-		{ headers: { "authorization": 'Bearer ' + jwt } }
+		{ headers: { authorization: `Bearer ${jwt}`} }
 	);
 }
 async function writeToChannel(

@@ -15,7 +15,6 @@ const collectorBaseUrl: string | undefined = process.env.npm_config_collector_ba
 const isApiKey: string | undefined = process.env.npm_config_is_api_key;
 const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
-const jwt: string | undefined = process.env.npm_config_jwt;
 
 describe('Send sensor data tests', () => {
 	beforeAll(() => {
@@ -27,7 +26,7 @@ describe('Send sensor data tests', () => {
 			await sendData(encryptedDataPath, keyFilePath, '', isApiKey, isBaseUrl, { temperature: '60 degrees' }, isAuthUrl);
 		} catch (ex: any) {
 			expect(ex.message).toBe(
-				'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url, --jwt'
+				'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url'
 			);
 		}
 	});
