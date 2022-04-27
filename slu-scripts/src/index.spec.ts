@@ -6,6 +6,7 @@ import yargs from 'yargs';
 import * as vpuf from './vpuf/vpuf';
 import * as sendData from './sensor-data/sensor-data';
 import { ChannelData } from '@iota/is-client';
+import { setSensorData } from './sensor-data/configuration';
 
 jest.mock('axios');
 
@@ -16,7 +17,7 @@ const collectorBaseUrl: string | undefined = process.env.npm_config_collector_ba
 const isApiKey: string | undefined = process.env.npm_config_is_api_key;
 const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
-const jwt: string | undefined = process.env.npm_config_jwt;
+const sensorDataPath: string | undefined = process.env.npm_config_sensor_data;
 
 describe('Encrypt-file tests', () => {
 	it('encrypt should execute', async () => {
@@ -153,10 +154,13 @@ describe('Bootstrap tests', () => {
 });
 
 describe('Send sensor data tests', () => {
+	beforeEach(() => {
+		setSensorData({});
+	})
+
 	it('send-data should execute', async () => {
 		process.argv[2] = 'send-data';
 		const argv = yargs.parse(process.argv[2]);
-		const payloadObject = JSON.parse('{"temperature": "100 degree"}');
 		const response: ChannelData = {
 			link: 'string',
 			imported: '2022-02-18T16:29:49.670Z',
@@ -183,7 +187,7 @@ describe('Send sensor data tests', () => {
 			isApiKey,
 			isBaseUrl,
 			collectorBaseUrl,
-			payloadObject,
+			sensorDataPath,
 			isAuthUrl
 		);
 
@@ -205,21 +209,8 @@ describe('Send sensor data tests', () => {
 
 		process.env.npm_config_interval = oldVal;
 	});
-
-	it('send sensor data should fail because payload could not parsed', async () => {
-		process.argv[2] = 'send-data';
-		const argv = yargs.parse(process.argv[2]);
-		const consoleSpy = jest.spyOn(console, 'error');
-		const processSpy = jest.spyOn(process, 'exit');
-		JSON.parse = jest.fn().mockRejectedValue({});
-
-		await execScript(argv);
-
-		expect(consoleSpy).toBeCalledWith('Could not parse payload, please provide an object as a string');
-		expect(processSpy).toBeCalledWith(1);
-	});
 });
 
 afterAll(() => {
-	fs.rmSync(destinationPath! + '/data.json.enc');
+		fs.rmSync(destinationPath! + '/data.json.enc');
 });

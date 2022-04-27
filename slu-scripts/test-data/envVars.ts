@@ -9,3 +9,4 @@ process.env.npm_config_is_api_key = "1cfa3bce-654d-41f6-a82a-94308dc4adf8";
 process.env.npm_config_is_base_url =  "https://demo.integration-services.cafe/";
 process.env.npm_config_is_auth_url = 'http://localhost:3030/api/v0.1/authentication/prove-ownership/';
 process.env.npm_config_nonce = '4a1f1bce-4eaa-44a1-aa22-ec88e1b0c0c6';
+process.env.npm_config_sensor_data = './test-data/sensorData.json'

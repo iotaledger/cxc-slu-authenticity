@@ -6,6 +6,12 @@ function setJwt(value: string){
     jwt = value;
 }
 
+let currentSensorData = '';
+
+function setSensorData(value: any){
+    currentSensorData = value;
+}
+
 function getClientConfiguration(isApiKey: string, isBaseUrl: string ): ClientConfig{
     return {
         apiKey: isApiKey,
@@ -15,4 +21,4 @@ function getClientConfiguration(isApiKey: string, isBaseUrl: string ): ClientCon
 }
 
 
-export {jwt, setJwt, getClientConfiguration};
+export {jwt, setJwt, getClientConfiguration, currentSensorData, setSensorData};

@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 import axios from 'axios';
-import {getClientConfiguration, jwt, setJwt} from './configuration';
+import { getClientConfiguration, jwt, setJwt, currentSensorData, setSensorData } from './configuration';
 
 export async function sendData(
 	encryptedDataPath: string | undefined,
@@ -15,9 +15,27 @@ export async function sendData(
 	isApiKey: string | undefined,
 	isBaseUrl: string | undefined,
 	collectorBaseUrl: string | undefined,
-	payloadData: any,
+	sensorDataPath: string | undefined,
 	isAuthUrl: string | undefined,
-): Promise<ChannelData> {
+): Promise<ChannelData | void> {
+
+	let sensorData;
+
+	//get the on the device stored sensor data
+	if (sensorDataPath) {
+		sensorData = await getSensorData(sensorDataPath);
+	} else {
+		throw new Error('--sensor_data was not provided');
+	}
+
+	//compare the current and new sensor data 
+	if (JSON.stringify(sensorData) !== JSON.stringify(currentSensorData)) {
+		setSensorData(sensorData);
+	} else {
+		return;
+	}
+
+	//send sensor data if the value has changed
 	if (isApiKey && isBaseUrl && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = createKey(keyFilePath);
@@ -30,7 +48,7 @@ export async function sendData(
 			try {
 				//send to collector
 				console.log('send data')
-				await postData(collectorBaseUrl, payloadData, identityKey.id, jwt);
+				await postData(collectorBaseUrl, sensorData, identityKey.id, jwt);
 				isSend = true;
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
@@ -59,7 +77,7 @@ export async function sendData(
 			}
 		}
 		console.log('write into channel')
-		return await writeToChannel(clientConfig, identityKey, channelAddress, payloadData);
+		return await writeToChannel(clientConfig, identityKey, channelAddress, sensorData);
 	} else {
 		throw new Error(
 			'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url'
@@ -70,7 +88,7 @@ async function postData(collectorBaseUrl: string, payloadData: any, deviceId: st
 	return axios.post(
 		collectorBaseUrl + '/data',
 		{ payload: payloadData, deviceId: deviceId },
-		{ headers: { authorization: `Bearer ${jwt}`} }
+		{ headers: { authorization: `Bearer ${jwt}` } }
 	);
 }
 async function writeToChannel(
@@ -93,4 +111,13 @@ async function signNonce(privateKey: string, nonce: string): Promise<String> {
 	const hash = crypto.createHash('sha256').update(nonce).digest().toString('hex');
 	const signedHash = await ed.sign(hash, decodedKey);
 	return ed.Signature.fromHex(signedHash).toHex();
+}
+
+async function getSensorData(sensorDataPath: string): Promise<any> {
+	try {
+		const sensorDataJson = fs.readFileSync(sensorDataPath, 'utf-8');
+		return await JSON.parse(sensorDataJson);
+	} catch (ex: any) {
+		throw new Error('Could not parse sensor data, please provide an object as a string or check path to the data');
+	}
 }
