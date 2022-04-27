@@ -97,6 +97,8 @@ services:
       - COLLECTOR_DID=${COLLECTOR_DID}
       - COLLECTOR_SECRET=${COLLECTOR_SECRET}
       - AUTH_PROVE_EXPIRATION=120000
+      - MPOWER_CONNECTOR_URL=${MPOWER_CONNECTOR_URL}
+      - DATABASE_NAME=authenticity-collector
     depends_on:
       - ssi-proof-of-ownership
       - mongo      
