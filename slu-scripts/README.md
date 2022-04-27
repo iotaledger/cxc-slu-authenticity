@@ -93,7 +93,6 @@ npm run send-data
 Example:
 
 ```
-TODO: update the command and make sure it runs correctly:
 npm run send-data --key_file=./test-data/unclonable.txt  --input_enc=./test-data/data.json.enc --interval=30000 --collector_base_url=https://cxc.is.iota.cafe/api/v1/authenticity --is_api_key=b85e51a2-9981-11ec-8770-4b8f01948e9b --is_base_url=https://demo-integration-services.iota.cafe --is_auth_url=https://demo-integration-services.iota.cafe/api/v0.1/authentication/prove-ownership --jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6RjQxOGlYbm5qSjg4ZlJQOVRKMlRBN2FGUW5mWjJvY0t4Wnp2SHZ1TW5UUWYiLCJwdWJsaWNLZXkiOiI0dnlQZFhkWktLMjFzVndlZE12cURwRzhRQks3Z0NtdjlYZFNVaERrWTV1USIsInVzZXJuYW1lIjoibWFuYWdlci10ZXN0LWlkIiwicmVnaXN0cmF0aW9uRGF0ZSI6IjIwMjItMDQtMDdUMTI6NDg6MzErMDI6MDAiLCJyb2xlIjoiVXNlciJ9LCJpYXQiOjE2NDkzMjk0MDIsImV4cCI6MTY0OTQxNTgwMn0.AiVgLtu21JBfsH2mX5JEC4KcHanvEosVFgV8HiXzF5g
 
 ```

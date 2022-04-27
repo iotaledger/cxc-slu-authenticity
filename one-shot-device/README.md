@@ -24,7 +24,11 @@
 
 ## Description
 
-One-Shot-Device is a microservice that allow the creator to register and authenticate devices to the
+One-Shot-Device is a microservice that allow the creator to register and authenticate devices for the CityXChange. It uses the Integration Services and IOTA SSI.
+
+<p align="center">
+  <img src="./one-shot-diagram.png" alt="one-shot-device-microservice diagram"/>
+</p>
 
 ## Installation
 
@@ -75,12 +79,27 @@ Once it is done, follow these steps to create a channel and register the device:
    click the `Create managers id` and send the POST request, it its response look for the value `id` and copy it into the collection variable called `manager_id`. You need to also securely store the value of `secret` to be used in the next step.
 
 2. In the `Authentication` tab:
-   click on the `Prove manager's id` and sent the GET request. It returns you a nonce that you can store in the collection variables. Next in the terminal navigate to the `nonce-signer` folder:
+   click on the `Prove manager's id` and sent the GET request. It returns you a nonce that you will need to sign. To sign the nonce, in the terminal navigate to the `nonce-signer` folder:
+
    ```bash
     $ cd nonce-signer
    ```
+
    There run the following commands:
+
    ```bash
    $ npm install
    $ npm run start
    ```
+
+   Then provide the nonce and secret the you have securely stored and hit enter to have the nonce signed. Again, store its value in the collection variables in the respective field.
+
+   Now click on the `Authenticate via signed nonce` and in its Body tab change the value of "signedNonce" to the one that you have just singed with nonce-signer and send the GET request. The request returns a jwt token that you then store in the collection variables like with other values.
+
+3. In the `Channels` tab:
+   click on the `Crate channel as manager` and copy the returned channel value into the `authorized_channel` value field in the collection variables - remember that to add the suffix `Bearer` in the variable value.
+
+4. With the steps above, you can now create and update device status in the `One Shot Device Actions`:
+
+- To create a new device click on the `Create Device` and send the POST request. In its response look for the nonce and save it in the collection variables
+- To install a new device and change its status to 'installed' click on the `Delete by nonce`
