@@ -65,9 +65,9 @@ describe('Send-proof tests', () => {
 		};
 
 		const body = {
-			did: "did:iota:12345",
+			did: 'did:iota:12345',
 			timestamp: new Date(),
-			signature: "signature"
+			signature: 'signature'
 		};
 
 		axios.post = jest.fn().mockResolvedValue(response);
@@ -156,7 +156,7 @@ describe('Bootstrap tests', () => {
 describe('Send sensor data tests', () => {
 	beforeEach(() => {
 		setSensorData({});
-	})
+	});
 
 	it('send-data should execute', async () => {
 		process.argv[2] = 'send-data';
@@ -212,5 +212,5 @@ describe('Send sensor data tests', () => {
 });
 
 afterAll(() => {
-		fs.rmSync(destinationPath! + '/data.json.enc');
+	fs.rmSync(destinationPath! + '/data.json.enc');
 });

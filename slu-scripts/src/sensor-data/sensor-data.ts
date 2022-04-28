@@ -16,9 +16,8 @@ export async function sendData(
 	isBaseUrl: string | undefined,
 	collectorBaseUrl: string | undefined,
 	sensorDataPath: string | undefined,
-	isAuthUrl: string | undefined,
+	isAuthUrl: string | undefined
 ): Promise<ChannelData | void> {
-
 	let sensorData;
 
 	//get the on the device stored sensor data
@@ -28,11 +27,10 @@ export async function sendData(
 		throw new Error('--sensor_data was not provided');
 	}
 
-	//compare the current and new sensor data 
+	//compare the current and new sensor data
 	if (JSON.stringify(sensorData) !== JSON.stringify(currentSensorData)) {
 		setSensorData(sensorData);
 	} else {
-		fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'No data changes \n', { flag: 'a' });
 		return;
 	}
 
@@ -48,21 +46,19 @@ export async function sendData(
 		while (!isSend) {
 			try {
 				//send to collector
-				console.log('send data')
+				console.log('send data');
 				await postData(collectorBaseUrl, sensorData, identityKey.id, jwt);
-				fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  ' Has send data \n', { flag: 'a' });
 				isSend = true;
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
 				if (ex.response.status === 409) {
-					console.log('send proof')
+					console.log('send proof');
 					const body = await decryptData(encryptedDataPath, keyFilePath);
 					await sendAuthProof(body, collectorBaseUrl);
-					fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'Has send proof \n', { flag: 'a' });
 				}
 				//Retry to send: jwt token expired
 				else if (ex.response.status === 401) {
-					console.log('get jwt')
+					console.log('get jwt');
 					const res = await axios.get(isAuthUrl + `/${identityKey.id}?api-key=${clientConfig.apiKey}`);
 					const signedNonce = await signNonce(identityKey.key.secret, res?.data?.nonce);
 					const isResponse = await axios.post(
@@ -74,14 +70,12 @@ export async function sendData(
 						}
 					);
 					setJwt(isResponse.data.jwt);
-					fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'Get jwt \n', { flag: 'a' });
 				} else {
 					throw ex;
 				}
 			}
 		}
-		console.log('write into channel')
-		fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'write to channel \n', { flag: 'a' });
+		console.log('write into channel');
 		return await writeToChannel(clientConfig, identityKey, channelAddress, sensorData);
 	} else {
 		throw new Error(

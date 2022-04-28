@@ -30,7 +30,7 @@ describe('Encrypt data', () => {
 		await decryptAndSendProof(encryptedDataPath!, keyFilePath!, collectorBaseUrl!);
 
 		expect(axios.post).toBeCalled();
-	})
+	});
 
 	it('should decrypt data and send successfully auth proof', async () => {
 		const response = {
@@ -91,7 +91,6 @@ describe('Encrypt data', () => {
 			expect(ex.message).toBe('--collector_url for post request is not provided');
 		}
 	});
-
 });
 afterAll(() => {
 	try {

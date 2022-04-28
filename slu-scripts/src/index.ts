@@ -35,10 +35,13 @@ const argv = yargs
 			.option('input_enc', { describe: 'The location of the encrypted device identity.' })
 			.option('is_api_key', { describe: 'Api key of the integration services' })
 			.option('is_base_url', { describe: 'The base url of the integration services' })
-			.option('interval', { describe: 'The interval in millisecond during data is written to the channel and send to the collector', default: '300000' })
+			.option('interval', {
+				describe: 'The interval in millisecond during data is written to the channel and send to the collector',
+				default: '300000'
+			})
 			.option('collector_base_url', { describe: 'The url of the collector microservice.' })
 			.option('is_auth_url', { describe: 'The integration services authentication url for post request to get a jwt token' })
-			.option('sensor_data', {describe: 'Path to the sensor data of the device'})
+			.option('sensor_data', { describe: 'Path to the sensor data of the device' })
 	)
 	.help().argv;
 
@@ -53,7 +56,7 @@ export async function execScript(argv: any) {
 	const isApiKey: string | undefined = process.env.npm_config_is_api_key;
 	const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 	const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
-	const nonce: string | undefined = process.env.npm_config_nonce; 
+	const nonce: string | undefined = process.env.npm_config_nonce;
 	const sensorDataPath: string | undefined = process.env.npm_config_sensor_data;
 
 	if (argv._.includes('encrypt')) {
@@ -66,9 +69,7 @@ export async function execScript(argv: any) {
 	} else if (argv._.includes('send-proof')) {
 		try {
 			if (interval) {
-				setInterval(async () =>
-					await decryptAndSendProof(encryptedDataPath!, keyFilePath!, collectorBaseUrl!), Number(interval)
-				);
+				setInterval(async () => await decryptAndSendProof(encryptedDataPath!, keyFilePath!, collectorBaseUrl!), Number(interval));
 			} else {
 				throw Error('No --interval in ms provided.');
 			}

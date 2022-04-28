@@ -54,14 +54,22 @@ describe('Send sensor data tests', () => {
 	});
 
 	it('should throw error because wrong data format', async () => {
-		const sensorDataJson = fs.writeFileSync('./test-data/dummydata.json', "temperature: 190 degrees");
+		const sensorDataJson = fs.writeFileSync('./test-data/dummydata.json', 'temperature: 190 degrees');
 
-		const response = sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, './test-data/dummydata.json', isAuthUrl);
-		
+		const response = sendData(
+			encryptedDataPath,
+			keyFilePath,
+			isApiKey,
+			isBaseUrl,
+			collectorBaseUrl,
+			'./test-data/dummydata.json',
+			isAuthUrl
+		);
+
 		expect(response).rejects.toThrowError('Could not parse sensor data, please provide an object as a string or check path to the data');
 		expect(axios.post).not.toBeCalled();
 
-		fs.rmSync('./test-data/dummydata.json')
+		fs.rmSync('./test-data/dummydata.json');
 	});
 
 	it('should send data', async () => {
