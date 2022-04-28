@@ -32,6 +32,7 @@ export async function sendData(
 	if (JSON.stringify(sensorData) !== JSON.stringify(currentSensorData)) {
 		setSensorData(sensorData);
 	} else {
+		fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'No data changes \n', { flag: 'a' });
 		return;
 	}
 
@@ -49,6 +50,7 @@ export async function sendData(
 				//send to collector
 				console.log('send data')
 				await postData(collectorBaseUrl, sensorData, identityKey.id, jwt);
+				fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  ' Has send data \n', { flag: 'a' });
 				isSend = true;
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
@@ -56,6 +58,7 @@ export async function sendData(
 					console.log('send proof')
 					const body = await decryptData(encryptedDataPath, keyFilePath);
 					await sendAuthProof(body, collectorBaseUrl);
+					fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'Has send proof \n', { flag: 'a' });
 				}
 				//Retry to send: jwt token expired
 				else if (ex.response.status === 401) {
@@ -71,12 +74,14 @@ export async function sendData(
 						}
 					);
 					setJwt(isResponse.data.jwt);
+					fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'Get jwt \n', { flag: 'a' });
 				} else {
 					throw ex;
 				}
 			}
 		}
 		console.log('write into channel')
+		fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+  'write to channel \n', { flag: 'a' });
 		return await writeToChannel(clientConfig, identityKey, channelAddress, sensorData);
 	} else {
 		throw new Error(

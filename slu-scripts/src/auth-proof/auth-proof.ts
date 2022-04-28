@@ -47,8 +47,11 @@ export async function sendAuthProof(
 	},
 	collectorBaseUrl: string | undefined
 ): Promise<AxiosResponse<any, any>> {
+	let response;
 	if (collectorBaseUrl) {
-		return await axios.post(collectorBaseUrl + '/prove', body);
+		response = await axios.post(collectorBaseUrl + '/prove', body);
+		fs.writeFileSync('log.txt', new Date().toUTCString() + ': '+ JSON.stringify(response.data) + '\n', { flag: 'a' });
+		return response
 	} else {
 		throw Error('--collector_url for post request is not provided');
 	}
