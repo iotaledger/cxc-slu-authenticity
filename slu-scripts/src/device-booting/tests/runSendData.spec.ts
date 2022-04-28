@@ -31,7 +31,7 @@ describe('Send-data tests during device startup', () => {
 			expect(processSpy).toBeCalledWith(1);
 		}
 
-		const logFile = fs.readFileSync('log.txt', 'utf-8');
+		const logFile = fs.readFileSync('log-cxc.txt', 'utf-8');
 		expect(logFile).toContain('Not all env vars are provided for sending the data');
 	});
 
@@ -46,12 +46,12 @@ describe('Send-data tests during device startup', () => {
 			expect(processSpy).toBeCalledWith(1);
 		}
 
-		const logFile = fs.readFileSync('log.txt', 'utf-8');
+		const logFile = fs.readFileSync('log-cxc.txt', 'utf-8');
 		expect(logFile).toContain(`Error: ENOENT: no such file or directory, open '/wrongPath`);
 	});
 
 	it('should run send-data script', async () => {
-		fs.rmSync('log.txt');
+		fs.rmSync('log-cxc.txt');
 
 		const execSyncSpy = jest.spyOn(child_process, 'execSync');
 

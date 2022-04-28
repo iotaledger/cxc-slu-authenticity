@@ -31,11 +31,11 @@ export function runSendData(
 				`cd ${scriptsPath} && npm run send-data --key_file=${keyFile} --interval=${sendDataInterval} --input_enc=${inputEnc} --collector_base_url=${collectorBaseUrl} --is_api_key=${isApiKey} --is_base_url=${isBaseUrl} --is_auth_url=${isAuthUrl} --sensor_data=${sensorData}`
 			);
 		} catch (ex: any) {
-			fs.writeFileSync('log.txt', new Date().toUTCString() + ': ' + ex + '\n', { flag: 'a' });
+			fs.writeFileSync('log-cxc.txt', new Date().toUTCString() + ': ' + ex + '\n', { flag: 'a' });
 			process.exit(1);
 		}
 	} else {
-		fs.writeFileSync('log.txt', new Date().toUTCString() + ': ' + 'Not all env vars are provided for sending the data \n', { flag: 'a' });
+		fs.writeFileSync('log-cxc.txt', new Date().toUTCString() + ': ' + 'Not all env vars are provided for sending the data \n', { flag: 'a' });
 		process.exit(1);
 	}
 }

@@ -23,11 +23,11 @@ export function runSendProof(
 				`cd ${scriptsPath} && npm run send-proof --key_file=${keyFile} --interval=${sendAuthInterval} --input_enc=${inputEnc} --collector_base_url=${collectorBaseUrl}`
 			);
 		} catch (ex) {
-			fs.writeFileSync('log.txt', new Date().toUTCString() + ': ' + ex + '\n', { flag: 'a' });
+			fs.writeFileSync('log-cxc.txt', new Date().toUTCString() + ': ' + ex + '\n', { flag: 'a' });
 			process.exit(1);
 		}
 	} else {
-		fs.writeFileSync('log.txt', new Date().toUTCString() + ': ' + 'Not all env vars are provided for sending authentication proof \n', {
+		fs.writeFileSync('log-cxc.txt', new Date().toUTCString() + ': ' + 'Not all env vars are provided for sending authentication proof \n', {
 			flag: 'a'
 		});
 		process.exit(1);
