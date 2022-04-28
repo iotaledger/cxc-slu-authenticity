@@ -2,7 +2,6 @@
 
 The slu-scripts folder provides multiple scripts which can
 
-- encrypt data
 - bootstraping the device by requesting the identity and save it encrypted on the device
 - sending authentication proof of the device
 - send the sensor data to the authenticity-collector service where it is written into the collector channel and write it to the channel of the device.
@@ -46,7 +45,7 @@ Example:
 
 ```
 npm run bootstrap --key_file=./test-data/unclonable.txt --dest=./test-data
---one-shot-device-url=http://localhost:3000/api/v1/one-shot-device/bootstrap --nonce=46f45a2c-114a-4cea-a570-b379fe3a4a95
+--one-shot-device-url=https://cxc.is.iota.cafe/api/v1/one-shot-device/bootstrap --nonce=46f45a2c-114a-4cea-a570-b379fe3a4a95
 ```
 
 <p align="center">
@@ -68,7 +67,7 @@ Example:
 ```
 
 npm run send-proof --key_file=./test-data/unclonable.txt --interval=240000 --input_enc=./test-data/data.json.enc
---collector_base_url=http://localhost:3000/api/v1/authenticity
+--collector_base_url=https://cxc.is.iota.cafe/api/v1/authenticity
 
 ```
 
@@ -93,7 +92,7 @@ npm run send-data
 Example:
 
 ```
-npm run send-data --key_file=./test-data/unclonable.txt  --input_enc=./test-data/data.json.enc --interval=30000 --collector_base_url=https://cxc.is.iota.cafe/api/v1/authenticity --is_api_key=b85e51a2-9981-11ec-8770-4b8f01948e9b --is_base_url=https://demo-integration-services.iota.cafe --is_auth_url=https://demo-integration-services.iota.cafe/api/v0.1/authentication/prove-ownership --jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6RjQxOGlYbm5qSjg4ZlJQOVRKMlRBN2FGUW5mWjJvY0t4Wnp2SHZ1TW5UUWYiLCJwdWJsaWNLZXkiOiI0dnlQZFhkWktLMjFzVndlZE12cURwRzhRQks3Z0NtdjlYZFNVaERrWTV1USIsInVzZXJuYW1lIjoibWFuYWdlci10ZXN0LWlkIiwicmVnaXN0cmF0aW9uRGF0ZSI6IjIwMjItMDQtMDdUMTI6NDg6MzErMDI6MDAiLCJyb2xlIjoiVXNlciJ9LCJpYXQiOjE2NDkzMjk0MDIsImV4cCI6MTY0OTQxNTgwMn0.AiVgLtu21JBfsH2mX5JEC4KcHanvEosVFgV8HiXzF5g
+npm run send-data --key_file=./test-data/unclonable.txt --input_enc=./test-data/data.json.enc --interval=30000 --collector_base_url=https://cxc.is.iota.cafe/api/v1/authenticity --is_api_key=b85e51a2-9981-11ec-8770-4b8f01948e9b --is_base_url=https://demo-integration-services.iota.cafe --is_auth_url=https://demo-integration-services.iota.cafe/api/v0.1/authentication/prove-ownership
 
 ```
 
