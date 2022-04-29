@@ -1,11 +1,11 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { SluDataDto } from './model/SluDataDto';
-import { SludataService } from './sludata.service';
+import { SluDataService } from './sludata.service';
 
 @Controller('/api/v1/authenticity/data')
-export class SludataController {
-	constructor(private sludataService: SludataService) {}
+export class SluDataController {
+	constructor(private sludataService: SluDataService) {}
 
 	@Post()
 	@UsePipes(new ValidationPipe({ transform: true }))
