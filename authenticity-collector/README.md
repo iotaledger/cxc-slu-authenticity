@@ -1,6 +1,6 @@
 ## Description
 
-Authenticity Collector is a microservice that allows the creator manage the authentication proof of the devices in the CityXChange. It also connects to MPower connector microservice to receive and save sensor data. It uses Integration Services and IOTA SSI.
+Authenticity Collector is a microservice that saves the authentication proof of the devices of CityXChange. Furthermore it writes the sensor data, which is send by the device, to his own channel and sends it also to MPower.
 
 <p align="center">
   <img src="./authenticity-collector-diagram.png" alt="authenticity-collector-microservice diagram"/>
@@ -23,17 +23,17 @@ $ npm run start
 
 ## Using the Authenticity-Collector microservice
 
-Then we have two services in the services folder. They are used when the microservices are starting. They used in main.ts. So collector-identity service checks if the collector_did and secret is provided and channel-subscription service checks if the collector has one channel already if not it creates one
+For using the service you need to create an identity for the collector so it is possible to create and write to his own channel. Then you need to provide the id and the secret for COLLECTOR_DID and COLLECTOR_SECRET of the identity in the .env file of the docker-compose.yml.
+On startup of the service it checks if the id and secret is provided and if the service has already one channel. If there is no channel it will automatically create one.
 
-We have two different endpoints one is the identity folder and the other sludata folder.
+We have two different endpoints:
 
-1. The identity service:
-   has two method POST and GET. So POST is therefore that the device can send the authentication proof and GET to get the database entries between a timeframe. It is used in the dashboard for example to change the badge 'Not Authentic' to 'Authentic'
+1. The `identity service` has two methods:
 
-- POST /api/v1/authenticity/prove
+- `POST /api/v1/authenticity/prove` - to send the authentication proof of the device
 
-- GET /api/v1/authenticity/prove
+- `GET /api/v1/authenticity/prove` - to get the database entries between a timeframe by providing query with "id","from" and "to"
 
-2. The sludata controller has one method POST where it first checks if the device is approved by requesting the database of the identity. If approved it send the data to MPOWER_CONNECTOR and writes the data of his own channel.
+2. The `sludata service` has one method:
 
-- POST /api/v1/authenticity/data
+- `POST /api/v1/authenticity/data` - to write the sensor data to the collector channel and sending it to MPower
