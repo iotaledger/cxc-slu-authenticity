@@ -1,30 +1,6 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-One-Shot-Device is a microservice that allow the creator to register and authenticate devices for the CityXChange. It uses the Integration Services and IOTA SSI.
+One-Shot-Device is a microservice that allows the creator to register and authenticate devices for the CityXChange. It uses Integration Services and IOTA SSI.
 
 <p align="center">
   <img src="./one-shot-microservice-diagram.png" alt="one-shot-device-microservice diagram"/>
@@ -40,7 +16,7 @@ $ npm install
 
 Copy .env.example and change it's name to .env. After that provide values for the variables inside it accordingly.
 
-Here is an example how a correct .evn file should look like:
+Here is an example what a correct .evn file should look like:
 
 ```bash
 MONGO_URL="mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
@@ -76,10 +52,10 @@ First import the Postman collection located in the `one-shot-device/postman coll
 Once it is done, follow these steps to create a channel and register the device:
 
 1. In the `Identities` tab:
-   click the `Create managers id` and send the POST request, it its response look for the value `id` and copy it into the collection variable called `manager_id`. You need to also securely store the value of `secret` to be used in the next step.
+   Click the `Create managers id` and send the POST request, it its response look for the value `id` and copy it into the collection variable called `manager_id`. You need to also securely store the value of `secret` to be used in the next step.
 
 2. In the `Authentication` tab:
-   click on the `Prove manager's id` and sent the GET request. It returns you a nonce that you will need to sign. To sign the nonce, in the terminal navigate to the `nonce-signer` folder:
+   Click on the `Prove manager's id` and sent the GET request. It returns you a nonce that you will need to sign. To sign the nonce, in the terminal navigate to the `nonce-signer` folder:
 
    ```bash
     $ cd nonce-signer
@@ -92,12 +68,12 @@ Once it is done, follow these steps to create a channel and register the device:
    $ npm run start
    ```
 
-   Then provide the nonce and secret the you have securely stored and hit enter to have the nonce signed. Again, store its value in the collection variables in the respective field.
+   Then provide the nonce and secret you have securely stored and hit enter to have the nonce signed. Again, store its value in the collection variables in the respective field.
 
-   Now click on the `Authenticate via signed nonce` and in its Body tab change the value of "signedNonce" to the one that you have just singed with nonce-signer and send the GET request. The request returns a jwt token that you then store in the collection variables like with other values.
+   Now click on the `Authenticate via signed nonce` and in its Body tab change the value of "signedNonce" to the one that you have just signed with nonce-signer and send the GET request. The request returns a jwt token that you then store in the collection variables like with other values.
 
 3. In the `Channels` tab:
-   click on the `Crate channel as manager` and copy the returned channel value into the `authorized_channel` value field in the collection variables - remember that to add the suffix `Bearer` in the variable value.
+   Click on the `Create channel as manager` and copy the returned channel value into the `authorized_channel` value field in the collection variables - remember that to add the suffix `Bearer` in the variable value.
 
 4. With the steps above, you can now create and update device status in the `One Shot Device Actions`:
 
