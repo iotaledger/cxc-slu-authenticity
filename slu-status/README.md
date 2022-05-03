@@ -13,7 +13,7 @@ The nonce is also set by the one-shot-device microservice when one device is cre
 The functionalities of each module is provided in this image:
 
 <p align="center">
-  <img src="https://github.com/iotaledger/cxc-slu-authenticity/blob/68-api-reference-slu-status/slu-status/diagrams/slu-stauts-module.png" alt="slu-status modules diagram"/>
+  <img src="https://github.com/iotaledger/cxc-slu-authenticity/blob/68-api-reference-slu-status/slu-status/diagrams/slu-status-module.png" alt="slu-status modules diagram"/>
 </p>
 
 
