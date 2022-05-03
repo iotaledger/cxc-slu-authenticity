@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SluStatusService } from './slu-status.service';
-import { SluStatusDto } from './model/SluStatusDto';
+import { SluStatusDto } from './model/slu-status.dto';
 import { SluStatus, SluStatusDocument, SluStatusSchema } from './schema/slu-status.schema';
 import { MongooseModule, getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';

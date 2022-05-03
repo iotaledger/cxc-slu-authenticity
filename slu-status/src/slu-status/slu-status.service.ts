@@ -1,5 +1,5 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
-import { SluStatusDto } from './model/SluStatusDto';
+import { SluStatusDto } from './model/slu-status.dto';
 import { SluStatus, SluStatusDocument } from './schema/slu-status.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
