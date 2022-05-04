@@ -3,7 +3,7 @@
 One-Shot-Device is a microservice that allows the creator to register and authenticate devices for the CityXChange. It uses Integration Services and IOTA SSI.
 
 <p align="center">
-  <img src="./one-shot-microservice-diagram.png" alt="one-shot-device-microservice diagram"/>
+  <img src="./assets/one-shot-microservice-diagram.png" alt="one-shot-device-microservice diagram"/>
 </p>
 
 ## Installation
