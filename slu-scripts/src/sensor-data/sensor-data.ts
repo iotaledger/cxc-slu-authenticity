@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ClientConfig, ChannelClient, ChannelData, ApiVersion } from '@iota/is-client';
+import { ClientConfig, ChannelClient, ChannelData } from '@iota/is-client';
 import { createKey, decrypt } from '../vpuf/vpuf';
 import { AxiosResponse } from 'axios';
 import { decryptData, sendAuthProof } from '../auth-proof/auth-proof';
