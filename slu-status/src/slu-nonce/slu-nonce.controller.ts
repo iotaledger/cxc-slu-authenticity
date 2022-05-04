@@ -113,7 +113,7 @@ export class SluNonceController {
 		name: 'creator'
 	})
 	@ApiBody({
-		type: 'SluNonce[]',
+		type: String,
 		examples: {
 			devices: {
 				summary: 'Request body with a list of device ids',

@@ -110,7 +110,7 @@ export class SluStatusController {
 	@Post('/statuses')
 	@ApiOperation({ summary: 'Return slu-statuses for a list of ids.' })
 	@ApiBody({
-		type: 'string[]',
+		type: String,
 		examples: {
 			devices: {
 				summary: 'Request body with a list of device ids',

@@ -15,7 +15,7 @@ async function bootstrap() {
 		.addApiKey({ type: 'apiKey', name: 'X-API-KEY', in: 'header' })
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('docs', app, document);
+	SwaggerModule.setup('api/v1/status-docs', app, document);
 
 	await app.listen(process.env.PORT || 3000);
 	Logger.log(`SLU-Status running on port ${process.env.PORT}`);

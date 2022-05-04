@@ -6,6 +6,7 @@ export class SluStatusDto {
 	@IsNotEmpty()
 	@IsString()
 	@Contains('did:iota:')
+	@ApiProperty()
 	id: string;
 
 	@IsNotEmpty()

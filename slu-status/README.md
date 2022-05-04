@@ -52,3 +52,7 @@ npm run build
 npm run start
 ````
 
+6. For the swagger docs call the endpoint:
+````
+/api/v1/status-docs
+````
