@@ -13,17 +13,17 @@ const collectorBaseUrl = process.env.COLLECTOR_BASE_URL;
 const scriptsPath = process.env.SCRIPTS_PATH;
 
 export function runSendData(
-	keyFile: string | undefined,
-	inputEnc: string | undefined,
-	isApiKey: string | undefined,
-	isBaseUrl: string | undefined,
-	isAuthUrl: string | undefined,
-	sendDataInterval: string | undefined,
-	sensorData: string | undefined,
-	collectorBaseUrl: string | undefined,
-	scriptsPath: string | undefined
+	keyFile: string,
+	inputEnc: string,
+	isApiKey: string,
+	isBaseUrl: string,
+	isAuthUrl: string,
+	sendDataInterval: string,
+	sensorData: string,
+	collectorBaseUrl: string,
+	scriptsPath: string
 ) {
-	if (keyFile && inputEnc && isApiKey && isBaseUrl && sendDataInterval && collectorBaseUrl && isAuthUrl && sensorData) {
+	if (keyFile && inputEnc && isApiKey && isBaseUrl && sendDataInterval && collectorBaseUrl && isAuthUrl && sensorData && scriptsPath) {
 		try {
 			fs.readFileSync(inputEnc, 'utf-8');
 			fs.readFileSync(keyFile, 'utf-8');
@@ -41,5 +41,5 @@ export function runSendData(
 }
 
 function execute() {
-	runSendData(keyFile, inputEnc, isApiKey, isBaseUrl, isAuthUrl, sendDataInterval, sensorData, collectorBaseUrl, scriptsPath);
+	runSendData(keyFile!, inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!, scriptsPath!);
 }

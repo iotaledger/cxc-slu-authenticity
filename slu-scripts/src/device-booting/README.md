@@ -4,7 +4,7 @@ We start with the general requirements. If the device is set up you can go to th
 
 # Requirements:
 
-1. Create a file in the root of the Rapsberry Pi.
+1. Create a file in the root of the Raspberry Pi.
 `````
 touch .env
 `````
@@ -12,15 +12,15 @@ touch .env
 
 ````
 KEY_FILE=<Absolute path to the key file>
-SEND_AUTH_INTERVAL=<Interval during authenticatgion proof is send>
+SEND_AUTH_INTERVAL=<Interval during the authentication proof is send>
 INPUT_ENC=<Absolute path to the encrypted device identity>
 COLLECTOR_BASE_URL=<The base url of the authenticity-collector microservice>
 SENSOR_DATA=<Absolute path to the stored data>
 IS_API_KEY=<Api key of the integration-services>
 IS_BASE_URL=<Base url of the integration-services>
-IS_AUTH_URL=<The authentication url of the integration-services: BASE_URL + /api/v0.1/authentication/prove-ownership>
+IS_AUTH_URL=<The authentication url of the integration-services: IS_BASE_URL + /api/v0.1/authentication/prove-ownership>
 SEND_DATA_INTERVAL=<Interval during the data is send to the collector and is written into the device channel>
-SCRIPTS_PATH=<Absolute path to the scripts folder of cxc-slu-authenticity project>
+SCRIPTS_PATH=<Absolute path to the slu-scripts folder of cxc-slu-authenticity project>
 ````
 
 3. Get the project.
@@ -47,19 +47,19 @@ sudo node -e 'require("./home/pi/cxc-slu-authenticity/slu-scripts/dist/src/devic
 sudo node -e 'require("./home/pi/cxc-slu-authenticity/slu-scripts/dist/src/device-booting/runSendData").execute()' &
 ````
 
-6. It maybe necessary to give execute rights. For that go to the folder (dist/src/device-booting) of the the transpiled scripts  or use the relative path  and give the rights:
+6. It maybe necessary to give execute rights. For that go to the folder (dist/src/device-booting) of the transpiled scripts or use the relative path and give the rights:
 ````
 sudo chmod +x runSendData.js
 sudo chmod +x runSendProof.js
 ````
 
-7. Before rebooting the scripts you need to bootstrap the device with the bootstrap script.
+7. Before rebooting the device you need to bootstrap the device with the bootstrap script.
 ```
-npm run bootstrap --key_file=<Path to the key file> --dest=<Path where to store the ecnrypted device identity> 
+npm run bootstrap --key_file=<Path to the key file> --dest=<Path to store the encrypted device identity> 
 --one_shot_device_url=< The bootstrap url of the one-shot-device microservice> --nonce= <Nonce of the device>
 ```
 
-8. Now you can reboot the device and the script will execute when the device boots up.
+8. Now you can reboot the device and the scripts will execute.
 ````
 sudo reboot
 ````
@@ -95,5 +95,14 @@ SCRIPTS_PATH=/home/pi/cxc-slu-authenticity/slu-scripts
 ````
 
 5. reboot the device
+````
+sudo reboot
+````
 
-6. In the dashboard you will see the sensor data written to the channel of the device and the badge 'Not Authentic' should change to 'Authentic'. If the data will not change the script won't send the data again. Because we use a static file in our ecxample you can simple change the value of the sensorData.json in the test-data folder without rebooting. After the interval period you should see the new data in the messages of the device in the dashboard. 
+6. In the dashboard you will see the sensor data written to the channel of the device and the badge 'Not Authentic' should change to 'Authentic'. If the data will not change the script won't send the data again. Because we use a static file in our example you can simple change the value of the sensorData.json in the test-data folder without rebooting. After the interval period you should see the new data in the messages of the device in the dashboard. 
+
+7. If there are any errors the scripts create a log file at the root of the device named:
+````
+log-cxc.txt
+````
+

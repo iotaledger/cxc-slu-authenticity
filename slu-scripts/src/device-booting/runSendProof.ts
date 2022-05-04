@@ -9,11 +9,11 @@ const collectorBaseUrl = process.env.COLLECTOR_BASE_URL;
 const scriptsPath = process.env.SCRIPTS_PATH;
 
 export function runSendProof(
-	keyFile: string | undefined,
-	sendAuthInterval: string | undefined,
-	inputEnc: string | undefined,
-	collectorBaseUrl: string | undefined,
-	scriptsPath: string | undefined
+	keyFile: string,
+	sendAuthInterval: string,
+	inputEnc: string,
+	collectorBaseUrl: string,
+	scriptsPath: string
 ) {
 	if (keyFile && sendAuthInterval && inputEnc && collectorBaseUrl && scriptsPath) {
 		try {
@@ -34,6 +34,6 @@ export function runSendProof(
 	}
 }
 
-export function execute() {
-	runSendProof(keyFile, sendAuthInterval, inputEnc, collectorBaseUrl, scriptsPath);
+function execute() {
+	runSendProof(keyFile!, sendAuthInterval!, inputEnc!, collectorBaseUrl!, scriptsPath!);
 }
