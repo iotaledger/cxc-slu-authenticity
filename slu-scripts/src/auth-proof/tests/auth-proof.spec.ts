@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { decryptData, sendAuthProof, encryptData } from '../auth-proof';
+import { decryptData, sendAuthProof, encryptData, decryptAndSendProof } from '../auth-proof';
 import axios from 'axios';
 
 jest.mock('axios');
@@ -15,6 +15,22 @@ describe('Encrypt data', () => {
 		const encryptedData = fs.readFileSync(encryptedDataPath!, 'utf-8');
 		expect(encryptedData).toContain('U2FsdGVkX1');
 	});
+
+	it('should decrypt and send proof', async () => {
+		const response = {
+			data: {},
+			headers: {},
+			config: {},
+			status: 200,
+			statusText: 'OK'
+		};
+
+		axios.post = jest.fn().mockResolvedValue(response);
+
+		await decryptAndSendProof(encryptedDataPath!, keyFilePath!, collectorBaseUrl!);
+
+		expect(axios.post).toBeCalled();
+	})
 
 	it('should decrypt data and send successfully auth proof', async () => {
 		const response = {
@@ -75,6 +91,7 @@ describe('Encrypt data', () => {
 			expect(ex.message).toBe('--collector_url for post request is not provided');
 		}
 	});
+
 });
 afterAll(() => {
 	try {

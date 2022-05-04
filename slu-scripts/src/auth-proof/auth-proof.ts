@@ -53,3 +53,8 @@ export async function sendAuthProof(
 		throw Error('--collector_url for post request is not provided');
 	}
 }
+
+export async function decryptAndSendProof(encryptedDataPath: string, keyFilePath: string, collectorBaseUrl: string): Promise<void>{
+	const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
+    await sendAuthProof(decryptedData, collectorBaseUrl);
+}
