@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChannelSubscriptionService } from './channel-subscription.service';
-import { ChannelInfo, CreateChannelResponse, ChannelClient } from 'iota-is-sdk';
+import { ChannelInfo, CreateChannelResponse, ChannelClient } from '@iota/is-client';
 import { ConfigModule } from '@nestjs/config';
+import { defaultConfig } from '../../configuration';
 
 describe('ChannelSubscriptionService', () => {
 	let service: ChannelSubscriptionService;
@@ -10,10 +11,11 @@ describe('ChannelSubscriptionService', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [ConfigModule],
-			providers: [ChannelSubscriptionService]
+			providers: [ChannelSubscriptionService, { provide: 'ChannelClient', useValue: new ChannelClient(defaultConfig) }]
 		}).compile();
 		channelInfo = {
 			channelAddress: '100a9101d361a1e3657681182a5f2784bb4e02c332fdc426ac4dc5b67d9eced10000000000000000:c2fe471fd08bc988b9cb2de8',
+			name: "channel name",
 			authorId: 'did:iota:12345',
 			topics: [
 				{
@@ -55,8 +57,12 @@ describe('ChannelSubscriptionService', () => {
 
 	it('should throw error', async () => {
 		process.env.COLLECTOR_DID = '';
-		process.env.COLLECTOR_SECRETE = '';
-		const error = service.channelSubscription();
-		await expect(error).rejects.toThrowError();
+		process.env.COLLECTOR_SECRET = '';
+		const authenticationSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockRejectedValue('not authenticated');
+		try{
+			await service.channelSubscription();
+		}catch(ex: any){
+			expect(ex).toBe('erro not authenticated');
+		}	
 	});
 });

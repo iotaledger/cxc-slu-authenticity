@@ -21,6 +21,8 @@
 		"test:e2e": "MONGO_URL=mongodb://127.0.0.1:8088/ jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit"
 	},
 	"dependencies": {
+		"@iota/is-client": "^0.1.2",
+		"@iota/is-shared-modules": "^0.1.2",
 		"@nestjs/axios": "^0.0.5",
 		"@nestjs/common": "^8.0.0",
 		"@nestjs/config": "^1.1.6",
@@ -33,7 +35,6 @@
 		"bs58": "^4.0.1",
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.13.2",
-		"iota-is-sdk": "^0.0.9",
 		"mongoose": "^6.1.8",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",
@@ -70,10 +71,7 @@
 			"json",
 			"ts"
 		],
-		"rootDir": "./",
-		"modulePaths": [
-			"<rootDir>"
-		],
+		"rootDir": "src",
 		"testRegex": ".*\\.spec\\.ts$",
 		"transform": {
 			"^.+\\.(t|j)s$": "ts-jest"

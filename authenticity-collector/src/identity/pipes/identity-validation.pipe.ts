@@ -2,7 +2,6 @@ import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { IdentityDto } from '../models/IdentityDto';
-import { IdentityService } from '../identity.service';
 
 @Injectable()
 export class IdentityValidationPipe implements PipeTransform<IdentityDto> {
@@ -19,8 +18,8 @@ export class IdentityValidationPipe implements PipeTransform<IdentityDto> {
 		return object;
 	}
 
-	private toValidate(metatype: Function): boolean {
-		const types: Function[] = [String, Boolean, Number, Array, Object];
+	private toValidate(metatype): boolean {
+		const types = [String, Boolean, Number, Array];
 		return !types.includes(metatype);
 	}
 }

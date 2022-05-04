@@ -2,12 +2,13 @@ import { Injectable, Logger, HttpException, HttpStatus, Inject } from '@nestjs/c
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeviceRegistrationDocument, DeviceRegistration } from './schemas/device-registration.schema';
-import { IdentityClient, ChannelClient, AccessRights } from 'iota-is-sdk';
+import { IdentityClient, ChannelClient, AccessRights } from '@iota/is-client';
 import { v4 as uuidv4 } from 'uuid';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { CreatorDevicesService } from '../creator-devices/creator-devices.service';
 
 @Injectable()
 export class DeviceRegistrationService {
@@ -23,8 +24,10 @@ export class DeviceRegistrationService {
 		private readonly userClient: ChannelClient,
 
 		@Inject('IdentityClient')
-		private readonly identityClient: IdentityClient
-	) {}
+		private readonly identityClient: IdentityClient,
+
+		private creatorDevicesService: CreatorDevicesService
+	) { }
 	private readonly logger: Logger = new Logger(DeviceRegistrationService.name);
 	private readonly requestConfig: AxiosRequestConfig<any> = {
 		headers: {
@@ -60,31 +63,33 @@ export class DeviceRegistrationService {
 	}
 
 	public async createSluStatus(id: string, channelAddress: string) {
-		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_BASE_URL');
 
 		const sluStatus = await firstValueFrom(
 			this.httpService.post(
-				`${sluStatusEndpoint}/${id}/${channelAddress}`,
+				`${sluStatusEndpoint}/status`,
 				{
-					status: 'created'
+					id: id,
+					status: 'created',
+					channelAddress: channelAddress
 				},
 				this.requestConfig
 			)
 		);
 
 		if (sluStatus === null) {
-			this.logger.error('Failed connecting with SLU-Stat0us Microservice');
+			this.logger.error('Failed connecting with SLU-Status Microservice');
 			throw new HttpException('Could not connect with SLU-Status Microservice.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	public async updateSluStatus(id: string) {
-		const sluStatusEndpoint = this.configService.get('SLU_STATUS_URL');
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_BASE_URL');
 		const body = {
 			status: 'installed'
 		};
 
 		const updateSluStatus = await firstValueFrom(
-			this.httpService.put(`${sluStatusEndpoint}/${id}/${body.status}`, body, this.requestConfig)
+			this.httpService.put(`${sluStatusEndpoint}/status/${id}/${body.status}`, body, this.requestConfig)
 		);
 
 		if (updateSluStatus === null) {
@@ -93,7 +98,17 @@ export class DeviceRegistrationService {
 		}
 	}
 
-	async createIdentityAndSubscribe(channelAddress: string) {
+	async saveSluNonce(id: string, nonce: string, creator: string): Promise<void> {
+		const sluStatusEndpoint = this.configService.get('SLU_STATUS_BASE_URL');
+		const body = {
+			sluId: id,
+			nonce: nonce,
+			creator: creator
+		};
+		await firstValueFrom(this.httpService.post(`${sluStatusEndpoint}/slu-nonce`, body, this.requestConfig));
+	}
+
+	async createIdentityAndSubscribe(channelAddress: string, creator: string) {
 		const nonce = uuidv4();
 		const deviceIdentity = await this.createIdentity();
 		const {
@@ -110,7 +125,7 @@ export class DeviceRegistrationService {
 			subscriptionLink: subscriptionLink,
 			channelSeed: seed,
 			channelAddress,
-			identityKeys: {
+			identityKey: {
 				id,
 				key
 			}
@@ -121,24 +136,28 @@ export class DeviceRegistrationService {
 
 		await this.createSluStatus(id, channelAddress);
 
+		await this.saveSluNonce(id, nonce, creator);
+
+		await this.creatorDevicesService.saveCreatorDevice({ id: id, channelAddress: channelAddress, creator: creator })
+
 		return { nonce, channelAddress, id };
 	}
 
 	async getRegisteredDevice(nonce: string): Promise<DeviceRegistration> {
 		const device = await this.deviceRegistrationModel.findOneAndDelete({ nonce }).exec();
 
-		if (device == null) {
+		if (device === null) {
 			this.logger.error('Document does not exist in the collection');
 			throw new HttpException('Could not find document in the collection.', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		const id = device.identityKeys.id;
+		const id = device.identityKey.id;
 
 		await this.updateSluStatus(id);
 
 		return {
 			channelAddress: device.channelAddress,
 			channelSeed: device.channelSeed,
-			identityKeys: device.identityKeys,
+			identityKey: device.identityKey,
 			nonce: device.nonce,
 			subscriptionLink: device.subscriptionLink
 		};

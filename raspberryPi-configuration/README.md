@@ -153,7 +153,7 @@ Then install `Node.js` and `npm` by executing:
     sudo apt install nodejs
 ```
 
-To verify that installation was successful and you have the latest LTS version on your computer run:
+To verify that installation was successful and you have the `latest LTS version` on your computer run:
 
 ```bash
     node -v

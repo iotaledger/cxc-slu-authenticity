@@ -17,13 +17,13 @@ export function encryptData(keyFilePath: string | undefined, inputData: string |
 export async function decryptData(
 	encryptedDataPath: string | undefined,
 	keyFilePath: string | undefined
-): Promise<{ did: string; timestamp: Date; signature: string } | undefined> {
+): Promise<{ did: string; timestamp: Date; signature: string }> {
 	if (encryptedDataPath && keyFilePath) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
 		const key = vpuf.createKey(keyFilePath);
 		const decryptedData = vpuf.decrypt(encryptedData, key);
-		const identity = JSON.parse(decryptedData).identity;
-		const did = identity?.doc?.id;
+		const identity = JSON.parse(decryptedData).identityKey;
+		const did = identity?.id;
 		const timestamp = new Date();
 		const privateKey = bs58.decode(identity?.key?.secret);
 		const signatureBuffer = await ed.sign(Buffer.from(timestamp.getTime().toString()), privateKey);
@@ -46,10 +46,15 @@ export async function sendAuthProof(
 		signature: string;
 	},
 	collectorBaseUrl: string | undefined
-): Promise<AxiosResponse<any, any> | undefined> {
+): Promise<AxiosResponse<any, any>> {
 	if (collectorBaseUrl) {
 		return await axios.post(collectorBaseUrl + '/prove', body);
 	} else {
-		throw Error('Collector url for post request is not provided');
+		throw Error('--collector_url for post request is not provided');
 	}
+}
+
+export async function decryptAndSendProof(encryptedDataPath: string, keyFilePath: string, collectorBaseUrl: string): Promise<void>{
+	const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
+    await sendAuthProof(decryptedData, collectorBaseUrl);
 }

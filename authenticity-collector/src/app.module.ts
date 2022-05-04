@@ -1,9 +1,13 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IdentityModule } from './identity/identity.module';
-import { ChannelSubscriptionService } from './channel-subscription/channel-subscription.service';
+import { ChannelSubscriptionService } from './services/channel-subscription/channel-subscription.service';
 import { SludataModule } from './sludata/sludata.module';
+import { ChannelClient, IdentityClient } from '@iota/is-client';
+import { defaultConfig } from './configuration';
+import { CollectorIdentityService } from './services/collector-identity/collector-identity.service';
+import { SluAuthorizationMiddleware } from './middleware/slu-authorization.middleware';
 
 @Module({
 	imports: [
@@ -18,8 +22,17 @@ import { SludataModule } from './sludata/sludata.module';
 				dbName: configService.get<string>('DATABASE_NAME')
 			}),
 			inject: [ConfigService]
-		}),
+		})
 	],
-	providers: [ChannelSubscriptionService]
+	providers: [
+		ChannelSubscriptionService,
+		CollectorIdentityService,
+		{ provide: 'IdentityClient', useValue: new IdentityClient(defaultConfig) },
+		{ provide: 'ChannelClient', useValue: new ChannelClient(defaultConfig) }
+	]
 })
-export class AppModule {}
+export class AppModule {
+	configure(consumer: MiddlewareConsumer) {
+		consumer.apply(SluAuthorizationMiddleware).forRoutes('/api/v1/authenticity/data');
+	}
+}

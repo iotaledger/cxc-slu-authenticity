@@ -7,8 +7,9 @@ import { DeviceRegistration, DeviceRegistrationSchema, DeviceRegistrationDocumen
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { channelMock, identityMock, mockDeviceRegistration, nonceMock, authorizedChannelMock } from './mocks';
-import { ChannelClient, IdentityClient } from 'iota-is-sdk';
+import { ChannelClient, IdentityClient } from '@iota/is-client';
 import { Connection, Model } from 'mongoose';
+import { CreatorDevicesModule } from '../creator-devices/creator-devices.module';
 
 describe('DeviceRegistrationController', () => {
 	let deviceRegistrationController: DeviceRegistrationController;
@@ -25,6 +26,7 @@ describe('DeviceRegistrationController', () => {
 	beforeEach(async () => {
 		module = await Test.createTestingModule({
 			imports: [
+				CreatorDevicesModule,
 				HttpModule,
 				ConfigModule,
 				ChannelClient,
@@ -73,10 +75,11 @@ describe('DeviceRegistrationController', () => {
 	});
 
 	it('should save nonce, channel and device identity to MongoDb', async () => {
+		const creator = 'did:iota:12345'
 		jest
 			.spyOn(deviceRegistrationService, 'createIdentityAndSubscribe')
 			.mockResolvedValue({ nonce: nonceMock, id: 'did:iota:123', channelAddress: authorizedChannelMock });
-		const saveDeviceToDb = (await deviceRegistrationController.createAndSubscribe(authorizedChannelMock)) as { nonce: string };
+		const saveDeviceToDb = (await deviceRegistrationController.createAndSubscribe(authorizedChannelMock, creator)) as { nonce: string };
 		expect(saveDeviceToDb.nonce).toBe(nonceMock);
 	});
 
@@ -88,11 +91,11 @@ describe('DeviceRegistrationController', () => {
 			mockDeviceRegistration.nonce
 		)) as DeviceRegistration;
 
-		expect(updateSluStatusSpy).toHaveBeenCalledWith(saveDeviceToDb.identityKeys.id);
+		expect(updateSluStatusSpy).toHaveBeenCalledWith(saveDeviceToDb.identityKey.id);
 		expect(deleteDeviceFromCollection.nonce).toBe(saveDeviceToDb.nonce);
 		expect(deleteDeviceFromCollection.channelAddress).toBe(saveDeviceToDb.channelAddress);
 		expect(deleteDeviceFromCollection.channelSeed).toBe(saveDeviceToDb.channelSeed);
-		expect(deleteDeviceFromCollection.identityKeys).toEqual(saveDeviceToDb.identityKeys);
+		expect(deleteDeviceFromCollection.identityKey).toEqual(saveDeviceToDb.identityKey);
 		expect(deleteDeviceFromCollection.subscriptionLink).toBe(saveDeviceToDb.subscriptionLink);
 	});
 

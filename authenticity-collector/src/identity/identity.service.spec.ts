@@ -6,7 +6,7 @@ import { Identity, IdentityDocument, IdentitySchema } from './schemas/identity.s
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { ConfigModule } from '@nestjs/config';
-import { Connection, Model, mongo } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { BadRequestException } from '@nestjs/common';
 import { IdentityDto } from './models/IdentityDto';
 

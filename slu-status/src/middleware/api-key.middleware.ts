@@ -10,7 +10,7 @@ export class ApiKeyMiddleware implements NestMiddleware {
 		const apiKey = this.configService.get<string>('API_KEY');
 		const reqApiKey = req.header('X-API-KEY');
 		if (reqApiKey !== apiKey) {
-			return res.status(400).send(['No valid api-key provided']);
+			return res.status(400).json('No valid api-key provided');
 		}
 		next();
 	}
