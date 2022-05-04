@@ -22,7 +22,7 @@ describe('Send-proof tests during device startup', () => {
 			throw new Error('process.exit: ' + number);
 		});
 		try {
-			runSendProof(keyFile, '', inputEnc, collectorBaseUrl, scriptsPath);
+			runSendProof(keyFile!, '', inputEnc!, collectorBaseUrl!, scriptsPath!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -37,7 +37,7 @@ describe('Send-proof tests during device startup', () => {
 		});
 
 		try {
-			runSendProof('/wrongPath', authInterval, inputEnc, collectorBaseUrl, scriptsPath);
+			runSendProof('/wrongPath', authInterval!, inputEnc!, collectorBaseUrl!, scriptsPath!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -51,7 +51,7 @@ describe('Send-proof tests during device startup', () => {
 
 		const execSyncSpy = jest.spyOn(child_process, 'execSync');
 
-		runSendProof(keyFile, authInterval, inputEnc, collectorBaseUrl, scriptsPath);
+		runSendProof(keyFile!, authInterval!, inputEnc!, collectorBaseUrl!, scriptsPath!);
 
 		try {
 			fs.readFileSync('log.txt', 'utf-8');

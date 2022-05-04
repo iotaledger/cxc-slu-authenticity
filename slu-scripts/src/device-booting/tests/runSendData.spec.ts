@@ -26,7 +26,7 @@ describe('Send-data tests during device startup', () => {
 			throw new Error('process.exit: ' + number);
 		});
 		try {
-			runSendData('', inputEnc, isApiKey, isBaseUrl, isAuthUrl, sendDataInterval, sensorData, collectorBaseUrl, scriptsPath);
+			runSendData('', inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!, scriptsPath!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -41,7 +41,7 @@ describe('Send-data tests during device startup', () => {
 		});
 
 		try {
-			runSendData('/wrongPath', inputEnc, isApiKey, isBaseUrl, isAuthUrl, sendDataInterval, sensorData, collectorBaseUrl, scriptsPath);
+			runSendData('/wrongPath', inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!, scriptsPath!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -55,7 +55,7 @@ describe('Send-data tests during device startup', () => {
 
 		const execSyncSpy = jest.spyOn(child_process, 'execSync');
 
-		runSendData(keyFile, inputEnc, isApiKey, isBaseUrl, isAuthUrl, sendDataInterval, sensorData, collectorBaseUrl, scriptsPath);
+		runSendData(keyFile!, inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!, scriptsPath!);
 
 		try {
 			fs.readFileSync('log.txt', 'utf-8');
