@@ -15,8 +15,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{is_url}}/authentication/prove-ownership/{{manager_id}}?api-key={{api-key}}",
-							"host": ["{{is_url}}"],
-							"path": ["authentication", "prove-ownership", "{{manager_id}}"],
+							"host": [
+								"{{is_url}}"
+							],
+							"path": [
+								"authentication",
+								"prove-ownership",
+								"{{manager_id}}"
+							],
 							"query": [
 								{
 									"key": "api-key",
@@ -45,12 +51,18 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"signedNonce\":\"c590301c1c3996783dd5bc9f97f6b0558d5330c834a053d95d5a6700a66852b2f3dd33eedfbb34e23feecf0c1998b069358ca00ca6908ef01862e14a5451d00e\"\n}"
+							"raw": "{\n    \"signedNonce\":\"8e65d2a73b79a647e57c0f095a5173e9bb3a5486d23569a38589367c288917e8676df21c3a00ff96a5a5bd7ad766a23140c538ef886fef6f6ac9593e15d3820d\"\n}"
 						},
 						"url": {
 							"raw": "{{is_url}}/authentication/prove-ownership/{{manager_id}}?api-key={{api-key}}",
-							"host": ["{{is_url}}"],
-							"path": ["authentication", "prove-ownership", "{{manager_id}}"],
+							"host": [
+								"{{is_url}}"
+							],
+							"path": [
+								"authentication",
+								"prove-ownership",
+								"{{manager_id}}"
+							],
 							"query": [
 								{
 									"key": "api-key",
@@ -93,8 +105,13 @@
 						},
 						"url": {
 							"raw": "{{is_url}}/channels/create?api-key={{api-key}}",
-							"host": ["{{is_url}}"],
-							"path": ["channels", "create"],
+							"host": [
+								"{{is_url}}"
+							],
+							"path": [
+								"channels",
+								"create"
+							],
 							"query": [
 								{
 									"key": "api-key",
@@ -128,12 +145,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"CxC\",\n\t\"lastname\": \"Manager\",\n\t\"username\": \"one-shot-manager-1\"\n}"
+							"raw": "{\n\t\"name\": \"CxC\",\n\t\"lastname\": \"Manager\",\n\t\"username\": \"one-shot-manager\"\n}"
 						},
 						"url": {
 							"raw": "{{is_url}}/identities/create?api-key={{api-key}}",
-							"host": ["{{is_url}}"],
-							"path": ["identities", "create"],
+							"host": [
+								"{{is_url}}"
+							],
+							"path": [
+								"identities",
+								"create"
+							],
 							"query": [
 								{
 									"key": "api-key",
@@ -161,9 +183,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{one_shot_device_url}}/create/e83d047377{{authorized_channel}}",
-							"host": ["{{one_shot_device_url}}"],
-							"path": ["create", "e83d047377{{authorized_channel}}"]
+							"raw": "{{one_shot_device_url}}/create/{{authorized_channel}}/{{manager_id}}",
+							"host": [
+								"{{one_shot_device_url}}"
+							],
+							"path": [
+								"create",
+								"{{authorized_channel}}",
+								"{{manager_id}}"
+							]
 						}
 					},
 					"response": []
@@ -175,8 +203,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{one_shot_device_url}}/bootstrap/{{nonce}}",
-							"host": ["{{one_shot_device_url}}"],
-							"path": ["bootstrap", "{{nonce}}"]
+							"host": [
+								"{{one_shot_device_url}}"
+							],
+							"path": [
+								"bootstrap",
+								"{{nonce}}"
+							]
 						}
 					},
 					"response": []
@@ -189,62 +222,61 @@
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
-				"exec": [""]
+				"exec": [
+					""
+				]
 			}
 		},
 		{
 			"listen": "test",
 			"script": {
 				"type": "text/javascript",
-				"exec": [""]
+				"exec": [
+					""
+				]
 			}
 		}
 	],
 	"variable": [
 		{
 			"key": "manager_jwt",
-			"value": "",
+			"value": "Bearer ",
 			"type": "string"
 		},
 		{
 			"key": "one_shot_device_url",
-			"value": "http://localhost:8080",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "api-key",
-			"value": "94F5BA49-12A6-4E45-A487-BF91C442276D",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "signed_nonce",
-			"value": "c590301c1c3996783dd5bc9f97f6b0558d5330c834a053d95d5a6700a66852b2f3dd33eedfbb34e23feecf0c1998b069358ca00ca6908ef01862e14a5451d00e",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "is_url",
-			"value": "http://localhost:3099/api/v0.1",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "authorized_channel",
-			"value": "e83d047377e2177bdeaeb6a18c0fb4beaea846a3c8c291ca4d3ada3654852e3c0000000000000000:f79e85622429f4b8dd0f3806",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "manager_id",
-			"value": "did:iota:BSENY1v3sMsEPmmbx8jEy5hDm4s6nyiEk9AaphA518Es",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "nonce",
-			"value": "329b9200-0b55-4062-aef4-38836619fc13",
-			"type": "string"
-		},
-		{
 			"value": "",
-			"type": "string",
-			"disabled": true
+			"type": "string"
 		}
 	]
 }
