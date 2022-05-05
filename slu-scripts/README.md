@@ -85,7 +85,6 @@ npm run send-data
  --collector_base_url: The base url of the authenticity-collector microservice.
  --is_api_key: The api key of the integration services
  --is_base_url: The base url of the integration services
- --jwt: The jwt token of the device to verify itself by the authenticity-collector microservice.
  --is_auth_url: The integration services authentication url for post request to get a jwt token
 ```
 
