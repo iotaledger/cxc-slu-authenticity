@@ -55,7 +55,7 @@ describe('Send sensor data tests', () => {
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl,payloadData, isAuthUrl);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
 
 		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
 		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
