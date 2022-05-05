@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ClientConfig, ChannelClient, ChannelData, ApiVersion } from '@iota/is-client';
+import { ClientConfig, ChannelClient, ChannelData } from '@iota/is-client';
 import { createKey, decrypt } from '../vpuf/vpuf';
 import { AxiosResponse } from 'axios';
 import { decryptData, sendAuthProof } from '../auth-proof/auth-proof';
@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 import axios from 'axios';
-import {getClientConfiguration, jwt, setJwt} from './configuration';
+import { getClientConfiguration, jwt, setJwt } from './configuration';
 
 export async function sendData(
 	encryptedDataPath: string | undefined,
@@ -16,7 +16,7 @@ export async function sendData(
 	isBaseUrl: string | undefined,
 	collectorBaseUrl: string | undefined,
 	payloadData: any,
-	isAuthUrl: string | undefined,
+	isAuthUrl: string | undefined
 ): Promise<ChannelData> {
 	if (isApiKey && isBaseUrl && encryptedDataPath && keyFilePath && collectorBaseUrl && isAuthUrl) {
 		const encryptedData = fs.readFileSync(encryptedDataPath, 'utf-8');
@@ -29,19 +29,19 @@ export async function sendData(
 		while (!isSend) {
 			try {
 				//send to collector
-				console.log('send data')
+				console.log('send data');
 				await postData(collectorBaseUrl, payloadData, identityKey.id, jwt);
 				isSend = true;
 			} catch (ex: any) {
 				//Retry to send: authentication prove expired
 				if (ex.response.status === 409) {
-					console.log('send proof')
+					console.log('send proof');
 					const body = await decryptData(encryptedDataPath, keyFilePath);
 					await sendAuthProof(body, collectorBaseUrl);
 				}
 				//Retry to send: jwt token expired
 				else if (ex.response.status === 401) {
-					console.log('get jwt')
+					console.log('get jwt');
 					const res = await axios.get(isAuthUrl + `/${identityKey.id}?api-key=${clientConfig.apiKey}`);
 					const signedNonce = await signNonce(identityKey.key.secret, res?.data?.nonce);
 					const isResponse = await axios.post(
@@ -58,7 +58,7 @@ export async function sendData(
 				}
 			}
 		}
-		console.log('write into channel')
+		console.log('write into channel');
 		return await writeToChannel(clientConfig, identityKey, channelAddress, payloadData);
 	} else {
 		throw new Error(
@@ -70,7 +70,7 @@ async function postData(collectorBaseUrl: string, payloadData: any, deviceId: st
 	return axios.post(
 		collectorBaseUrl + '/data',
 		{ payload: payloadData, deviceId: deviceId },
-		{ headers: { authorization: `Bearer ${jwt}`} }
+		{ headers: { authorization: `Bearer ${jwt}` } }
 	);
 }
 async function writeToChannel(
