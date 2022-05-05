@@ -4,7 +4,7 @@ import { SluDataDto } from './model/SluDataDto';
 import { SluDataService } from './sludata.service';
 import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiNotFoundResponse, ApiInternalServerErrorResponse } from '@nestjs/swagger';
 
-@ApiTags('authenticity-collector')
+@ApiTags('slu-data')
 @Controller('/api/v1/authenticity/data')
 export class SluDataController {
 	constructor(private sluDataService: SluDataService) {}
@@ -20,11 +20,11 @@ export class SluDataController {
 			}
 		}
 	})
-	@ApiNotFoundResponse({ description: 'authentication prove not found in the collection' })
 	@ApiResponse({
 		status: 409,
 		description: 'authentication prove expired'
 	})
+	@ApiNotFoundResponse({ description: 'authentication prove not found in the collection' })
 	@ApiInternalServerErrorResponse({
 		description: 'Internal server error'
 	})

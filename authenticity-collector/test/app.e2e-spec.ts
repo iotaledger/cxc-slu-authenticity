@@ -265,8 +265,6 @@ describe('AppController (e2e)', () => {
 				.set('Authorization', 'Bearer ' + jwt)
 				.send(sluDataBody);
 
-			console.log('status in data / POST :', status);
-
 			expect(status).toBe(201);
 			expect(body.log.payload.deviceId).toBe(sluDataBody.deviceId);
 			//SHA256 length in hex format
