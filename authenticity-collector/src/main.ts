@@ -25,11 +25,11 @@ async function bootstrap() {
 	SwaggerModule.setup('/api/v1/authenticity-collector-docs', app, document);
 
 	await app.listen(process.env.PORT || 3000);
-	// const collectorIdentityService = app.get(CollectorIdentityService);
-	// await collectorIdentityService.checkCollectorIdentity();
+	const collectorIdentityService = app.get(CollectorIdentityService);
+	await collectorIdentityService.checkCollectorIdentity();
 
-	// const channelSubscription = app.get(ChannelSubscriptionService);
-	// await channelSubscription.channelSubscription();
+	const channelSubscription = app.get(ChannelSubscriptionService);
+	await channelSubscription.channelSubscription();
 	Logger.log(`authenticity-collector running on port ${process.env.PORT}`);
 }
 

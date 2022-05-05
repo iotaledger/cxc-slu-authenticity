@@ -15,8 +15,10 @@ export class SluDataController {
 		description: 'Sending authentication proof was successful',
 		schema: {
 			example: {
-				payload: { hashedData: `hashedData`, deviceId: 'did:iota:12345' },
-				deviceId: 'did:iota:12345'
+				payload: {
+					hashedData: `U2FsdGVkX199lBknVEUkXZvpyPu+Gcz1hiEVjtNAywwC12yvuY+Vbca50pVhbfA4`,
+					deviceId: 'did:iota:12345'
+				}
 			}
 		}
 	})
@@ -34,10 +36,11 @@ export class SluDataController {
 		examples: {
 			sluData: {
 				summary: 'Request body with SluDataDTO',
-				description: 'Request to send the authentication proof.',
 				value: {
-					payload: { hashedData: `hashedData`, deviceId: 'did:iota:12345' },
-					deviceId: 'did:iota:12345'
+					payload: {
+						hashedData: `U2FsdGVkX199lBknVEUkXZvpyPu+Gcz1hiEVjtNAywwC12yvuY+Vbca50pVhbfA4`,
+						deviceId: 'did:iota:12345'
+					}
 				} as SluDataDto
 			}
 		}
