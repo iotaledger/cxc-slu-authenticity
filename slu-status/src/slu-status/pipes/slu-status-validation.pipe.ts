@@ -12,8 +12,6 @@ export class SluStatusValidationPipe implements PipeTransform<SluStatusDto> {
 		if (errors.length > 0) {
 			throw new BadRequestException(errors);
 		}
-		console.log(object)
-		console.log(!object.id.includes('did:iota'));
 		if (!object.id.includes('did:iota')) {
 			throw new BadRequestException('Validation fails for status: ' + object.id);
 		}
