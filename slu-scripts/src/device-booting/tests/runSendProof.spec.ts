@@ -1,16 +1,14 @@
-import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as vpuf from '../../vpuf/vpuf';
 import { runSendProof } from '../runSendProof';
+import * as sendProof from '../../auth-proof/auth-proof'
 
-jest.mock('child_process');
 
 describe('Send-proof tests during device startup', () => {
 	let keyFile = process.env.KEY_FILE;
 	let authInterval = process.env.SEND_AUTH_INTERVAL;
 	let inputEnc = process.env.INPUT_ENC;
 	let collectorBaseUrl = process.env.COLLECTOR_BASE_URL;
-	let scriptsPath = process.env.SCRIPTS_PATH;
 
 	beforeEach(async () => {
 		const key = vpuf.createKey('./test-data/unclonable.txt');
@@ -22,7 +20,7 @@ describe('Send-proof tests during device startup', () => {
 			throw new Error('process.exit: ' + number);
 		});
 		try {
-			runSendProof(keyFile!, '', inputEnc!, collectorBaseUrl!, scriptsPath!);
+			runSendProof(keyFile!, '', inputEnc!, collectorBaseUrl!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -37,7 +35,7 @@ describe('Send-proof tests during device startup', () => {
 		});
 
 		try {
-			runSendProof('/wrongPath', authInterval!, inputEnc!, collectorBaseUrl!, scriptsPath!);
+			runSendProof('/wrongPath', authInterval!, inputEnc!, collectorBaseUrl!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -48,22 +46,23 @@ describe('Send-proof tests during device startup', () => {
 
 	it('should run send-proof script', async () => {
 		fs.rmSync('log-cxc.txt');
+		const authProofSpy = jest.spyOn(sendProof, 'decryptAndSendProof').mockResolvedValue();
 
-		const execSyncSpy = jest.spyOn(child_process, 'execSync');
-
-		runSendProof(keyFile!, authInterval!, inputEnc!, collectorBaseUrl!, scriptsPath!);
+		jest.useFakeTimers();
+		runSendProof(keyFile!, authInterval!, inputEnc!, collectorBaseUrl!);
+		jest.advanceTimersByTime(3000);
 
 		try {
 			fs.readFileSync('log.txt', 'utf-8');
 		} catch (ex: any) {
 			expect(ex.message).toBe(`ENOENT: no such file or directory, open 'log.txt'`);
 		}
-		expect(execSyncSpy).toBeCalledWith(
-			`cd / && npm run send-proof --key_file=./test-data/unclonable.txt --interval=1000 --input_enc=./test-data/data.json.enc --collector_base_url=https://cxc.iota.cafe/api/v1/authenticity`
-		);
-	});
+		expect(authProofSpy).toBeCalledWith(inputEnc, keyFile, collectorBaseUrl);
+		expect(authProofSpy).toBeCalledTimes(3);
+	
+});
 
-	afterEach(() => {
-		fs.rmSync('./test-data/data.json.enc');
-	});
+afterEach(() => {
+	fs.rmSync('./test-data/data.json.enc');
+});
 });

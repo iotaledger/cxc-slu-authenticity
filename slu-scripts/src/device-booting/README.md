@@ -20,7 +20,6 @@ IS_API_KEY=<Api key of the integration-services>
 IS_BASE_URL=<Base url of the integration-services>
 IS_AUTH_URL=<The authentication url of the integration-services: IS_BASE_URL + /api/v0.1/authentication/prove-ownership>
 SEND_DATA_INTERVAL=<Interval during the data is send to the collector and is written into the device channel>
-SCRIPTS_PATH=<Absolute path to the slu-scripts folder of cxc-slu-authenticity project>
 ````
 
 3. Get the project.
@@ -91,7 +90,6 @@ IS_API_KEY=b85e51a2-9981-11ec-8770-4b8f01948e9b
 IS_BASE_URL=https://demo-integration-services.iota.cafe
 IS_AUTH_URL=https://demo-integration-services.iota.cafe/api/v0.1/authentication/prove-ownership
 SEND_DATA_INTERVAL=30000
-SCRIPTS_PATH=/home/pi/cxc-slu-authenticity/slu-scripts
 ````
 
 5. reboot the device

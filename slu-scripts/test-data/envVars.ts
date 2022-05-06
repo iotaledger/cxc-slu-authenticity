@@ -15,7 +15,6 @@ process.env.KEY_FILE = './test-data/unclonable.txt';
 process.env.SEND_AUTH_INTERVAL = '1000';
 process.env.INPUT_ENC = './test-data/data.json.enc';
 process.env.COLLECTOR_BASE_URL = 'https://cxc.iota.cafe/api/v1/authenticity';
-process.env.SCRIPTS_PATH = '/';
 process.env.IS_API_KEY = '1cfa3bce-654d-41f6-a82a-94308dc4adf8';
 process.env.IS_BASE_URL = 'https://demo.integration-services.cafe/';
 process.env.IS_AUTH_URL = 'https://demo.integration-services.cafe/api/v0.1/authentication/prove-ownership/';

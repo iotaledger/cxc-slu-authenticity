@@ -1,9 +1,8 @@
 import { runSendData } from '../runSendData';
 import * as vpuf from '../../vpuf/vpuf';
 import * as fs from 'fs';
-import * as child_process from 'child_process';
+import * as sendData from '../../sensor-data/sensor-data'
 
-jest.mock('child_process');
 
 describe('Send-data tests during device startup', () => {
 	let keyFile = process.env.KEY_FILE;
@@ -26,7 +25,7 @@ describe('Send-data tests during device startup', () => {
 			throw new Error('process.exit: ' + number);
 		});
 		try {
-			runSendData('', inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!, scriptsPath!);
+			runSendData('', inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -41,7 +40,7 @@ describe('Send-data tests during device startup', () => {
 		});
 
 		try {
-			runSendData('/wrongPath', inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!, scriptsPath!);
+			runSendData('/wrongPath', inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!);
 		} catch (ex: any) {
 			expect(processSpy).toBeCalledWith(1);
 		}
@@ -53,18 +52,23 @@ describe('Send-data tests during device startup', () => {
 	it('should run send-data script', async () => {
 		fs.rmSync('log-cxc.txt');
 
-		const execSyncSpy = jest.spyOn(child_process, 'execSync');
+		const sendDataSpy = jest.spyOn(sendData, 'sendData').mockResolvedValue();
 
-		runSendData(keyFile!, inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!, scriptsPath!);
+		jest.useFakeTimers()
+		runSendData(keyFile!, inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!);
+		jest.advanceTimersByTime(3000);
 
 		try {
 			fs.readFileSync('log.txt', 'utf-8');
 		} catch (ex: any) {
 			expect(ex.message).toBe(`ENOENT: no such file or directory, open 'log.txt'`);
 		}
-		expect(execSyncSpy).toBeCalledWith(
-			`cd / && npm run send-data --key_file=./test-data/unclonable.txt --interval=1000 --input_enc=./test-data/data.json.enc --collector_base_url=https://cxc.iota.cafe/api/v1/authenticity --is_api_key=1cfa3bce-654d-41f6-a82a-94308dc4adf8 --is_base_url=https://demo.integration-services.cafe/ --is_auth_url=https://demo.integration-services.cafe/api/v0.1/authentication/prove-ownership/ --sensor_data=./test-data/sensorData.json`
+		expect(sendDataSpy).toBeCalledWith(
+			inputEnc, keyFile, isApiKey, isBaseUrl, collectorBaseUrl, sensorData, isAuthUrl
 		);
+		expect(sendDataSpy).toBeCalledTimes(3);
+
+		jest.useRealTimers();
 	});
 
 	afterEach(() => {
