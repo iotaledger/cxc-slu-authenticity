@@ -13,7 +13,7 @@ npm run install
 npm run build
 ```
 
-The above listed scripts can then be run via the following commands:
+The scripts can be run via the following commands:
 
 1. encrypting a file:
 
@@ -37,7 +37,7 @@ npm run encrypt-file --key_file=./test-data/unclonable.txt --input=./test-data/d
 npm run bootstrap
 --key_file: The key file used to encrypt/decrypt the data
 --dest: Location where the encrypted data should be saved
---one-shot-device-url: The url endpoint of the one-shot-device to get the device identity
+--one-shot-device-url: The bootstrap url endpoint of the one-shot-device to get the device identity
 --nonce: Nonce of the device
 ```
 
@@ -65,7 +65,6 @@ npm run send-proof
 Example:
 
 ```
-
 npm run send-proof --key_file=./test-data/unclonable.txt --interval=240000 --input_enc=./test-data/data.json.enc
 --collector_base_url=https://cxc.is.iota.cafe/api/v1/authenticity
 
@@ -85,7 +84,7 @@ npm run send-data
  --collector_base_url: The base url of the authenticity-collector microservice.
  --is_api_key: The api key of the integration services
  --is_base_url: The base url of the integration services
- --is_auth_url: The integration services authentication url for post request to get a jwt token
+ --is_auth_url: The authentication url of the integration-services: is_base_url + /api/v0.1/authentication/prove-ownership.
 ```
 
 Example:

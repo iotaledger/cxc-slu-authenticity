@@ -54,7 +54,7 @@ export async function sendAuthProof(
 	}
 }
 
-export async function decryptAndSendProof(encryptedDataPath: string, keyFilePath: string, collectorBaseUrl: string): Promise<void>{
+export async function decryptAndSendProof(encryptedDataPath: string, keyFilePath: string, collectorBaseUrl: string): Promise<void> {
 	const decryptedData = await decryptData(encryptedDataPath, keyFilePath);
-    await sendAuthProof(decryptedData, collectorBaseUrl);
+	await sendAuthProof(decryptedData, collectorBaseUrl);
 }
