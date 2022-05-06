@@ -9,7 +9,8 @@ import {
 	ApiResponse,
 	ApiOkResponse,
 	ApiNotFoundResponse,
-	ApiInternalServerErrorResponse
+	ApiInternalServerErrorResponse,
+	ApiQuery
 } from '@nestjs/swagger';
 import { Identity } from './schemas/identity.schema';
 
@@ -19,13 +20,28 @@ export class IdentityController {
 	constructor(private identityService: IdentityService) {}
 
 	@Get()
+	@ApiQuery({
+		name: 'to',
+		description: 'The date to limit the search.',
+		type: Date
+	})
+	@ApiQuery({
+		name: 'from',
+		description: 'The starting date to filter the database.',
+		type: Date
+	})
+	@ApiQuery({
+		name: 'did',
+		description: 'The id of the device to receive the authentication proves.',
+		type: String
+	})
 	@ApiOkResponse({
 		description: 'Authentication prove read was successful',
 		schema: {
 			example: {
 				did: 'did:iota:12345',
-				from: '2022-01-27T13:04:18.559Z',
-				to: '2022-02-27T13:04:18.559Z'
+				timestamp: new Date('2022-02-27T13:04:18.559Z'),
+				signature: '3MrtMZZYmKUrB2jdsG4hwzD6yxAjo3uUrnNq44uVFWd6p8zvaRqhwvfQV5keGdJXV57HS7V9djWM5ZSm8dwY7FNH'
 			}
 		}
 	})
