@@ -1,6 +1,6 @@
 ## Description
 
-One-Shot-Device is a microservice that allows the creator to register and authenticate devices for the CityXChange. It uses Integration Services and IOTA SSI.
+One-Shot-Device is a microservice that allows the creator to register and authenticate devices for the CityXChange project. It leverages the APIs of the Integration Services to create identities of SLUs and create channels where measured data will be tracked.
 
 <p align="center">
   <img src="./assets/one-shot-microservice-diagram.png" alt="one-shot-device-microservice diagram"/>
@@ -73,7 +73,7 @@ Once it is done, follow these steps to create a channel and register the device:
    Now click on the `Authenticate via signed nonce` and in its Body tab change the value of "signedNonce" to the one that you have just signed with nonce-signer and send the GET request. The request returns a jwt token that you then store in the collection variables like with other values.
 
 3. In the `Channels` tab:
-   Click on the `Crate channel as manager` and copy the returned channel value into the `authorized_channel` value field in the collection variables - remember that to add the suffix `Bearer` in the variable value.
+   Click on the `Create channel as manager` and copy the returned channel value into the `authorized_channel` value field in the collection variables - remember that to add the suffix `Bearer` in the variable value.
 
 4. With the steps above, you can now create and update device status in the `One Shot Device Actions`:
 
