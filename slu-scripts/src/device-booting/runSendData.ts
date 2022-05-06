@@ -39,6 +39,6 @@ export function runSendData(
 	}
 }
 
-function execute() {
+export function execute() {
 	runSendData(keyFile!, inputEnc!, isApiKey!, isBaseUrl!, isAuthUrl!, sendDataInterval!, sensorData!, collectorBaseUrl!);
 }

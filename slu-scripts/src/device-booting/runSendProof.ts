@@ -30,6 +30,6 @@ export function runSendProof(
 	}
 }
 
-function execute() {
+export function execute() {
 	runSendProof(keyFile!, sendAuthInterval!, inputEnc!, collectorBaseUrl!);
 }
