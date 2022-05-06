@@ -2,8 +2,8 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SluDataDto } from './model/SluDataDto';
-import { SludataController } from './sludata.controller';
-import { SludataService } from './sludata.service';
+import { SluDataController } from './sludata.controller';
+import { SluDataService } from './sludata.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { IdentitySchema } from '../identity/schemas/identity.schema';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
@@ -12,11 +12,11 @@ import { IdentityModule } from '../identity/identity.module';
 import { Response } from 'express';
 
 describe('SludataController', () => {
-	let controller: SludataController;
+	let controller: SluDataController;
 	let sluDataBody: SluDataDto;
 	let mongod: MongoMemoryServer;
 	let connection: Connection;
-	let sludataService: SludataService;
+	let sludataService: SluDataService;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -35,13 +35,13 @@ describe('SludataController', () => {
 				}),
 				MongooseModule.forFeature([{ name: 'Identity', schema: IdentitySchema }])
 			],
-			controllers: [SludataController],
-			providers: [SludataService]
+			controllers: [SluDataController],
+			providers: [SluDataService]
 		}).compile();
 
-		controller = module.get<SludataController>(SludataController);
+		controller = module.get<SluDataController>(SluDataController);
 		connection = module.get<Connection>(getConnectionToken());
-		sludataService = module.get<SludataService>(SludataService);
+		sludataService = module.get<SluDataService>(SluDataService);
 
 		sluDataBody = {
 			payload: { temperature: '60 degress' },

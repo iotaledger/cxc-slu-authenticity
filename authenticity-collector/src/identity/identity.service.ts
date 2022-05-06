@@ -28,7 +28,7 @@ export class IdentityService {
 		);
 		if (response.data.success === true && response.data.isVerified) {
 			try {
-				let model = await new this.identityModel(identity).save();
+				const model = await new this.identityModel(identity).save();
 				return model.toObject();
 			} catch (ex: any) {
 				this.logger.error('Failed saving identity in database');

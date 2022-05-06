@@ -3,7 +3,7 @@ import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common';
 
 @Injectable()
 export class SluAuthorizationMiddleware implements NestMiddleware {
-	constructor(@Inject('IdentityClient') private identityClient: IdentityClient) { }
+	constructor(@Inject('IdentityClient') private identityClient: IdentityClient) {}
 
 	async use(req: any, res: any, next: () => void) {
 		const { authorization } = req.headers;
