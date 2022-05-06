@@ -7,7 +7,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { SluStatus, SluStatusSchema } from '../src/slu-status/schema/slu-status.schema';
 import { Model, Connection } from 'mongoose';
 import { Status } from '../src/slu-status/model/Status';
-import { SluStatusDto } from '../src/slu-status/model/SluStatusDto';
+import { SluStatusDto } from '../src/slu-status/model/slu-status.dto';
 import { SluNonce, SluNonceSchema } from '../src/slu-nonce/schema/slu-nonce.schema';
 import { EmptyLogger } from './empty-logger';
 
