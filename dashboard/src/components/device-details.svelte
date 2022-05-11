@@ -41,7 +41,7 @@
 			<Icon size={32} boxed boxColor={BoxColor.Transparent} type="person-badge" />
 			<div class="ms-4 me-4">
 				<div>
-					<div class="fw-bold text-break">{device?.id}</div>
+					<div class="fw-bold text-break">{device?.name}</div>
 					<div class="pills">
 						{#if status}
 							<Badge pill color="primary">{status}</Badge>
@@ -62,11 +62,25 @@
 			</div>
 		</div>
 	{/if}
+	{#if device.id}
+	<div class="bg-light rounded px-4 pt-3 pb-4">
+		<div class="text-primary">Related device id</div>
+		<div class="text-break">
+			{device.id}
+		</div>
+	</div>
+	{/if}
 	{#if device.channelAddress}
 		<div class="bg-light rounded px-4 pt-3 pb-4">
 			<div class="text-primary">Related channel address</div>
 			<div class="text-break">
 				{device.channelAddress}
+			</div>
+		</div>
+		<div class="bg-light rounded px-4 pt-3 pb-4">
+			<div class="text-primary">Related channel name</div>
+			<div class="text-break">
+				channel-{device.name}
 			</div>
 		</div>
 	{/if}

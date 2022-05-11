@@ -36,8 +36,8 @@ export class DeviceRegistrationService {
 		}
 	};
 
-	private async createIdentity() {
-		const deviceIdentity = await this.identityClient.create('my-device' + Math.ceil(Math.random() * 1000));
+	private async createIdentity(deviceName: string) {
+		const deviceIdentity = await this.identityClient.create(deviceName);
 
 		if (deviceIdentity === null) {
 			this.logger.error('Failed to create identity for your device');
@@ -108,12 +108,12 @@ export class DeviceRegistrationService {
 		await firstValueFrom(this.httpService.post(`${sluStatusEndpoint}/slu-nonce`, body, this.requestConfig));
 	}
 
-	async createIdentityAndSubscribe(channelAddress: string, creator: string) {
+	async createIdentityAndSubscribe(channelAddress: string, creator: string, deviceName: string) {
 		const nonce = uuidv4();
-		const deviceIdentity = await this.createIdentity();
+		const deviceIdentity = await this.createIdentity(deviceName);
 		const {
 			doc: { id },
-			key
+			key,
 		} = deviceIdentity;
 		const { secret } = key;
 
@@ -138,7 +138,7 @@ export class DeviceRegistrationService {
 
 		await this.saveSluNonce(id, nonce, creator);
 
-		await this.creatorDevicesService.saveCreatorDevice({ id: id, channelAddress: channelAddress, creator: creator })
+		await this.creatorDevicesService.saveCreatorDevice({ id: id, channelAddress: channelAddress, creator: creator, name: deviceName })
 
 		return { nonce, channelAddress, id };
 	}

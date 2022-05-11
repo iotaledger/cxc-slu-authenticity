@@ -47,16 +47,16 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
     }
 }
 
-export async function createDevice(): Promise<void> {
+export async function createDevice(deviceName: string): Promise<void> {
     try {
         // Create a channel
         // Timeout to see progress bar animation (from 0 to 0.33)
         setTimeout(() => deviceCreationProgress.set(0.33), 100)
-        const channel = await createChannel([{ type: 'cxc', source: 'cxc' }]);
+        const channel = await createChannel(`channel-${deviceName}`,'',[{ type: 'cxc', source: 'cxc' }]);
         // Create a device
         if (channel) {
             deviceCreationProgress.set(0.66)
-            const deviceResponse = await fetch(`${SLU_API_BASE_URL}/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
+            const deviceResponse = await fetch(`${SLU_API_BASE_URL}/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}/${deviceName}`, {
                 method: 'POST',
             })
             const device = await deviceResponse.json()
