@@ -9,21 +9,21 @@ import { IdentityService } from '../identity/identity.service';
 import { Identity } from '../identity/schemas/identity.schema';
 
 @Injectable()
-export class SludataService {
-	constructor(private configService: ConfigService, private httpService: HttpService, private identitiyService: IdentityService) {}
+export class SluDataService {
+	constructor(private configService: ConfigService, private httpService: HttpService, private identityService: IdentityService) {}
 
 	async checkAuthProve(id: string): Promise<boolean> {
 		const expirationTime = this.configService.get('AUTH_PROVE_EXPIRATION');
 		const from = new Date();
 		from.setMilliseconds(from.getMilliseconds() - expirationTime);
-		const identities: Identity[] = await this.identitiyService.getAuthProves(id, from, new Date());
+		const identities: Identity[] = await this.identityService.getAuthProves(id, from, new Date());
 		if (identities.length === 0) return false;
 		return true;
 	}
 
 	async sendDataToConnector(data: SluDataDto): Promise<void> {
-		const mpowerUrl = this.configService.get<string>('MPOWER_CONNECTOR_URL');
-		await firstValueFrom(this.httpService.post(mpowerUrl, data));
+		const mPowerUrl = this.configService.get<string>('MPOWER_CONNECTOR_URL');
+		await firstValueFrom(this.httpService.post(mPowerUrl, data));
 	}
 
 	async writeDataToChannel(data: SluDataDto): Promise<ChannelData> {

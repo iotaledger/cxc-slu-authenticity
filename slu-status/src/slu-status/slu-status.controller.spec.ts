@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SluStatusDto } from './model/SluStatusDto';
+import { SluStatusDto } from './model/slu-status.dto';
 import { SluStatus, SluStatusDocument, SluStatusSchema } from './schema/slu-status.schema';
 import { SluStatusController } from './slu-status.controller';
 import { SluStatusService } from './slu-status.service';

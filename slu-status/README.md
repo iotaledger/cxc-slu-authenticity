@@ -1,73 +1,58 @@
+## Slu-Status Microservice
+
+The slu-status microservice stores the status and nonce of devices. 
+Currently one device can have two different statuses: "created" and "installed". When a device is created by the creator the status is automatically set to "created" by the one-shot-device microservice and is changed to "installed" when the bootstrap script has run. 
+The nonce is also set by the one-shot-device microservice when one device is created.
+
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <img src="https://github.com/iotaledger/cxc-slu-authenticity/blob/68-api-reference-slu-status/slu-status/diagrams/slu-status.png" alt="slu-status diagram"/>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+The functionalities of each module is provided in this image:
+
+<p align="center">
+  <img src="https://github.com/iotaledger/cxc-slu-authenticity/blob/68-api-reference-slu-status/slu-status/diagrams/slu-status-module.png" alt="slu-status modules diagram"/>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Local Setup
 
-## Installation
+# Download the project
 
-```bash
-$ npm install
+1. Clone the project:
+````
+git clone https://github.com/iotaledger/cxc-slu-authenticity.git
+````
+
+2. Go to the slu-status directory:
+```
+cd slu-status
 ```
 
-## Running the app
+3. Create an .env file where you provide for example the following variables:
+````
+API_KEY=2b3fe07d-b7db-49cb-8300-d32139e3d435
+DATABASE_URL=mongodb://root:rootpassword@mongo:27017
+DATABASE_NAME=slu-status
+PORT:3000
+````
 
-```bash
-# development
-$ npm run start
+If the endpoints are tested manually provide one header "X-API-KEY" with the API-KEY value of the .env file.
 
-# watch mode
-$ npm run start:dev
+4. Install and build the project:
+````
+npm install
+npm run build
+````
 
-# production mode
-$ npm run start:prod
-```
+5. Run the service:
+````
+npm run start
+````
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+6. For the swagger docs call the endpoint:
+````
+/api/v1/status-docs
+````

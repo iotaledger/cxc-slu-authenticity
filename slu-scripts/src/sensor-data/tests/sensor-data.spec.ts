@@ -4,6 +4,7 @@ import { ChannelClient, ChannelData } from '@iota/is-client';
 import * as AuthProof from '../../auth-proof/auth-proof';
 import fs from 'fs';
 import axios from 'axios';
+import { setSensorData } from '../configuration';
 
 jest.mock('axios');
 
@@ -15,15 +16,16 @@ const collectorBaseUrl: string | undefined = process.env.npm_config_collector_ba
 const isApiKey: string | undefined = process.env.npm_config_is_api_key;
 const isBaseUrl: string | undefined = process.env.npm_config_is_base_url;
 const isAuthUrl: string | undefined = process.env.npm_config_is_auth_url;
+const sensorDataPath: string | undefined = process.env.npm_config_sensor_data;
 
 describe('Send sensor data tests', () => {
-	beforeAll(() => {
+	beforeEach(() => {
 		encryptData(keyFilePath, inputData, destination);
 	});
 
 	it('should fail to send data: env variable not provided', async () => {
 		try {
-			await sendData(encryptedDataPath, keyFilePath, '', isApiKey, isBaseUrl, { temperature: '60 degrees' }, isAuthUrl);
+			await sendData(encryptedDataPath, keyFilePath, '', isApiKey, isBaseUrl, sensorDataPath, isAuthUrl);
 		} catch (ex: any) {
 			expect(ex.message).toBe(
 				'One or all of the env variables are not provided: --input_enc, --key_file, --is_api_key, --is_base_url, --collector_data_url, --collector_url, --is_url'
@@ -31,8 +33,49 @@ describe('Send sensor data tests', () => {
 		}
 	});
 
+	it('should fail to send data: sensor data path not provided', async () => {
+		try {
+			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, '', isAuthUrl);
+		} catch (ex: any) {
+			expect(ex.message).toBe('--sensor_data was not provided');
+		}
+	});
+
+	it('should return without sending because data has not changed', async () => {
+		const sensorDataJson = fs.readFileSync(sensorDataPath!, 'utf-8');
+		const sensorData = JSON.parse(sensorDataJson);
+
+		setSensorData(sensorData);
+
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, sensorDataPath, isAuthUrl);
+
+		expect(response).toBe(undefined);
+		expect(axios.post).not.toBeCalled();
+	});
+
+	it('should throw error because wrong data format', async () => {
+		const sensorDataJson = fs.writeFileSync('./test-data/dummydata.json', 'temperature: 190 degrees');
+
+		const response = sendData(
+			encryptedDataPath,
+			keyFilePath,
+			isApiKey,
+			isBaseUrl,
+			collectorBaseUrl,
+			'./test-data/dummydata.json',
+			isAuthUrl
+		);
+
+		expect(response).rejects.toThrowError('Could not parse sensor data, please provide an object as a string or check path to the data');
+		expect(axios.post).not.toBeCalled();
+
+		fs.rmSync('./test-data/dummydata.json');
+	});
+
 	it('should send data', async () => {
-		const payloadData = JSON.parse('{"temperature": "100 degree"}');
+		setSensorData({});
+		const sensorDataJson = fs.readFileSync(sensorDataPath!, 'utf-8');
+		const sensorData = JSON.parse(sensorDataJson);
 		const dataString = fs.readFileSync(inputData!, 'utf-8');
 		const data = JSON.parse(dataString);
 		const channelData: ChannelData = {
@@ -55,15 +98,17 @@ describe('Send sensor data tests', () => {
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, sensorDataPath, isAuthUrl);
 
 		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
-		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
+		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: sensorData });
 		expect(response).toBe(channelData);
 	});
 
 	it('should send data with retry: auth prove expired', async () => {
-		const payloadData = JSON.parse('{"temperature": "100 degree"}');
+		setSensorData({});
+		const sensorDataJson = fs.readFileSync(sensorDataPath!, 'utf-8');
+		const sensorData = JSON.parse(sensorDataJson);
 		const dataString = fs.readFileSync(inputData!, 'utf-8');
 		const data = JSON.parse(dataString);
 		const channelData: ChannelData = {
@@ -86,17 +131,16 @@ describe('Send sensor data tests', () => {
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 		const sendAuthProveSpy = jest.spyOn(AuthProof, 'sendAuthProof');
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, sensorDataPath, isAuthUrl);
 
 		expect(sendAuthProveSpy).toBeCalled();
 		expect(authenticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
-		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
+		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: sensorData });
 		expect(response).toBe(channelData);
 	});
 
 	it('should fail to send data: nonce !== 40', async () => {
-		const payloadData = JSON.parse('{"temperature": "100 degree"}');
-
+		setSensorData({});
 		const postResp = {
 			data: {},
 			headers: {},
@@ -117,7 +161,7 @@ describe('Send sensor data tests', () => {
 		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
-			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
+			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, sensorDataPath, isAuthUrl);
 		} catch (ex: any) {
 			expect(axios.post).toHaveBeenCalledTimes(1);
 			expect(axios.get).toHaveBeenCalled();
@@ -126,7 +170,9 @@ describe('Send sensor data tests', () => {
 	});
 
 	it('should send data with retry: jwt expired', async () => {
-		const payloadData = JSON.parse('{"temperature": "100 degree"}');
+		setSensorData({});
+		const sensorDataJson = fs.readFileSync(sensorDataPath!, 'utf-8');
+		const sensorData = JSON.parse(sensorDataJson);
 		const dataString = fs.readFileSync(inputData!, 'utf-8');
 		const data = JSON.parse(dataString);
 		const channelData: ChannelData = {
@@ -164,18 +210,17 @@ describe('Send sensor data tests', () => {
 		const autheticateSpy = jest.spyOn(ChannelClient.prototype, 'authenticate').mockResolvedValue();
 		const writeSpy = jest.spyOn(ChannelClient.prototype, 'write').mockResolvedValue(channelData);
 
-		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
+		const response = await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, sensorDataPath, isAuthUrl);
 
 		expect(axios.post).toHaveBeenCalledTimes(3);
 		expect(axios.get).toHaveBeenCalled();
 		expect(autheticateSpy).toHaveBeenCalledWith(data.identityKey.id, data.identityKey.key.secret);
-		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: payloadData });
+		expect(writeSpy).toHaveBeenCalledWith(data.channelAddress, { payload: sensorData });
 		expect(response).toBe(channelData);
 	});
 
 	it('should fail to send data: internal server error', async () => {
-		const payloadData = JSON.parse('{"temperature": "100 degree"}');
-
+		setSensorData({});
 		const postResp = {
 			data: {},
 			headers: {},
@@ -187,14 +232,14 @@ describe('Send sensor data tests', () => {
 		axios.post = jest.fn().mockRejectedValueOnce({ response: postResp });
 
 		try {
-			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, payloadData, isAuthUrl);
+			await sendData(encryptedDataPath, keyFilePath, isApiKey, isBaseUrl, collectorBaseUrl, sensorDataPath, isAuthUrl);
 		} catch (ex: any) {
 			expect(axios.post).toHaveBeenCalled();
 			expect(ex.response).toBe(postResp);
 		}
 	});
 
-	afterAll(() => {
+	afterEach(() => {
 		fs.rmSync(destination! + '/data.json.enc');
 	});
 });

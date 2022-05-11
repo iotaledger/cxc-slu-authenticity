@@ -2,7 +2,7 @@ import { HttpModule, HttpService } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChannelClient, ChannelData } from '@iota/is-client';
-import { SludataService } from './sludata.service';
+import { SluDataService } from './sludata.service';
 import * as crypto from 'crypto';
 import { IdentityModule } from '../identity/identity.module';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -13,7 +13,7 @@ import { IdentityService } from '../identity/identity.service';
 import { of } from 'rxjs';
 
 describe('SludataService', () => {
-	let service: SludataService;
+	let service: SluDataService;
 	let httpService: HttpService;
 	let mongod: MongoMemoryServer;
 	let connection: Connection;
@@ -36,10 +36,10 @@ describe('SludataService', () => {
 				}),
 				MongooseModule.forFeature([{ name: 'Identity', schema: IdentitySchema }])
 			],
-			providers: [SludataService]
+			providers: [SluDataService]
 		}).compile();
 
-		service = module.get<SludataService>(SludataService);
+		service = module.get<SluDataService>(SluDataService);
 		httpService = module.get<HttpService>(HttpService);
 		connection = module.get<Connection>(getConnectionToken());
 		identityService = module.get<IdentityService>(IdentityService);

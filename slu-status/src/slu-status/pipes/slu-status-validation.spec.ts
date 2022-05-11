@@ -1,5 +1,5 @@
 import { ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { SluStatusDto } from '../model/SluStatusDto';
+import { SluStatusDto } from '../model/slu-status.dto';
 import { Status } from '../model/Status';
 import { SluStatusValidationPipe } from './slu-status-validation.pipe';
 

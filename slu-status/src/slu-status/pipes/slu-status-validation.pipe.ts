@@ -1,7 +1,7 @@
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { SluStatusDto } from '../model/SluStatusDto';
+import { SluStatusDto } from '../model/slu-status.dto';
 import { Status } from '../model/Status';
 
 @Injectable()
