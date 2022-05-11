@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDevice, getDevices} from '$lib';
+	import { createDevice, getDevices, getStatuses} from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -42,7 +42,7 @@
 	$: message = 'No devices found';
 	$: query, onSearch();
 	$: tableData = {
-		headings: ['Device Name', 'Related channel'],
+		headings: ['Device Name', 'Related channel', 'Status'],
 		rows: searchResults.map((device) => ({
 			onClick: () => handleSelectDevice(device),
 			content: [
@@ -53,6 +53,9 @@
 				},
 				{
 					value: `channel-${device.name}` ?? '-'
+				},
+				{
+					value: device.status ?? '-'
 				}
 			]
 		}))
@@ -64,6 +67,10 @@
 
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
+		const devicesWithStatus = await getStatuses(devices);
+		if(devicesWithStatus.lenght === devices.length){
+			devices = devices.flatMap((device, i) => [{...device, status: devicesWithStatus[i].status}]);
+		}
 		searchResults = devices;
 	}
 

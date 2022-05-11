@@ -3,4 +3,5 @@ export interface Device {
     nonce?: string;
     name?: string;
     channelAddress?: string;
+    status?: string;
 }

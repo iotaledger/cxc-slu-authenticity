@@ -47,6 +47,30 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
     }
 }
 
+export async function getStatuses(devices: Device[]): Promise<any>{
+    const deviceIds: string[] = devices.map((device) => device.id);
+    try {
+        const response = await fetch(`${SLU_API_BASE_URL}/status/statuses`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-API-KEY': import.meta.env.VITE_SLU_STATUS_API_KEY,
+            },
+            body: JSON.stringify({id: deviceIds})         
+        })
+        return await response.json();
+    }
+    catch (e) {
+        showNotification({
+            type: NotificationType.Error,
+            message: "The request for the statuses failed",
+        })
+        console.error(Error, e);
+        return "-"
+    }
+
+}
+
 export async function createDevice(deviceName: string): Promise<void> {
     try {
         // Create a channel
