@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDevice, getDevices, getStatuses} from '$lib';
+	import { createDevice, getDevices, getStatuses } from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -15,7 +15,7 @@
 
 	enum State {
 		ListDevices = 'listDevices',
-		DeviceDetails = 'deviceDetails',
+		DeviceDetails = 'deviceDetails'
 	}
 
 	let loading: boolean = false;
@@ -31,7 +31,7 @@
 	let isOpen = false;
 
 	$: createDeviceButton = {
-		onClick: () => isOpen = true,
+		onClick: () => (isOpen = true),
 		icon: 'plus',
 		color: 'dark',
 		label: loading ? 'Creating device...' : 'Create device',
@@ -67,10 +67,8 @@
 
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
-		const devicesWithStatus = await getStatuses(devices);
-		if(devicesWithStatus.lenght === devices.length){
-			devices = devices.flatMap((device, i) => [{...device, status: devicesWithStatus[i].status}]);
-		}
+		const devicesWithStatus  = await getStatuses(devices);
+		devices = devices.flatMap((device, i) => [{ ...device, status: devicesWithStatus[i].status }]);
 		searchResults = devices;
 	}
 
@@ -116,7 +114,7 @@
 			actionButtons={[createDeviceButton]}
 			bind:searchQuery={query}
 		/>
-		<DeviceName {isOpen} bind:value={deviceName} onClick={() => handleCreateDevice()}></DeviceName>
+		<DeviceName {isOpen} bind:value={deviceName} onClick={() => handleCreateDevice()} />
 		{#if loading}
 			<div class="progressbar-wrapper">
 				<ProgressBar progress={$deviceCreationProgress} />
