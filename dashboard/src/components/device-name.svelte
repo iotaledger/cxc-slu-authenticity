@@ -8,7 +8,7 @@
 
 
 <div class="w-100">
-    <Modal {isOpen}  {toggle}>
+    <Modal {isOpen} backdrop={false} {toggle}>
         <ModalHeader class="px-4 pt-3" {toggle}>Device Name</ModalHeader>
         <ModalBody class="px-4 pb-4">
             <Input bsSize="lg" bind:value placeholder="Device Name"/>
