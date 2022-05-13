@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDevice, getDevices} from '$lib';
+	import { createChannelForDevice, createDevice, getDevices} from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -52,7 +52,7 @@
 					value: device.name ?? '-'
 				},
 				{
-					value: `channel-${device.name}` ?? '-'
+					value: device.channelName ?? '-'
 				}
 			]
 		}))
@@ -82,7 +82,8 @@
 	async function handleCreateDevice(): Promise<void> {
 		isOpen = false;
 		loading = true;
-		await createDevice(deviceName);
+		const channel = await createChannelForDevice('channel-'+ deviceName);
+		await createDevice(deviceName, channel);
 		await loadDevices();
 		loading = false;
 	}

@@ -77,10 +77,12 @@
 				{device.channelAddress}
 			</div>
 		</div>
+	{/if}	
+	{#if device.channelName}	
 		<div class="bg-light rounded px-4 pt-3 pb-4">
 			<div class="text-primary">Related channel name</div>
 			<div class="text-break">
-				channel-{device.name}
+				{device.channelName}
 			</div>
 		</div>
 	{/if}

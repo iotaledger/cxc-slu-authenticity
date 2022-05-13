@@ -47,12 +47,15 @@ export async function getDevices(creatorId: string): Promise<Device[]> {
     }
 }
 
-export async function createDevice(deviceName: string): Promise<void> {
+export async function createChannelForDevice(channelName: string): Promise<any>{
+    return await createChannel(channelName,'',[{ type: 'cxc', source: 'cxc' }]);
+}
+
+export async function createDevice(deviceName: string, channel: any): Promise<void> {
     try {
         // Create a channel
         // Timeout to see progress bar animation (from 0 to 0.33)
         setTimeout(() => deviceCreationProgress.set(0.33), 100)
-        const channel = await createChannel(`channel-${deviceName}`,'',[{ type: 'cxc', source: 'cxc' }]);
         // Create a device
         if (channel) {
             deviceCreationProgress.set(0.66)

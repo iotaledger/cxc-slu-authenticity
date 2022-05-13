@@ -138,7 +138,8 @@ export class DeviceRegistrationService {
 
 		await this.saveSluNonce(id, nonce, creator);
 
-		await this.creatorDevicesService.saveCreatorDevice({ id: id, channelAddress: channelAddress, creator: creator, name: deviceName })
+		const channelInfo = await this.userClient.info(channelAddress);
+		await this.creatorDevicesService.saveCreatorDevice({ id: id, channelAddress: channelAddress, creator: creator, name: deviceName, channelName: channelInfo.name })
 
 		return { nonce, channelAddress, id };
 	}
