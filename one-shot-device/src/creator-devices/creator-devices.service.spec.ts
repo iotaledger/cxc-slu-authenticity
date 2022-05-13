@@ -36,7 +36,8 @@ describe('CreatorDevicesService', () => {
       id: 'did:iota:12345',
       channelAddress: 'nn32j02h3onfr203',
       creator: 'did:iota:54321',
-      name: 'test-name'
+      name: 'test-name',
+      channelName: 'channel-test-name'
     };
 
   });
@@ -66,13 +67,15 @@ describe('CreatorDevicesService', () => {
       id: 'did:iota:123456',
       channelAddress: 'nn32j02h3onfr203',
       creator: 'did:iota:54321',
-      name: 'test-name-2'
+      name: 'test-name-2',
+      channelName: 'channel-test-name-2'
     };
     const creatorDevice3 = {
       id: 'did:iota:123457',
       channelAddress: 'nn32j02h3onfr203',
       creator: 'did:iota:54322',
-      name: 'test-name-3'
+      name: 'test-name-3',
+      channelName: 'channel-test-name-3'
     };
     const device1 = (await new creatorDevicesModel(creatorDevice).save()).toObject();
     const device2 = (await new creatorDevicesModel(creatorDevice2).save()).toObject();

@@ -4,4 +4,5 @@ export interface Device {
     name?: string;
     channelAddress?: string;
     status?: string;
+    channelName?: string;
 }

@@ -15,7 +15,10 @@ export class CreatorDevice {
 	creator: string;
 
 	@Prop({required: true})
-	name: string
+	name: string;
+
+	@Prop({required: true})
+	channelName: string;
 }
 
 export const CreatorDeviceSchema = SchemaFactory.createForClass(CreatorDevice);
