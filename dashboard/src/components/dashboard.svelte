@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createChannelForDevice, createDevice, getDevices} from '$lib';
+	import { createDevice, getDevices} from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -82,8 +82,7 @@
 	async function handleCreateDevice(): Promise<void> {
 		isOpen = false;
 		loading = true;
-		const channel = await createChannelForDevice('channel-'+ deviceName);
-		await createDevice(deviceName, channel);
+		await createDevice(deviceName);
 		await loadDevices();
 		loading = false;
 	}
