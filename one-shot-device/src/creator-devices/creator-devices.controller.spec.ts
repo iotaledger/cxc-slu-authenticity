@@ -43,7 +43,8 @@ describe('CreatorDevicesController', () => {
       id: 'did:iota:12345',
       channelAddress: 'nn32j02h3onfr203',
       creator: 'did:iota:54321',
-      name: 'test-name'
+      name: 'test-name',
+      channelName: 'channel-test-name'
     }];
 
     const creatorDevicesServiceSpy = jest.spyOn(creatorDevicesService, 'getAllDevices').mockResolvedValue(creatorDevices);

@@ -77,7 +77,8 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
@@ -102,7 +103,8 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
@@ -124,7 +126,8 @@ describe('DeviceRegistrationController', () => {
 				authenticate: () => {
 					identityMock.doc.id, identityMock.key.secret;
 				},
-				requestSubscription: () => null
+				requestSubscription: () => null,
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
@@ -149,7 +152,8 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
@@ -178,7 +182,8 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
@@ -203,7 +208,8 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
@@ -234,7 +240,8 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
@@ -262,7 +269,8 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
