@@ -56,8 +56,12 @@ export async function createDevice(deviceName: string): Promise<void> {
         // Create a device
         if (channel) {
             deviceCreationProgress.set(0.66)
-            const deviceResponse = await fetch(`${SLU_API_BASE_URL}/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}/${deviceName}`, {
+            const deviceResponse = await fetch(`http://localhost:3010/api/v1/one-shot-device/create/${channel?.channelAddress}/${get(authenticationData)?.did}`, {
+                body: JSON.stringify({ name: deviceName }),
                 method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                }
             })
             const device = await deviceResponse.json()
             // Authorize device to created channel

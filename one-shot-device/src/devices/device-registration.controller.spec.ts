@@ -76,7 +76,9 @@ describe('DeviceRegistrationController', () => {
 
 	it('should save nonce, channel and device identity to MongoDb', async () => {
 		const creator = 'did:iota:12345';
-		const deviceName = 'test-name';
+		const deviceName = {
+			name: 'test-name'
+		};
 		jest
 			.spyOn(deviceRegistrationService, 'createIdentityAndSubscribe')
 			.mockResolvedValue({ nonce: nonceMock, id: 'did:iota:123', channelAddress: authorizedChannelMock });

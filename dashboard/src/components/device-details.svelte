@@ -91,7 +91,7 @@
 		{subscriptions}
 		channel={{ topics: [], name: '', channelAddress: '', authorId: $authenticationData?.did }}
 	/>
-	<div class="pt-4 text-break">
+	<div class="pt-1 text-break pb-5">
 		<h5>Messages</h5>
 		<ChannelMessages channelData={$selectedChannelData} />
 	</div>
