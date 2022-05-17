@@ -1,11 +1,11 @@
-import { Controller, Get, Param, Post, Logger } from '@nestjs/common';
+import { Controller, Get, Param, Post, Logger, Body } from '@nestjs/common';
 import { DeviceRegistrationService } from './device-registration.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiOkResponse, ApiNotFoundResponse, ApiInternalServerErrorResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiOkResponse, ApiNotFoundResponse, ApiInternalServerErrorResponse, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('one-shot-device')
 @Controller('/api/v1/one-shot-device')
 export class DeviceRegistrationController {
-	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) {}
+	constructor(private readonly deviceRegistrationService: DeviceRegistrationService) { }
 	private readonly logger: Logger = new Logger(DeviceRegistrationController.name);
 
 	@Post('/create/:channelAddress/:creator')
@@ -17,10 +17,22 @@ export class DeviceRegistrationController {
 	@ApiInternalServerErrorResponse({
 		description: 'Internal server error'
 	})
+	@ApiBody({
+		type: String,
+		required: false,
+		examples: {
+			devices: {
+				description: 'For creating one device with a name.',
+				value: {
+					name: 'device-name'
+				}
+			}
+		}
+	})
 	@ApiOperation({ summary: 'Create a channel as manager' })
-	async createAndSubscribe(@Param('channelAddress') channelAddress: string, @Param('creator') creator: string) {
+	async createAndSubscribe(@Param('channelAddress') channelAddress: string, @Param('creator') creator: string, @Body() body: { name?: string }) {
 		try {
-			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress, creator);
+			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress, creator, body?.name);
 			return {
 				success: true,
 				...nonce

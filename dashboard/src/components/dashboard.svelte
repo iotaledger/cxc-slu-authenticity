@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDevice, getDevices } from '$lib';
+	import { createDevice, getDevices} from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -11,11 +11,11 @@
 	} from '@iota/is-ui-components';
 	import { onMount } from 'svelte';
 	import { Container, Row } from 'sveltestrap';
-	import { DeviceDetails, ProgressBar } from '../components';
+	import { DeviceDetails, ProgressBar, DeviceName } from '../components';
 
 	enum State {
 		ListDevices = 'listDevices',
-		DeviceDetails = 'deviceDetails'
+		DeviceDetails = 'deviceDetails',
 	}
 
 	let loading: boolean = false;
@@ -27,8 +27,11 @@
 	let devices: Device[] = [];
 	let createDeviceButton: ActionButton;
 
+	let deviceName = '';
+	let isOpen = false;
+
 	$: createDeviceButton = {
-		onClick: handleCreateDevice,
+		onClick: () => isOpen = true,
 		icon: 'plus',
 		color: 'dark',
 		label: loading ? 'Creating device...' : 'Create device',
@@ -39,17 +42,17 @@
 	$: message = 'No devices found';
 	$: query, onSearch();
 	$: tableData = {
-		headings: ['Device Id', 'Related channel'],
+		headings: ['Device Name', 'Related channel'],
 		rows: searchResults.map((device) => ({
 			onClick: () => handleSelectDevice(device),
 			content: [
 				{
 					icon: 'person-badge',
 					boxColor: 'transparent',
-					value: device.id ?? '-'
+					value: device.name ?? '-'
 				},
 				{
-					value: device.channelAddress ?? '-'
+					value: device.channelName ?? '-'
 				}
 			]
 		}))
@@ -77,8 +80,9 @@
 	}
 
 	async function handleCreateDevice(): Promise<void> {
+		isOpen = false;
 		loading = true;
-		await createDevice();
+		await createDevice(deviceName);
 		await loadDevices();
 		loading = false;
 	}
@@ -105,6 +109,7 @@
 			actionButtons={[createDeviceButton]}
 			bind:searchQuery={query}
 		/>
+		<DeviceName {isOpen} bind:value={deviceName} onClick={() => handleCreateDevice()}></DeviceName>
 		{#if loading}
 			<div class="progressbar-wrapper">
 				<ProgressBar progress={$deviceCreationProgress} />
