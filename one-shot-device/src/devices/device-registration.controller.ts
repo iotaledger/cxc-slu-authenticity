@@ -19,6 +19,7 @@ export class DeviceRegistrationController {
 	})
 	@ApiBody({
 		type: String,
+		required: false,
 		examples: {
 			devices: {
 				description: 'For creating one device with a name.',
@@ -29,9 +30,9 @@ export class DeviceRegistrationController {
 		}
 	})
 	@ApiOperation({ summary: 'Create a channel as manager' })
-	async createAndSubscribe(@Param('channelAddress') channelAddress: string, @Param('creator') creator: string, @Body() deviceName: { name: string }) {
+	async createAndSubscribe(@Param('channelAddress') channelAddress: string, @Param('creator') creator: string, @Body() body: { name?: string }) {
 		try {
-			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress, creator, deviceName.name);
+			const nonce = await this.deviceRegistrationService.createIdentityAndSubscribe(channelAddress, creator, body?.name);
 			return {
 				success: true,
 				...nonce
