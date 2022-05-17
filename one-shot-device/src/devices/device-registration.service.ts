@@ -36,7 +36,7 @@ export class DeviceRegistrationService {
 		}
 	};
 
-	private async createIdentity(deviceName: string) {
+	private async createIdentity(deviceName?: string) {
 		const deviceIdentity = await this.identityClient.create(deviceName);
 
 		if (deviceIdentity === null) {
@@ -108,7 +108,7 @@ export class DeviceRegistrationService {
 		await firstValueFrom(this.httpService.post(`${sluStatusEndpoint}/slu-nonce`, body, this.requestConfig));
 	}
 
-	async createIdentityAndSubscribe(channelAddress: string, creator: string, deviceName: string) {
+	async createIdentityAndSubscribe(channelAddress: string, creator: string, deviceName?: string) {
 		const nonce = uuidv4();
 		const deviceIdentity = await this.createIdentity(deviceName);
 		const {
