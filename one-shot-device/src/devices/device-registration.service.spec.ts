@@ -19,6 +19,7 @@ describe('DeviceRegistrationController', () => {
 	let mongod: MongoMemoryServer;
 	let connection: Connection;
 	const creator = 'did:iota:12345';
+	const deviceName = 'test-name';
 
 	const moduleCreator = async (identityClientMock: IdentityJson | any, subscriptionResponseMock: RequestSubscriptionResponse | any) => {
 		module = await Test.createTestingModule({
@@ -76,13 +77,14 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		const createSluStatusSpy = jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
 		const saveSluNonceSpy = jest.spyOn(deviceRegistrationService, 'saveSluNonce').mockResolvedValue(Promise.resolve());
-		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		expect(createSluStatusSpy).toHaveBeenCalled();
 		expect(saveSluNonceSpy).toHaveBeenCalled();
 	});
@@ -101,14 +103,15 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
 		jest.spyOn(deviceRegistrationService, 'saveSluNonce').mockResolvedValue(Promise.resolve());
-		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
-		const createMongoDocument = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
+		const createMongoDocument = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 
 		expect(createMongoDocument.nonce).not.toBeNull();
 		expect(createMongoDocument.nonce.length).toEqual(36);
@@ -123,12 +126,13 @@ describe('DeviceRegistrationController', () => {
 				authenticate: () => {
 					identityMock.doc.id, identityMock.key.secret;
 				},
-				requestSubscription: () => null
+				requestSubscription: () => null,
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		try {
-			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		} catch (err) {
 			expect(err.message).toBe('Could not subscribe your device to the channel.');
 		}
@@ -148,14 +152,15 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		let error: Error;
 
 		try {
-			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+			await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		} catch (err) {
 			error = err;
 		}
@@ -177,13 +182,14 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
 		jest.spyOn(deviceRegistrationService, 'saveSluNonce').mockResolvedValue(Promise.resolve());
-		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		const savedDevice = await deviceRegistrationModel.find({});
 		expect(savedDevice[0].channelAddress).toStrictEqual(authorizedChannelMock);
 	});
@@ -202,13 +208,14 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
 		jest.spyOn(deviceRegistrationService, 'saveSluNonce').mockResolvedValue(Promise.resolve());
-		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		await deviceRegistrationModel.find({});
 		jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
 
@@ -233,15 +240,16 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		const updateSluStatusSpy = jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
 		jest.spyOn(deviceRegistrationService, 'saveSluNonce').mockResolvedValue(Promise.resolve());
-		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
-		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
 
 		expect(updateSluStatusSpy).toHaveBeenCalled();
@@ -261,15 +269,16 @@ describe('DeviceRegistrationController', () => {
 						subscriptionLink: requestSubscription.subscriptionLink,
 						seed: requestSubscription.seed
 					};
-				}
+				},
+				info: () => {return {name: 'channelName'}}
 			}
 		);
 
 		jest.spyOn(deviceRegistrationService, 'createSluStatus').mockResolvedValue(Promise.resolve());
 		jest.spyOn(deviceRegistrationService, 'saveSluNonce').mockResolvedValue(Promise.resolve());
-		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		jest.spyOn(deviceRegistrationService, 'updateSluStatus').mockResolvedValue(Promise.resolve());
-		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator);
+		const registeredDevice = await deviceRegistrationService.createIdentityAndSubscribe(authorizedChannelMock, creator, deviceName);
 		const deleteDeviceResult = await deviceRegistrationService.getRegisteredDevice(registeredDevice.nonce);
 
 		expect(deleteDeviceResult.channelAddress).toEqual(registeredDevice.channelAddress);
