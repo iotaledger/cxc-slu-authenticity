@@ -24,6 +24,6 @@ The ssi-proof-of-ownership service proves the device identity by verifying his s
 
 ### slu-scripts:
 The slu-scripts folder includes several scripts which are run on the device and interact with the above mentioned services. </br>
-[Further informatiion about slu-scripts](slu-scripts/README.md)
+[Further information about slu-scripts](slu-scripts/README.md)
 
 
