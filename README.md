@@ -1,9 +1,8 @@
 # is-cxc-authenticity-collector
-CityXChange microservices are responsible to collect informations about authentic SLU devices.
-To do that the user get the possibility to create and to setup devices with the provided services:
+CityXChange microservices are responsible to setup and collect data about authentic SLU devices.
 
 dashboard:
-The dashboard provide a visual representation of the devices where the user and can see the created devices, the related addresses, names and the send data.
+The dashboard provide a visual representation of the devices where the user can see the created devices, the related addresses, names and sent data.
 Furthermore he can create other devices.
 [Further information about the dashboard](dashboard/README.md)
 
