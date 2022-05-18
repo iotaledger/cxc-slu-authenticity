@@ -53,6 +53,9 @@
 				},
 				{
 					value: device.channelName ?? '-'
+				},
+				{
+					value: device.status ?? '-'
 				}
 			]
 		}))

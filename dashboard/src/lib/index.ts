@@ -132,8 +132,8 @@ export async function isAuthenticDevice(deviceId: string): Promise<boolean> {
         const identityDetails = await searchIdentityByDID(deviceId)
         const registrationDateAndTime = identityDetails?.registrationDate
         // Only get date but no time
-        const registrationDate = registrationDateAndTime?.split('T')?.[0]
-        const today = new Date().toISOString().split('T')[0]
+        const registrationDate = registrationDateAndTime;
+        const today = new Date().toISOString();
 
         const isAuthenticResponse = await fetch(`${SLU_API_BASE_URL}/authenticity/prove?did=${deviceId}&from=${registrationDate}&to=${today}`, {
             headers: {
