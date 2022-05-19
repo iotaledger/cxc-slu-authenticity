@@ -85,12 +85,13 @@ npm run send-data
  --is_api_key: The api key of the integration services
  --is_base_url: The base url of the integration services
  --is_auth_url: The authentication url of the integration-services: is_base_url + /api/v0.1/authentication/prove-ownership.
+ --sensor_data: The json file with the sensor data of the device.
 ```
 
 Example:
 
 ```
-npm run send-data --key_file=./test-data/unclonable.txt --input_enc=./test-data/data.json.enc --interval=30000 --collector_base_url=https://cxc.is.iota.cafe/api/v1/authenticity --is_api_key=b85e51a2-9981-11ec-8770-4b8f01948e9b --is_base_url=https://demo-integration-services.iota.cafe --is_auth_url=https://demo-integration-services.iota.cafe/api/v0.1/authentication/prove-ownership
+npm run send-data --key_file=./test-data/unclonable.txt --input_enc=./test-data/data.json.enc --interval=30000 --collector_base_url=https://cxc.is.iota.cafe/api/v1/authenticity --is_api_key=b85e51a2-9981-11ec-8770-4b8f01948e9b --is_base_url=https://demo-integration-services.iota.cafe --is_auth_url=https://demo-integration-services.iota.cafe/api/v0.1/authentication/prove-ownership --sensor_data=./test-data/sensorData.json
 
 ```
 
