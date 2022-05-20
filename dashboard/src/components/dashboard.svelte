@@ -97,9 +97,6 @@
 	}
 
 	function onSearch() {
-		console.log("onSearch fired");
-		console.log("devices")
-		console.log("query: ", query);
 		if (query) {
 			if (query.includes('did:iota')) {
 				searchResults = devices.filter((d) => d.id?.includes(query));
