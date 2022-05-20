@@ -68,8 +68,21 @@
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
 		const devicesWithStatus  = await getStatuses(devices);
-		devices = devices.flatMap((device, i) => [{ ...device, status: devicesWithStatus[i].status }]);
+		devices = filterDevices(devices, devicesWithStatus);
 		searchResults = devices;
+	}
+
+	function filterDevices(devices: Device[], devicesWithStatus: Device[]): Device[]{
+		return devices.flatMap((device) => {
+			let status: string;
+			devicesWithStatus.forEach((statusDevice: Device, i: number) => {
+				if(device.id === statusDevice.id){
+					status = statusDevice.status;
+					delete devicesWithStatus[i];
+				}
+			})
+			return [{ ...device, status }]
+		});
 	}
 
 	function updateState(): void {
