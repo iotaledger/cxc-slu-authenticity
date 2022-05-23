@@ -28,10 +28,10 @@
 	let createDeviceButton: ActionButton;
 
 	let deviceName = '';
-	let isOpen = false;
+	let isDeviceNameDialogOpen = false;
 
 	$: createDeviceButton = {
-		onClick: () => (isOpen = true),
+		onClick: () => (isDeviceNameDialogOpen = true),
 		icon: 'plus',
 		color: 'dark',
 		label: loading ? 'Creating device...' : 'Create device',
@@ -85,11 +85,12 @@
 	}
 
 	async function handleCreateDevice(): Promise<void> {
-		isOpen = false;
+		isDeviceNameDialogOpen = false;
 		loading = true;
 		await createDevice(deviceName);
 		await loadDevices();
 		loading = false;
+		deviceName = '';
 	}
 
 	function handleBackClick(): void {
@@ -114,7 +115,7 @@
 			actionButtons={[createDeviceButton]}
 			bind:searchQuery={query}
 		/>
-		<DeviceName {isOpen} bind:value={deviceName} onClick={() => handleCreateDevice()} />
+		<DeviceName bind:isOpen={isDeviceNameDialogOpen} bind:value={deviceName} onClick={() => handleCreateDevice()} />
 		{#if loading}
 			<div class="progressbar-wrapper">
 				<ProgressBar progress={$deviceCreationProgress} />
