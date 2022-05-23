@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDevice, getDevices, getStatuses} from '$lib';
+	import { createDevice, getDevices, getStatuses } from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -67,21 +67,16 @@
 
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
-		const devicesWithStatus  = await getStatuses(devices);
-		devices = filterDevices(devices, devicesWithStatus);
+		const devicesWithStatus = await getStatuses(devices);
+		addStatusToDevices(devices, devicesWithStatus);
 		searchResults = devices;
 	}
 
-	function filterDevices(devices: Device[], devicesWithStatus: Device[]): Device[]{
-		return devices.flatMap((device) => {
-			let status: string;
-			devicesWithStatus.forEach((statusDevice: Device, i: number) => {
-				if(device.id === statusDevice.id){
-					status = statusDevice.status;
-					delete devicesWithStatus[i];
-				}
-			})
-			return [{ ...device, status }]
+	function addStatusToDevices(devices: Device[], devicesWithStatus: Device[]) {
+		devices.map((device) => {
+			devicesWithStatus
+				.filter((statusDevice) => statusDevice.id === device.id)
+				.map((statusDevice) => device.status = statusDevice.status);
 		});
 	}
 
