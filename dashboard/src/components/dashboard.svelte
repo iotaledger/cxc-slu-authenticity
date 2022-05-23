@@ -96,8 +96,6 @@
 		selectedDevice = null;
 	}
 
-	// if (query?.includes('did:iota'))
-
 	function onSearch() {
 			if (query?.includes('did:iota')) {
 				searchResults = devices.filter((d) => d.id?.includes(query));
