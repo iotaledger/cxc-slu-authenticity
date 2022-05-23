@@ -90,9 +90,12 @@ export async function createDevice(deviceName?: string): Promise<void> {
             const device = await deviceResponse.json()
             // Authorize device to created channel
             if (device) {
-                deviceCreationProgress.set(1);
+                deviceCreationProgress.set(0.90);
                 await acceptSubscription(channel?.channelAddress, device?.id);
-                deviceCreationProgress.set(0)
+                deviceCreationProgress.set(1)
+                //wait the amount of the delay value of the progress bar to reach 100% 
+                await new Promise((res) => setTimeout(res, 10000));
+                deviceCreationProgress.set(0);
             }
         }
     }

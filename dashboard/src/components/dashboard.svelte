@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDevice, getDevices, getStatuses} from '$lib';
+	import { createDevice, getDevices, getStatuses } from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -67,7 +67,7 @@
 
 	async function loadDevices() {
 		devices = await getDevices($authenticationData?.did);
-		const devicesWithStatus  = await getStatuses(devices);
+		const devicesWithStatus = await getStatuses(devices);
 		devices = devices.flatMap((device, i) => [{ ...device, status: devicesWithStatus[i].status }]);
 		searchResults = devices;
 	}
@@ -87,7 +87,7 @@
 	async function handleCreateDevice(): Promise<void> {
 		isDeviceNameDialogOpen = false;
 		loading = true;
-		await createDevice(deviceName);
+		await createDevice(deviceName);	
 		await loadDevices();
 		loading = false;
 		deviceName = '';
@@ -115,7 +115,11 @@
 			actionButtons={[createDeviceButton]}
 			bind:searchQuery={query}
 		/>
-		<DeviceName bind:isOpen={isDeviceNameDialogOpen} bind:value={deviceName} onClick={() => handleCreateDevice()} />
+		<DeviceName
+			bind:isOpen={isDeviceNameDialogOpen}
+			bind:value={deviceName}
+			onClick={() => handleCreateDevice()}
+		/>
 		{#if loading}
 			<div class="progressbar-wrapper">
 				<ProgressBar progress={$deviceCreationProgress} />
