@@ -20,7 +20,9 @@ async function bootstrap() {
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config, options);
-	SwaggerModule.setup('/api/v1/one-shot-device-docs', app, document);
+	SwaggerModule.setup('/docs', app, document);
+	//url for traefik
+	SwaggerModule.setup('/one-shot-device-docs', app, document);
 
 	await app.listen(process.env.PORT || 3000);
 	Logger.log(`One Shot Device Registration running on port ${process.env.PORT}`);
