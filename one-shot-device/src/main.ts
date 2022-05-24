@@ -5,7 +5,6 @@ import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-
 	const options: SwaggerDocumentOptions = {
 		operationIdFactory: (controllerKey: string, methodKey: string) => methodKey
 	};

@@ -3,7 +3,7 @@
 	import { authenticatedUserDID, isAuthenticated } from '@iota/is-ui-components';
 	import { logout } from '@iota/is-ui-components';
 
-	import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'sveltestrap';
+	import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'sveltestrap';
 
 	let isOpen = false;
 
@@ -25,14 +25,11 @@
 		/></NavbarBrand
 	>
 	{#if $isAuthenticated}
-		<NavbarToggler on:click={() => (isOpen = !isOpen)} />
-		<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
 			<Nav class="ms-auto" navbar>
 				<NavItem>
 					<NavLink on:click={_logout}>Logout</NavLink>
 				</NavItem>
 			</Nav>
-		</Collapse>
 	{/if}
 </Navbar>
 {#if $authenticatedUserDID}
