@@ -24,7 +24,7 @@
 	let selectedDevice: Device;
 	let query: string;
 	let searchResults: Device[] = [];
-	let devices: Device[] = [];
+	let creatorDevices: Device[] = [];
 	let createDeviceButton: ActionButton;
 
 	let deviceName = '';
@@ -66,17 +66,21 @@
 	});
 
 	async function loadDevices() {
-		devices = await getDevices($authenticationData?.did);
-		const devicesWithStatus = await getStatuses(devices);
-		addStatusToDevices(devices, devicesWithStatus);
-		searchResults = devices;
+		creatorDevices = await getDevices($authenticationData?.did);
+		const devicesWithStatus = await getStatuses(creatorDevices);
+		creatorDevices = addStatusToDevices(creatorDevices, devicesWithStatus);
+		searchResults = creatorDevices;
 	}
 
-	function addStatusToDevices(devices: Device[], devicesWithStatus: Device[]) {
-		devices.map((device) => {
-			devicesWithStatus
-				.filter((statusDevice) => statusDevice.id === device.id)
-				.map((statusDevice) => device.status = statusDevice.status);
+	function addStatusToDevices(
+		devices: Device[],
+		devicesWithStatus: { id: string; status: string }[]
+	) {
+		return devices.map((device) => {
+			return {
+				...device,
+				status: devicesWithStatus.find((status) => status.id === device.id)?.status || undefined
+			};
 		});
 	}
 
@@ -105,7 +109,7 @@
 	}
 
 	function onSearch() {
-		searchResults = devices.filter((d) => d.id?.includes(query));
+		searchResults = creatorDevices.filter((d) => d.id?.includes(query));
 	}
 </script>
 
