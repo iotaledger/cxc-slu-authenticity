@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@iota/is-cli": "^0.0.17"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.34"
   }
 }
