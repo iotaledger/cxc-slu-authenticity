@@ -99,7 +99,7 @@
 	async function handleCreateDevice(): Promise<void> {
 		isDeviceNameDialogOpen = false;
 		loading = true;
-		await createDevice(deviceName);
+		await createDevice(deviceName);	
 		await loadDevices();
 		loading = false;
 		deviceName = '';
@@ -129,7 +129,11 @@
 			actionButtons={[createDeviceButton]}
 			bind:searchQuery={query}
 		/>
-		<DeviceName bind:isOpen={isDeviceNameDialogOpen} bind:value={deviceName} onClick={() => handleCreateDevice()} />
+		<DeviceName
+			bind:isOpen={isDeviceNameDialogOpen}
+			bind:value={deviceName}
+			onClick={() => handleCreateDevice()}
+		/>
 		{#if loading}
 			<div class="progressbar-wrapper">
 				<ProgressBar progress={$deviceCreationProgress} />
