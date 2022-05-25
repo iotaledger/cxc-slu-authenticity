@@ -22,9 +22,7 @@ async function bootstrap() {
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config, options);
-	SwaggerModule.setup('/docs', app, document);
-	//url for traefik
-	SwaggerModule.setup('/authenticity-docs', app, document);
+	SwaggerModule.setup('/docs', app, document, {explorer: true});
 
 	await app.listen(process.env.PORT || 3000);
 	const collectorIdentityService = app.get(CollectorIdentityService);
