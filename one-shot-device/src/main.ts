@@ -20,7 +20,7 @@ async function bootstrap() {
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config, options);
-	SwaggerModule.setup('/docs', app, document);
+	SwaggerModule.setup('/one-shot-device/docs', app, document);
 
 	await app.listen(process.env.PORT || 3000);
 	Logger.log(`One Shot Device Registration running on port ${process.env.PORT}`);

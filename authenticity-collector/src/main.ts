@@ -22,7 +22,7 @@ async function bootstrap() {
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config, options);
-	SwaggerModule.setup('/docs', app, document);
+	SwaggerModule.setup('/authenticity/docs', app, document);
 
 	await app.listen(process.env.PORT || 3000);
 	const collectorIdentityService = app.get(CollectorIdentityService);
