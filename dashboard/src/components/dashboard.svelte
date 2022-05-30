@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDevice, getDevices, getStatuses} from '$lib';
+	import { createDevice, getDevices, getStatuses } from '$lib';
 	import { deviceCreationProgress } from '$lib/store';
 	import type { Device } from '$lib/types';
 	import {
@@ -24,7 +24,7 @@
 	let selectedDevice: Device;
 	let query: string;
 	let searchResults: Device[] = [];
-	let devices: Device[] = [];
+	let creatorDevices: Device[] = [];
 	let createDeviceButton: ActionButton;
 
 	let deviceName = '';
@@ -66,10 +66,22 @@
 	});
 
 	async function loadDevices() {
-		devices = await getDevices($authenticationData?.did);
-		const devicesWithStatus  = await getStatuses(devices);
-		devices = devices.flatMap((device, i) => [{ ...device, status: devicesWithStatus[i].status }]);
-		searchResults = devices;
+		creatorDevices = await getDevices($authenticationData?.did);
+		const devicesWithStatus = await getStatuses(creatorDevices);
+		creatorDevices = addStatusToDevices(creatorDevices, devicesWithStatus);
+		searchResults = creatorDevices;
+	}
+
+	function addStatusToDevices(
+		devices: Device[],
+		devicesWithStatus: { id: string; status: string }[]
+	) {
+		return devices.map((device) => {
+			return {
+				...device,
+				status: devicesWithStatus.find((status) => status.id === device.id)?.status || undefined
+			};
+		});
 	}
 
 	function updateState(): void {
@@ -87,7 +99,7 @@
 	async function handleCreateDevice(): Promise<void> {
 		isDeviceNameDialogOpen = false;
 		loading = true;
-		await createDevice(deviceName);
+		await createDevice(deviceName);	
 		await loadDevices();
 		loading = false;
 		deviceName = '';
@@ -98,7 +110,9 @@
 	}
 
 	function onSearch() {
-		searchResults = devices.filter((d) => d.id?.includes(query));
+			if (query?.includes('did:iota')) {
+				searchResults = creatorDevices.filter((d) => d.id?.includes(query));
+			} else {searchResults = creatorDevices.filter((d) => d.name?.includes(query))};
 	}
 </script>
 
@@ -115,7 +129,11 @@
 			actionButtons={[createDeviceButton]}
 			bind:searchQuery={query}
 		/>
-		<DeviceName bind:isOpen={isDeviceNameDialogOpen} bind:value={deviceName} onClick={() => handleCreateDevice()} />
+		<DeviceName
+			bind:isOpen={isDeviceNameDialogOpen}
+			bind:value={deviceName}
+			onClick={() => handleCreateDevice()}
+		/>
 		{#if loading}
 			<div class="progressbar-wrapper">
 				<ProgressBar progress={$deviceCreationProgress} />
