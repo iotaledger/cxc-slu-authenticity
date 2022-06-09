@@ -109,19 +109,20 @@ services:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
-      # available on build 
-      args:
-        - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
-        - VITE_IOTA_IS_SDK_GATEWAY_URL=${INTEGRATION_SERVICE}
-        - VITE_DEVICE_MANAGEMENTE_API_REST_URL=
-        - VITE_SLU_STATUS_API_KEY=${SLU_STATUS_API_KEY}
-        - VITE_SLU_GATEWAY_URL=
+    container_name: "cxc-dashboard"
     restart: always
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dashboard.entrypoints=web"
       - "traefik.http.routers.dashboard.rule=PathPrefix(`/`)"
       - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
+    environment:
+      - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
+      - VITE_IOTA_IS_SDK_GATEWAY_URL=${INTEGRATION_SERVICE}
+      - VITE_DEVICE_MANAGEMENTE_API_REST_URL=
+      - VITE_SLU_STATUS_API_KEY=${SLU_STATUS_API_KEY}
+      - VITE_SLU_GATEWAY_URL=
+    command: sh -c "npm run build && npm run prod"
     depends_on:
       - authenticity-collector
       - one-shot-device
