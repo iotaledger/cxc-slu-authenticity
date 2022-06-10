@@ -1,8 +1,9 @@
 {
 	"name": "dashboard",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"scripts": {
-		"dev": "svelte-kit dev --host 0.0.0.0",
+		"prod": "node build/index.js",
+		"dev": "svelte-kit dev --host 0.0.0.0 --port ${PORT:-3000}",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",

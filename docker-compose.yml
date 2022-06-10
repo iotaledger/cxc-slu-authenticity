@@ -109,6 +109,7 @@ services:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
+    container_name: "cxc-dashboard"
     restart: always
     labels:
       - "traefik.enable=true"
@@ -121,6 +122,7 @@ services:
       - VITE_DEVICE_MANAGEMENTE_API_REST_URL=
       - VITE_SLU_STATUS_API_KEY=${SLU_STATUS_API_KEY}
       - VITE_SLU_GATEWAY_URL=
+    command: sh -c "npm run build && npm run prod"
     depends_on:
       - authenticity-collector
       - one-shot-device
