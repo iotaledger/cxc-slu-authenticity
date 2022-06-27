@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cxc-slu-status
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: cxc-slu-status
+  template:
+    metadata:
+      labels:
+        app: cxc-slu-status
+    spec:
+      containers:
+        - name: cxc-slu-status
+          image: iotaledger/cxc-slu-status:v0.1.0
+          command:
+          - npm
+          - run
+          - start:prod
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "250m"
+            limits:
+              memory: "250Mi"
+              cpu: "500m"
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: 3000
+          env:
+            - name: "API_KEY"
+              valueFrom:
+                configMapKeyRef:
+                  name: cxc-config
+                  key: SLU_STATUS_API_KEY
+            - name: "DATABASE_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: cxc-config
+                  key: DATABASE_URL
+            - name: "DATABASE_NAME"
+              value: "slu-status"
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cxc-slu-status
+  labels:
+    app: cxc-slu-status    
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: cxc-slu-status

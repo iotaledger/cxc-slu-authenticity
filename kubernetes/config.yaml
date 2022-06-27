@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cxc-config
+data:
+  API_KEY: b85e51a2-9981-11ec-8770-4b8f01948e9b
+  DATABASE_URL: "mongodb://root:root@cxc-mongo-mongodb:27017"
+  INTEGRATION_SERVICE: https://demo-integration-services.iota.cafe
+  COLLECTOR_DID: did:iota:2wEbnkDQAxSefsttZJEfpPjsRoqZLKFKsxEPoX3BH549
+  COLLECTOR_SECRET: CfBPasfDLg2K8a4E3Rca1AjQWW768rKiPvoYNAJBzpEZ
+  SLU_STATUS_API_KEY: 2b3fe07d-b7db-49cb-8300-d32139e3d435
+  JWT_SECRET: "foobar"
+  MPOWER_CONNECTOR_URL: "https://en5mzd9ir2abq.x.pipedream.net"
+  

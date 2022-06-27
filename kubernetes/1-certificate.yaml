@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cxc-iota-cafe-certificate
+spec:
+  dnsNames:
+    - "cxc.is.iota.cafe"
+  duration: 2160h0m0s
+  issuerRef:
+    name: cloudflare-issuer
+  renewBefore: 360h0m0s
+  secretName: cxc-tls-crt-secret
+  usages:
+    - server auth
+    - client auth
+  privateKey:
+    algorithm: RSA
+    size: 2048
