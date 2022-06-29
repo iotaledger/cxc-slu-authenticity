@@ -16,6 +16,7 @@ spec:
       containers:
         - name: cxc-dashboard
           image: iotaledger/cxc-dashboard:v0.0.1
+          command: ['sh', '-c', 'npm run build && npm run prod']
           resources:
             requests:
               memory: "500Mi"
