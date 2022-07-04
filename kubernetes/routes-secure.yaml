@@ -1,0 +1,84 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cxc-authenticity-collector
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cxc.is.iota.cafe`) && (PathPrefix(`/api/v1/authenticity`) || PathPrefix(`/authenticity-collector`))
+      kind: Rule
+      services:
+        - name: cxc-authenticity-collector
+          kind: Service
+          port: 3000
+  tls:
+    secretName: cxc-tls-crt-secret
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cxc-one-shot-device
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cxc.is.iota.cafe`) && (PathPrefix(`/api/v1/one-shot-device`) || PathPrefix(`/api/v1/creator-devices`) || || PathPrefix(`/one-shot-device`))
+      kind: Rule
+      services:
+        - name: cxc-one-shot-device
+          kind: Service
+          port: 3000
+  tls:
+    secretName: cxc-tls-crt-secret
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cxc-proof-of-ownership
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cxc.is.iota.cafe`) && PathPrefix(`/api/v1/ownership`)
+      kind: Rule
+      services:
+        - name: cxc-proof-of-ownership
+          kind: Service
+          port: 3000
+  tls:
+    secretName: cxc-tls-crt-secret
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cxc-slu-status
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cxc.is.iota.cafe`) && (PathPrefix(`/api/v1/status`) || PathPrefix(`/api/v1/slu-nonce`) || PathPrefix(`/slu-status`))
+      kind: Rule
+      services:
+        - name: cxc-slu-status
+          kind: Service
+          port: 3000
+  tls:
+    secretName: cxc-tls-crt-secret
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cxc-dashboard
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cxc.is.iota.cafe`) && ( PathPrefix(`/`) && !PathPrefix(`/api`) )
+      kind: Rule
+      services:
+        - name: cxc-dashboard
+          kind: Service
+          port: 3000
+  tls:
+    secretName: cxc-tls-crt-secret

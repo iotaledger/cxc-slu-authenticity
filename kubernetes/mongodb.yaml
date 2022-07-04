@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cxc-mongo
+#  namespace: argocd
+#  finalizers:
+#  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: mongodb
+    helm:
+      parameters:
+      - name: "auth.enabled"
+        value: "true"
+      - name: "auth.rootUser"
+        value: "root"
+      - name: "auth.rootPassword"
+        value: "root"
+      - name: "usernames"
+        value: "root"
+      - name: "databases"
+        value: "cxc"
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: 11.1.5
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
